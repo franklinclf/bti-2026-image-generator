@@ -81,7 +81,8 @@ def ascii_preview(W,H,ch,px,cols=104,thr=232):
         lines.append(line)
     return '\n'.join(lines)
 
-src='brand-source/logotipo_flat.png'; dst='propostas/assets/ufrn-white.png'
+src = sys.argv[1] if len(sys.argv) > 1 else 'brand-source/logotipo_positivo.png'
+dst = sys.argv[2] if len(sys.argv) > 2 else 'propostas/assets/ufrn-white.png'
 W,H,ch,px = load_png(src)
 print(f'origem {src}: {W}x{H} ch={ch}')
 op,tr = save_white(dst,W,H,ch,px)
