@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TI 2026.1 — Convite &amp; Display · UFRN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-0:#05070d;
+    --navy-1:#070a12;
+    --navy-2:#0a1122;
+    --navy-3:#0f1a30;
+    --navy-4:#152442;
+    --gold:#c9a227;
+    --gold-2:#d4af37;
+    --champagne:#e8cf8f;
+    --off:#eef2fb;
+    --muted:#8ea4c8;
+    --mono:"JetBrains Mono",monospace;
+    --sans:"Space Grotesk",sans-serif;
+    --serif:"Fraunces",serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#05070d;}
+  body{
+    font-family:var(--sans);
+    color:var(--off);
+    padding:8px 0 60px;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ===== scaler (contrato) ===== */
+  .fit{display:flex;justify-content:center;}
+  .sheet{transform-origin:top center;}
+  .cap{
+    font:600 12px "JetBrains Mono",monospace;
+    letter-spacing:.3em;
+    color:#8ea4c8;
+    text-transform:uppercase;
+    margin:22px 0 12px;
+    text-align:center;
+  }
+
+  /* ===== card ===== */
+  .card{
+    width:1600px;
+    height:1149px;
+    box-sizing:border-box;
+    position:relative;
+    overflow:hidden;
+    border-radius:12px;
+    background:
+      radial-gradient(120% 90% at 30% 22%, rgba(21,36,66,.92) 0%, rgba(15,26,48,.55) 42%, rgba(7,10,18,0) 72%),
+      radial-gradient(90% 120% at 92% 78%, rgba(21,36,66,.55) 0%, rgba(10,17,34,0) 60%),
+      linear-gradient(155deg, #0a1122 0%, #070a12 48%, #05070d 100%);
+    box-shadow:0 40px 120px rgba(0,0,0,.6), inset 0 0 0 1px rgba(201,162,39,.10);
+    color:var(--off);
+    font-family:var(--sans);
+  }
+
+  /* ===== blueprint mesh (fundo) ===== */
+  .mesh{position:absolute;inset:0;pointer-events:none;z-index:1;}
+  .mesh .fine{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(201,162,39,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,162,39,.045) 1px, transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(115% 100% at 78% 55%, #000 0%, rgba(0,0,0,.35) 38%, transparent 66%);
+            mask-image:radial-gradient(115% 100% at 78% 55%, #000 0%, rgba(0,0,0,.35) 38%, transparent 66%);
+  }
+  .mesh .coarse{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(201,162,39,.075) 1.4px, transparent 1.4px),
+      linear-gradient(90deg, rgba(201,162,39,.075) 1.4px, transparent 1.4px);
+    background-size:220px 220px;
+    -webkit-mask-image:radial-gradient(120% 100% at 80% 60%, #000 0%, rgba(0,0,0,.4) 40%, transparent 70%);
+            mask-image:radial-gradient(120% 100% at 80% 60%, #000 0%, rgba(0,0,0,.4) 40%, transparent 70%);
+  }
+  /* vinheta pra dar profundidade e limpar bordas do texto */
+  .vignette{
+    position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:
+      radial-gradient(78% 90% at 26% 46%, rgba(5,7,13,.55) 0%, rgba(5,7,13,0) 55%),
+      linear-gradient(180deg, rgba(5,7,13,.35) 0%, rgba(5,7,13,0) 16%, rgba(5,7,13,0) 82%, rgba(5,7,13,.55) 100%);
+  }
+
+  /* ===== grafo (atrás da figura / cantos) ===== */
+  .graph{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .graph svg{width:100%;height:100%;display:block;}
+
+  /* fio dourado hairline decorativo do quadro */
+  .frame{
+    position:absolute;inset:26px;z-index:3;pointer-events:none;
+    border:1px solid rgba(201,162,39,.22);
+    border-radius:8px;
+  }
+  .frame::before{
+    content:"";position:absolute;inset:7px;
+    border:1px solid rgba(201,162,39,.10);
+    border-radius:5px;
+  }
+  /* cantos tipo colchete */
+  .corner{position:absolute;width:34px;height:34px;z-index:4;pointer-events:none;}
+  .corner::before,.corner::after{content:"";position:absolute;background:var(--gold);opacity:.7;}
+  .corner::before{width:34px;height:1.5px;}
+  .corner::after{width:1.5px;height:34px;}
+  .corner.tl{top:34px;left:34px;}
+  .corner.tr{top:34px;right:34px;}
+  .corner.tr::before{right:0;} .corner.tr::after{right:0;}
+  .corner.bl{bottom:34px;left:34px;} .corner.bl::before{bottom:0;} .corner.bl::after{bottom:0;}
+  .corner.br{bottom:34px;right:34px;} .corner.br::before{right:0;bottom:0;} .corner.br::after{right:0;bottom:0;}
+
+  /* ===== layout de conteúdo ===== */
+  .content{
+    position:absolute;inset:0;z-index:6;
+    display:grid;
+    grid-template-columns: 1fr 560px;
+    padding:88px 78px 74px 92px;
+  }
+  .left{
+    display:flex;flex-direction:column;
+    padding-right:40px;
+    min-width:0;
+  }
+
+  /* --- identidade topo --- */
+  .identity{display:flex;align-items:center;gap:22px;}
+  .mono-hex{width:74px;height:82px;flex:0 0 auto;filter:drop-shadow(0 6px 16px rgba(201,162,39,.22));}
+  .id-text{display:flex;flex-direction:column;gap:7px;}
+  .id-course{
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:16px;
+    letter-spacing:.42em;
+    color:var(--champagne);
+    text-transform:uppercase;
+  }
+  .id-year{
+    display:flex;align-items:center;gap:12px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:.34em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .id-year .rule{height:1px;width:52px;background:linear-gradient(90deg,var(--gold),transparent);display:inline-block;}
+  .id-year b{color:var(--gold-2);font-weight:600;}
+
+  /* prompt / codigo sutil */
+  .prompt{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.16em;
+    color:rgba(142,164,200,.62);
+    margin-top:44px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .prompt .arrow{color:var(--gold-2);}
+  .prompt .cursor{
+    display:inline-block;width:9px;height:16px;background:var(--gold-2);
+    margin-left:2px;transform:translateY(2px);opacity:.85;
+    animation:blink 1.15s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .comment{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.05em;
+    color:rgba(142,164,200,.5);
+    margin-top:10px;
+  }
+
+  /* --- nome --- */
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;letter-spacing:.36em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;margin-top:26px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .eyebrow .dot{width:6px;height:6px;background:var(--gold-2);transform:rotate(45deg);}
+  .name{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:82px;
+    line-height:.98;
+    letter-spacing:-.01em;
+    color:var(--off);
+    text-shadow:0 2px 30px rgba(0,0,0,.4);
+  }
+  .name .accent{color:var(--champagne);}
+  .name-underline{
+    margin-top:22px;height:2px;width:300px;
+    background:linear-gradient(90deg, var(--gold-2) 0%, var(--gold) 40%, transparent 100%);
+    box-shadow:0 0 18px rgba(201,162,39,.35);
+  }
+
+  /* --- corpo --- */
+  .body-text{
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:23px;
+    line-height:1.62;
+    color:rgba(238,242,251,.86);
+    max-width:640px;
+    margin-top:34px;
+  }
+  .body-text b{font-weight:500;color:var(--off);}
+
+  /* --- destaque colacao --- */
+  .highlight-wrap{margin-top:30px;display:flex;flex-direction:column;gap:8px;}
+  .highlight-kicker{
+    font-family:var(--mono);font-size:12px;letter-spacing:.34em;
+    color:var(--gold-2);text-transform:uppercase;
+    display:flex;align-items:center;gap:11px;
+  }
+  .highlight-kicker .brace{opacity:.7;}
+  .highlight{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:500;
+    font-size:64px;
+    line-height:1;
+    color:var(--champagne);
+    text-shadow:0 4px 40px rgba(232,207,143,.18);
+  }
+
+  /* --- modulos local/data --- */
+  .modules{
+    margin-top:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    max-width:720px;
+  }
+  .mod{
+    position:relative;
+    padding:22px 24px 22px 24px;
+    border:1px solid rgba(201,162,39,.28);
+    border-radius:9px;
+    background:linear-gradient(155deg, rgba(21,36,66,.42), rgba(10,17,34,.30));
+    backdrop-filter:blur(2px);
+    overflow:hidden;
+  }
+  .mod::before{
+    content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;
+    background:linear-gradient(180deg,var(--gold-2),var(--gold));
+    border-radius:2px;box-shadow:0 0 12px rgba(201,162,39,.4);
+  }
+  .mod-label{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.28em;
+    color:var(--gold-2);text-transform:uppercase;
+    display:flex;align-items:center;gap:9px;margin-bottom:12px;
+  }
+  .mod-label .idx{color:var(--muted);}
+  .mod-title{
+    font-family:var(--sans);font-weight:600;font-size:22px;
+    color:var(--off);line-height:1.2;letter-spacing:.005em;
+  }
+  .mod-sub{
+    font-family:var(--sans);font-weight:300;font-size:16.5px;
+    color:rgba(142,164,200,.92);margin-top:6px;line-height:1.35;
+  }
+  .mod-time{
+    font-family:var(--mono);font-weight:500;font-size:26px;
+    color:var(--champagne);letter-spacing:.02em;
+  }
+
+  /* --- dedicatoria (display) --- */
+  .script-over{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    font-size:46px;
+    color:var(--champagne);
+    margin-top:30px;
+    line-height:1;
+  }
+  .dedic{
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:22.5px;
+    line-height:1.68;
+    color:rgba(238,242,251,.88);
+    max-width:660px;
+    margin-top:26px;
+  }
+  .dedic b{font-weight:500;color:var(--off);}
+  .closing{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:500;
+    font-size:52px;
+    color:var(--off);
+    margin-top:30px;
+    line-height:1;
+  }
+  .display-tail{
+    margin-top:auto;
+    display:flex;align-items:center;gap:16px;
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.24em;
+    color:rgba(142,164,200,.55);text-transform:uppercase;
+  }
+  .display-tail .line{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,162,39,.3),transparent);}
+
+  /* ===== figura (direita) ===== */
+  .figure{
+    position:relative;
+    align-self:stretch;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .figure .glow{
+    position:absolute;
+    top:50%;left:50%;transform:translate(-50%,-46%);
+    width:520px;height:720px;
+    background:radial-gradient(50% 50% at 50% 45%, rgba(201,162,39,.20) 0%, rgba(21,36,66,.16) 42%, rgba(7,10,18,0) 72%);
+    filter:blur(6px);
+    z-index:0;
+  }
+  .figure .ground{
+    position:absolute;
+    bottom:34px;left:50%;transform:translateX(-50%);
+    width:420px;height:70px;
+    background:radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 72%);
+    z-index:0;
+  }
+  .figure .baseline{
+    position:absolute;
+    bottom:64px;left:50%;transform:translateX(-50%);
+    width:380px;height:2px;
+    background:linear-gradient(90deg, transparent, rgba(201,162,39,.55) 20%, rgba(232,207,143,.85) 50%, rgba(201,162,39,.55) 80%, transparent);
+    box-shadow:0 0 16px rgba(201,162,39,.4);
+    z-index:1;
+  }
+  .figure .silhouette{
+    position:relative;z-index:1;
+    height:900px;width:auto;
+    filter:drop-shadow(0 24px 40px rgba(0,0,0,.5));
+  }
+  .figure .photo-label{
+    position:absolute;
+    bottom:26px;left:50%;transform:translateX(-50%);
+    z-index:2;
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+    color:rgba(142,164,200,.72);text-transform:uppercase;
+    white-space:nowrap;
+    display:flex;align-items:center;gap:8px;
+  }
+  .figure .photo-label .tick{width:6px;height:6px;border:1px solid var(--gold-2);transform:rotate(45deg);}
+  /* rótulo modular vertical de acento */
+  .fig-tag{
+    position:absolute;top:44px;right:2px;z-index:2;
+    font-family:var(--mono);font-size:11px;letter-spacing:.3em;
+    color:rgba(201,162,39,.5);text-transform:uppercase;
+    writing-mode:vertical-rl;
+  }
+
+  /* ===== rodape logos ===== */
+  .footer{
+    position:absolute;left:92px;right:78px;bottom:52px;z-index:7;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:30px;
+  }
+  .logos{display:flex;align-items:center;gap:30px;}
+  .logo-item{display:flex;flex-direction:column;align-items:center;gap:9px;}
+  .logo-item .lbl{
+    font-family:var(--mono);font-size:10px;letter-spacing:.28em;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .logo-item img{display:block;}
+  .logo-ufrn{height:30px;filter:brightness(0) invert(1);opacity:.92;}
+  .logo-imd{height:30px;filter:brightness(0) invert(1);opacity:.92;}
+  .logo-pix{height:30px;mix-blend-mode:screen;}
+  .logo-div{width:1px;height:40px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.4),transparent);align-self:flex-end;margin-bottom:4px;}
+  .foot-eof{
+    font-family:var(--mono);font-size:11px;letter-spacing:.26em;
+    color:rgba(142,164,200,.5);text-transform:uppercase;
+    align-self:flex-end;
+  }
+  .foot-eof b{color:var(--gold-2);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="fit"><div class="sheet">
+
+  <div class="cap">CONVITE — 1600 × 1149</div>
+
+  <!-- ============================= CONVITE ============================= -->
+  <div class="card">
+    <!-- fundo -->
+    <div class="mesh"><div class="coarse"></div><div class="fine"></div></div>
+
+    <!-- grafo (atras da figura + cantos) -->
+    <div class="graph">
+      <svg viewBox="0 0 1600 1149" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="rgba(201,162,39,0.16)" stroke-width="1" fill="none">
+          <path d="M1180 210 L1320 300 L1470 250 M1320 300 L1300 470 L1180 560 M1300 470 L1450 520 M1180 560 L1240 720 L1400 700 M1240 720 L1140 860 M1400 700 L1500 800 M1180 210 L1120 360 L1180 560 M1120 360 L980 420"/>
+          <path d="M60 120 L180 90 L240 210 L120 270 Z M180 90 L300 160"/>
+          <path d="M120 980 L60 1080 M120 980 L240 1040 L320 960"/>
+        </g>
+        <g fill="rgba(232,207,143,0.42)">
+          <circle cx="1180" cy="210" r="3.5"/><circle cx="1320" cy="300" r="4"/><circle cx="1470" cy="250" r="3"/>
+          <circle cx="1300" cy="470" r="3.5"/><circle cx="1180" cy="560" r="4.5"/><circle cx="1450" cy="520" r="3"/>
+          <circle cx="1240" cy="720" r="3.5"/><circle cx="1400" cy="700" r="4"/><circle cx="1140" cy="860" r="3"/>
+          <circle cx="1500" cy="800" r="3"/><circle cx="1120" cy="360" r="3"/><circle cx="980" cy="420" r="2.6"/>
+          <circle cx="180" cy="90" r="3"/><circle cx="240" cy="210" r="2.6"/><circle cx="120" cy="270" r="2.6"/><circle cx="300" cy="160" r="2.4"/>
+          <circle cx="120" cy="980" r="2.8"/><circle cx="240" cy="1040" r="2.6"/><circle cx="320" cy="960" r="2.4"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="vignette"></div>
+    <div class="frame"></div>
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+
+    <div class="content">
+      <!-- COLUNA ESQUERDA -->
+      <div class="left">
+        <div class="identity">
+          <!-- monograma hexagonal TI -->
+          <svg class="mono-hex" viewBox="0 0 74 82" aria-hidden="true">
+            <defs>
+              <linearGradient id="hxg-c" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#e8cf8f"/><stop offset="1" stop-color="#c9a227"/>
+              </linearGradient>
+            </defs>
+            <polygon points="37,3 70,21 70,61 37,79 4,61 4,21" fill="rgba(21,36,66,0.5)" stroke="url(#hxg-c)" stroke-width="2"/>
+            <polygon points="37,13 61,26 61,56 37,69 13,56 13,26" fill="none" stroke="rgba(201,162,39,0.35)" stroke-width="1"/>
+            <g stroke="rgba(232,207,143,0.55)" stroke-width="1.1" fill="none">
+              <path d="M37,3 L37,13 M70,21 L61,26 M70,61 L61,56 M37,79 L37,69 M4,61 L13,56 M4,21 L13,26"/>
+            </g>
+            <g fill="#e8cf8f">
+              <circle cx="37" cy="3" r="2.4"/><circle cx="70" cy="21" r="2.4"/><circle cx="70" cy="61" r="2.4"/>
+              <circle cx="37" cy="79" r="2.4"/><circle cx="4" cy="61" r="2.4"/><circle cx="4" cy="21" r="2.4"/>
+            </g>
+            <text x="37" y="52" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="30" fill="#eef2fb" font-style="italic">TI</text>
+          </svg>
+          <div class="id-text">
+            <div class="id-course">Tecnologia da Informa&ccedil;&atilde;o</div>
+            <div class="id-year"><span class="rule"></span>Formatura <b>2026.1</b> &middot; UFRN</div>
+          </div>
+        </div>
+
+        <div class="prompt"><span class="arrow">&gt;_</span> ./cerimonia --colacao &nbsp;<span class="cursor"></span></div>
+        <div class="comment">// convite oficial &middot; presen&ccedil;a confirmada</div>
+
+        <div class="eyebrow"><span class="dot"></span>const formando =</div>
+        <div class="name">Nome do <span class="accent">Formando</span></div>
+        <div class="name-underline"></div>
+
+        <p class="body-text">
+          formando em <b>Tecnologia da Informa&ccedil;&atilde;o</b>, turma <b>2026.1</b>, da Universidade Federal do Rio Grande do Norte, tem a honra de convid&aacute;-lo para a
+        </p>
+
+        <div class="highlight-wrap">
+          <div class="highlight-kicker"><span class="brace">{</span> cerim&ocirc;nia <span class="brace">}</span></div>
+          <div class="highlight">Cola&ccedil;&atilde;o de Grau</div>
+        </div>
+
+        <!-- MODULOS local/data -->
+        <div class="modules">
+          <div class="mod">
+            <div class="mod-label"><span class="idx">[ 01 ]</span> Local</div>
+            <div class="mod-title">Gin&aacute;sio Poliesportivo 1 — UFRN</div>
+            <div class="mod-sub">Rua da Sa&uacute;de, Lagoa Nova — Natal/RN</div>
+          </div>
+          <div class="mod">
+            <div class="mod-label"><span class="idx">[ 02 ]</span> Data</div>
+            <div class="mod-title">28 de Julho de 2026</div>
+            <div class="mod-time">19h00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: figura -->
+      <div class="figure">
+        <span class="fig-tag">[ figura · corpo inteiro ]</span>
+        <div class="glow"></div>
+        <div class="ground"></div>
+        <div class="baseline"></div>
+        <!-- silhueta elegante em pe (placeholder cutout) -->
+        <svg class="silhouette" viewBox="0 0 300 900" aria-hidden="true">
+          <defs>
+            <linearGradient id="silh-c" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="rgba(142,164,200,0.30)"/>
+              <stop offset="0.55" stop-color="rgba(201,162,39,0.22)"/>
+              <stop offset="1" stop-color="rgba(21,36,66,0.30)"/>
+            </linearGradient>
+          </defs>
+          <g fill="url(#silh-c)" stroke="rgba(232,207,143,0.28)" stroke-width="1.2">
+            <!-- cabeca -->
+            <circle cx="150" cy="86" r="46"/>
+            <!-- pescoco/ombros/torso (traje social) -->
+            <path d="M124 128 C126 150 118 156 96 168 C72 182 60 210 58 250
+                     L54 470 C53 500 60 520 66 545 L74 600
+                     L120 600 L130 470 L134 360 L150 356 L166 360 L170 470 L180 600
+                     L226 600 L234 545 C240 520 247 500 246 470
+                     L242 250 C240 210 228 182 204 168 C182 156 174 150 176 128
+                     C170 138 158 144 150 144 C142 144 130 138 124 128 Z"/>
+            <!-- pernas -->
+            <path d="M96 600 L86 830 C85 848 90 858 104 858 L128 858 C138 858 142 848 142 832 L150 615 L120 600 Z"/>
+            <path d="M204 600 L214 830 C215 848 210 858 196 858 L172 858 C162 858 158 848 158 832 L150 615 L180 600 Z"/>
+            <!-- sapatos -->
+            <path d="M84 858 L82 878 C82 886 88 890 100 890 L134 890 C140 890 142 884 140 876 L138 858 Z"/>
+            <path d="M216 858 L218 878 C218 886 212 890 200 890 L166 890 C160 890 158 884 160 876 L162 858 Z"/>
+          </g>
+          <!-- lapela/gravata detalhe fio dourado -->
+          <path d="M150 144 L150 350 M138 156 L150 210 L162 156" fill="none" stroke="rgba(232,207,143,0.42)" stroke-width="1.4"/>
+          <circle cx="150" cy="86" r="46" fill="none" stroke="rgba(232,207,143,0.30)" stroke-width="1"/>
+        </svg>
+        <div class="photo-label"><span class="tick"></span>Foto do formando &middot; corpo inteiro &middot; fundo removido</div>
+      </div>
+    </div>
+
+    <!-- RODAPE -->
+    <div class="footer">
+      <div class="logos">
+        <div class="logo-item">
+          <img class="logo-ufrn" src="assets/ufrn-wordmark.png" alt="UFRN">
+          <span class="lbl">Institui&ccedil;&atilde;o</span>
+        </div>
+        <span class="logo-div"></span>
+        <div class="logo-item">
+          <img class="logo-imd" src="assets/imd.svg" alt="IMD — Instituto Metr&oacute;pole Digital">
+          <span class="lbl">Curso</span>
+        </div>
+        <span class="logo-div"></span>
+        <div class="logo-item">
+          <img class="logo-pix" src="assets/pix.png" alt="PIX Formaturas">
+          <span class="lbl">Realiza&ccedil;&atilde;o</span>
+        </div>
+      </div>
+      <div class="foot-eof">// TI 2026.1 &middot; <b>EOF</b></div>
+    </div>
+  </div>
+
+
+  <div class="cap">DISPLAY DE MESA — 1600 × 1149</div>
+
+  <!-- ============================= DISPLAY DE MESA ============================= -->
+  <div class="card">
+    <div class="mesh"><div class="coarse"></div><div class="fine"></div></div>
+
+    <div class="graph">
+      <svg viewBox="0 0 1600 1149" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="rgba(201,162,39,0.16)" stroke-width="1" fill="none">
+          <path d="M1180 210 L1320 300 L1470 250 M1320 300 L1300 470 L1180 560 M1300 470 L1450 520 M1180 560 L1240 720 L1400 700 M1240 720 L1140 860 M1400 700 L1500 800 M1180 210 L1120 360 L1180 560 M1120 360 L980 420"/>
+          <path d="M60 120 L180 90 L240 210 L120 270 Z M180 90 L300 160"/>
+          <path d="M120 980 L60 1080 M120 980 L240 1040 L320 960"/>
+        </g>
+        <g fill="rgba(232,207,143,0.42)">
+          <circle cx="1180" cy="210" r="3.5"/><circle cx="1320" cy="300" r="4"/><circle cx="1470" cy="250" r="3"/>
+          <circle cx="1300" cy="470" r="3.5"/><circle cx="1180" cy="560" r="4.5"/><circle cx="1450" cy="520" r="3"/>
+          <circle cx="1240" cy="720" r="3.5"/><circle cx="1400" cy="700" r="4"/><circle cx="1140" cy="860" r="3"/>
+          <circle cx="1500" cy="800" r="3"/><circle cx="1120" cy="360" r="3"/><circle cx="980" cy="420" r="2.6"/>
+          <circle cx="180" cy="90" r="3"/><circle cx="240" cy="210" r="2.6"/><circle cx="120" cy="270" r="2.6"/><circle cx="300" cy="160" r="2.4"/>
+          <circle cx="120" cy="980" r="2.8"/><circle cx="240" cy="1040" r="2.6"/><circle cx="320" cy="960" r="2.4"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="vignette"></div>
+    <div class="frame"></div>
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+
+    <div class="content">
+      <div class="left">
+        <div class="identity">
+          <svg class="mono-hex" viewBox="0 0 74 82" aria-hidden="true">
+            <defs>
+              <linearGradient id="hxg-d" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#e8cf8f"/><stop offset="1" stop-color="#c9a227"/>
+              </linearGradient>
+            </defs>
+            <polygon points="37,3 70,21 70,61 37,79 4,61 4,21" fill="rgba(21,36,66,0.5)" stroke="url(#hxg-d)" stroke-width="2"/>
+            <polygon points="37,13 61,26 61,56 37,69 13,56 13,26" fill="none" stroke="rgba(201,162,39,0.35)" stroke-width="1"/>
+            <g stroke="rgba(232,207,143,0.55)" stroke-width="1.1" fill="none">
+              <path d="M37,3 L37,13 M70,21 L61,26 M70,61 L61,56 M37,79 L37,69 M4,61 L13,56 M4,21 L13,26"/>
+            </g>
+            <g fill="#e8cf8f">
+              <circle cx="37" cy="3" r="2.4"/><circle cx="70" cy="21" r="2.4"/><circle cx="70" cy="61" r="2.4"/>
+              <circle cx="37" cy="79" r="2.4"/><circle cx="4" cy="61" r="2.4"/><circle cx="4" cy="21" r="2.4"/>
+            </g>
+            <text x="37" y="52" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="30" fill="#eef2fb" font-style="italic">TI</text>
+          </svg>
+          <div class="id-text">
+            <div class="id-course">Tecnologia da Informa&ccedil;&atilde;o</div>
+            <div class="id-year"><span class="rule"></span>Formatura <b>2026.1</b> &middot; UFRN</div>
+          </div>
+        </div>
+
+        <div class="prompt"><span class="arrow">&gt;_</span> ./dedicatoria --print &nbsp;<span class="cursor"></span></div>
+        <div class="comment">// para quem caminhou comigo</div>
+
+        <div class="eyebrow"><span class="dot"></span>const formando =</div>
+        <div class="name">Nome do <span class="accent">Formando</span></div>
+        <div class="name-underline"></div>
+
+        <p class="script-over">Aos que amo,</p>
+
+        <p class="dedic">
+          A voc&ecirc;s, que acreditaram em mim e me impulsionaram a seguir em frente, dedico esta conquista. Foi ao lado de pessoas t&atilde;o especiais como voc&ecirc;s que encontrei a <b>for&ccedil;a</b> e a <b>coragem</b> para enfrentar cada desafio. Com profunda gratid&atilde;o, agrade&ccedil;o por estarem presentes em cada passo, ajudando a transformar meus sonhos em realidade. <b>Este momento &eacute; nosso.</b>
+        </p>
+
+        <p class="closing">Muito obrigado!</p>
+
+        <div class="display-tail">
+          <span>{ dedicat&oacute;ria }</span><span class="line"></span><span>EOF</span>
+        </div>
+      </div>
+
+      <div class="figure">
+        <span class="fig-tag">[ figura · corpo inteiro ]</span>
+        <div class="glow"></div>
+        <div class="ground"></div>
+        <div class="baseline"></div>
+        <svg class="silhouette" viewBox="0 0 300 900" aria-hidden="true">
+          <defs>
+            <linearGradient id="silh-d" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="rgba(142,164,200,0.30)"/>
+              <stop offset="0.55" stop-color="rgba(201,162,39,0.22)"/>
+              <stop offset="1" stop-color="rgba(21,36,66,0.30)"/>
+            </linearGradient>
+          </defs>
+          <g fill="url(#silh-d)" stroke="rgba(232,207,143,0.28)" stroke-width="1.2">
+            <circle cx="150" cy="86" r="46"/>
+            <path d="M124 128 C126 150 118 156 96 168 C72 182 60 210 58 250
+                     L54 470 C53 500 60 520 66 545 L74 600
+                     L120 600 L130 470 L134 360 L150 356 L166 360 L170 470 L180 600
+                     L226 600 L234 545 C240 520 247 500 246 470
+                     L242 250 C240 210 228 182 204 168 C182 156 174 150 176 128
+                     C170 138 158 144 150 144 C142 144 130 138 124 128 Z"/>
+            <path d="M96 600 L86 830 C85 848 90 858 104 858 L128 858 C138 858 142 848 142 832 L150 615 L120 600 Z"/>
+            <path d="M204 600 L214 830 C215 848 210 858 196 858 L172 858 C162 858 158 848 158 832 L150 615 L180 600 Z"/>
+            <path d="M84 858 L82 878 C82 886 88 890 100 890 L134 890 C140 890 142 884 140 876 L138 858 Z"/>
+            <path d="M216 858 L218 878 C218 886 212 890 200 890 L166 890 C160 890 158 884 160 876 L162 858 Z"/>
+          </g>
+          <path d="M150 144 L150 350 M138 156 L150 210 L162 156" fill="none" stroke="rgba(232,207,143,0.42)" stroke-width="1.4"/>
+          <circle cx="150" cy="86" r="46" fill="none" stroke="rgba(232,207,143,0.30)" stroke-width="1"/>
+        </svg>
+        <div class="photo-label"><span class="tick"></span>Foto do formando &middot; corpo inteiro &middot; fundo removido</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="logos">
+        <div class="logo-item">
+          <img class="logo-ufrn" src="assets/ufrn-wordmark.png" alt="UFRN">
+          <span class="lbl">Institui&ccedil;&atilde;o</span>
+        </div>
+        <span class="logo-div"></span>
+        <div class="logo-item">
+          <img class="logo-imd" src="assets/imd.svg" alt="IMD — Instituto Metr&oacute;pole Digital">
+          <span class="lbl">Curso</span>
+        </div>
+        <span class="logo-div"></span>
+        <div class="logo-item">
+          <img class="logo-pix" src="assets/pix.png" alt="PIX Formaturas">
+          <span class="lbl">Realiza&ccedil;&atilde;o</span>
+        </div>
+      </div>
+      <div class="foot-eof">// TI 2026.1 &middot; <b>EOF</b></div>
+    </div>
+  </div>
+
+</div></div>
+
+<script>
+(function(){function s(){var el=document.querySelector('.sheet');if(!el)return;var k=Math.min(1,(innerWidth-40)/1600);el.style.transform='scale('+k+')';var f=document.querySelector('.fit');f.style.height=(el.scrollHeight*k)+'px';}addEventListener('resize',s);addEventListener('load',s);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(s);setTimeout(s,300);})();
+</script>
+</body>
+</html>
