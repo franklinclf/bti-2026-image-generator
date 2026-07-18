@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+const fs=require('fs'),path=require('path');
+const OUT='/private/tmp/claude-501/-Users-franklinoliveira-Documents-BTI2026/90018351-689e-48d2-9559-f81866183309/tasks/w5hsdr9wq.output';
+const DEST='/Users/franklinoliveira/Documents/BTI2026/propostas';
+const data=JSON.parse(fs.readFileSync(OUT,'utf8'));
+const splits=(data.result&&data.result.splits)||data.splits||[];
+const letter=['a','b','c'];
+const norm=x=>x.normalize('NFD').replace(/[̀-ͯ]/g,'');
+console.log('\n=== EXTRACAO + QA (split geometrico) ===\n');
+splits.forEach(p=>{
+  const idx=p._index, fname=`split-${letter[idx-1]}.html`, html=p.html||'';
+  fs.writeFileSync(path.join(DEST,fname),html,'utf8');
+  const q=[];
+  if(!/^<!DOCTYPE html>/i.test(html.trim()))q.push('sem DOCTYPE');
+  const cards=(html.match(/class="card"/g)||[]).length; if(cards<2)q.push('cards='+cards);
+  const photo=(html.match(/assets\/sample-photo\.jpg/g)||[]).length; if(photo<2)q.push('foto='+photo);
+  const clip=(html.match(/clip-path/g)||[]).length; if(clip<1)q.push('sem clip-path');
+  if(/class="silhouette"/.test(html))q.push('resto silhouette');
+  if(!html.includes('assets/ufrn-white.png'))q.push('sem ufrn-white');
+  if(!html.includes('assets/imd.svg'))q.push('sem imd');
+  if(!html.includes('assets/pix.png'))q.push('sem pix');
+  if(!html.includes('watermark'))q.push('sem watermark');
+  if(!/>TI<\/text>/.test(html))q.push('sem hexTI');
+  ['Nome do','Colação de Grau','Ginásio','Aos que amo','Muito obrigado'].forEach(t=>{if(!norm(html).includes(norm(t)))q.push('falta '+t)});
+  const o=(html.match(/<div/g)||[]).length,c=(html.match(/<\/div>/g)||[]).length;
+  console.log(`#${idx} ${p.variant_name}`);
+  console.log(`   ${fname} (${html.length} ch, cards:${cards}, foto:${photo}, clip:${clip}, div +${o}/-${c}${o!==c?' DESBAL':''})`);
+  console.log(`   QA: ${q.length?'⚠ '+q.join(' | '):'OK ✓'}\n`);
+});
+console.log('escritos em',DEST);
