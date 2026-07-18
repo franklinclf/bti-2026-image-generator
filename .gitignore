@@ -1,0 +1,17 @@
+# deps / build
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# vercel
+.vercel/
+
+# editores / SO
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# superpowers / brainstorm
+.superpowers/

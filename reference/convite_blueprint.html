@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Convite · Colação de Grau · TI 2026.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-950: #060b16;
+    --navy-900: #0a1122;
+    --navy-800: #0f1a30;
+    --navy-700: #152442;
+    --navy-600: #1c2e50;
+    --gold: #d4af37;
+    --gold-soft: #c9a227;
+    --gold-bright: #e8cf8f;
+    --gold-line: rgba(201, 162, 39, 0.16);
+    --gold-line-strong: rgba(212, 175, 55, 0.42);
+    --ink: #eef2fb;
+    --ink-dim: #aab6cf;
+    --ink-faint: #6d7c9c;
+    --mono: "JetBrains Mono", monospace;
+    --serif: "Fraunces", serif;
+    --sans: "Sora", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background:
+      radial-gradient(1200px 900px at 50% -10%, #0d1526 0%, #070a12 60%),
+      #070a12;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    font-family: var(--sans);
+  }
+
+  /* ---------------- CARD ---------------- */
+  .card {
+    width: 860px;
+    height: 1216px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    color: var(--ink);
+    background:
+      radial-gradient(1000px 720px at 78% 8%, rgba(28, 46, 80, 0.55) 0%, rgba(15, 26, 48, 0) 55%),
+      radial-gradient(900px 900px at 12% 108%, rgba(212, 175, 55, 0.10) 0%, rgba(15, 26, 48, 0) 52%),
+      linear-gradient(168deg, #101c34 0%, #0b1424 42%, #0a101f 100%);
+    background-color: #0b1424;
+    box-shadow:
+      0 40px 120px rgba(0, 0, 0, 0.65),
+      0 4px 30px rgba(0, 0, 0, 0.4),
+      inset 0 0 0 1px rgba(201, 162, 39, 0.10);
+    isolation: isolate;
+  }
+
+  /* fine technical grid */
+  .grid-fine {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, var(--gold-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--gold-line) 1px, transparent 1px);
+    background-size: 43px 43px;
+    background-position: -1px -1px;
+    opacity: 0.5;
+    -webkit-mask-image: radial-gradient(120% 100% at 50% 42%, #000 55%, transparent 100%);
+            mask-image: radial-gradient(120% 100% at 50% 42%, #000 55%, transparent 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .grid-coarse {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(212,175,55,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(212,175,55,0.08) 1px, transparent 1px);
+    background-size: 215px 215px;
+    background-position: -1px -1px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* engineering inner frame with tick marks */
+  .frame {
+    position: absolute;
+    inset: 30px;
+    border: 1px solid var(--gold-line-strong);
+    border-radius: 4px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .frame::before {
+    /* corner registration + subtle inner rule */
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border: 1px solid rgba(201, 162, 39, 0.14);
+    border-radius: 2px;
+  }
+
+  /* corner registration marks (crosshair) */
+  .reg {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .reg::before, .reg::after {
+    content: "";
+    position: absolute;
+    background: var(--gold-soft);
+    opacity: 0.7;
+  }
+  .reg::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-0.5px); }
+  .reg::after  { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-0.5px); }
+  .reg.tl { top: 22px; left: 22px; }
+  .reg.tr { top: 22px; right: 22px; }
+  .reg.bl { bottom: 22px; left: 22px; }
+  .reg.br { bottom: 22px; right: 22px; }
+
+  /* edge measurement ticks */
+  .ticks {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .ticks.top, .ticks.bottom { left: 88px; right: 88px; height: 8px; }
+  .ticks.top { top: 39px; }
+  .ticks.bottom { bottom: 39px; }
+  .ticks.top {
+    background-image: repeating-linear-gradient(to right,
+      var(--gold-soft) 0, var(--gold-soft) 1px, transparent 1px, transparent 26px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 60%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0, #000 60%, transparent 100%);
+  }
+  .ticks.bottom {
+    background-image: repeating-linear-gradient(to right,
+      var(--gold-soft) 0, var(--gold-soft) 1px, transparent 1px, transparent 26px);
+    -webkit-mask-image: linear-gradient(to top, #000 0, #000 60%, transparent 100%);
+            mask-image: linear-gradient(to top, #000 0, #000 60%, transparent 100%);
+  }
+
+  /* ---------- CONTENT LAYOUT ---------- */
+  .content {
+    position: relative;
+    z-index: 5;
+    height: 100%;
+    padding: 74px 82px 66px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- header / meta line ---- */
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .meta-row .dot { color: var(--gold-soft); }
+
+  /* ---- monogram + identity lockup ---- */
+  .identity {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .monogram {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 26px;
+  }
+
+  .id-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    padding-left: 0.42em;
+  }
+
+  .id-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-optical-sizing: auto;
+    font-size: 43px;
+    line-height: 1.02;
+    letter-spacing: 0.012em;
+    margin-top: 16px;
+    color: var(--ink);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  }
+  .id-title .em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold-bright);
+  }
+
+  .id-class {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.36em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+  }
+  .id-class .rule {
+    width: 42px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-line-strong), transparent);
+  }
+  .id-class b {
+    color: var(--gold-bright);
+    font-weight: 500;
+    letter-spacing: 0.30em;
+  }
+
+  /* ---- photo portrait area (arch) ---- */
+  .portrait-wrap {
+    margin-top: 42px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  .portrait {
+    width: 276px;
+    height: 330px;
+    position: relative;
+  }
+  .portrait .arch {
+    position: absolute;
+    inset: 0;
+    border-radius: 138px 138px 14px 14px;
+    padding: 1.4px;
+    background: linear-gradient(160deg, var(--gold-bright) 0%, var(--gold-soft) 30%, rgba(201,162,39,0.15) 55%, var(--gold-soft) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    box-shadow: 0 0 44px rgba(212, 175, 55, 0.16);
+  }
+  .portrait .fill {
+    position: absolute;
+    inset: 6px;
+    border-radius: 132px 132px 10px 10px;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 50% 8%, rgba(232,207,143,0.42) 0%, rgba(212,175,55,0.10) 26%, rgba(15,26,48,0) 52%),
+      linear-gradient(178deg, #21365f 0%, #16274a 40%, #0e1a33 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  /* subtle duotone texture inside the portrait */
+  .portrait .fill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(232,207,143,0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(232,207,143,0.055) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(80% 70% at 50% 40%, #000 20%, transparent 78%);
+            mask-image: radial-gradient(80% 70% at 50% 40%, #000 20%, transparent 78%);
+  }
+  /* soft silhouette hint of a person (shoulders) */
+  .portrait .fill .silhouette {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 190px;
+    background: radial-gradient(60% 60% at 50% 100%, rgba(8,14,26,0.55) 0%, rgba(8,14,26,0) 72%);
+  }
+  .portrait .fill .label {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 22px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: rgba(232, 207, 143, 0.82);
+    text-align: center;
+  }
+  .portrait .fill .label .sub {
+    display: block;
+    margin-top: 6px;
+    color: rgba(170, 182, 207, 0.55);
+    letter-spacing: 0.24em;
+    font-size: 8.5px;
+  }
+  /* small technical annotation next to portrait */
+  .portrait .annot {
+    position: absolute;
+    right: -66px;
+    top: 40px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    text-align: left;
+    line-height: 1.7;
+  }
+  .portrait .annot::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 6px;
+    width: 10px;
+    height: 1px;
+    background: var(--gold-line-strong);
+  }
+  .portrait .annot-l {
+    position: absolute;
+    left: -70px;
+    bottom: 30px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    text-align: right;
+    line-height: 1.7;
+  }
+  .portrait .annot-l::after {
+    content: "";
+    position: absolute;
+    right: -14px;
+    bottom: 6px;
+    width: 10px;
+    height: 1px;
+    background: var(--gold-line-strong);
+  }
+
+  /* ---- graduate name ---- */
+  .name-block {
+    margin-top: 40px;
+    text-align: center;
+  }
+  .name-kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1;
+    margin-top: 12px;
+    color: var(--gold-bright);
+    letter-spacing: 0.005em;
+  }
+  .name-rule {
+    width: 148px;
+    height: 1px;
+    margin: 20px auto 0;
+    background: linear-gradient(to right, transparent, var(--gold-line-strong) 20%, var(--gold) 50%, var(--gold-line-strong) 80%, transparent);
+    position: relative;
+  }
+  .name-rule::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--gold-bright);
+    transform: translate(-50%, -50%) rotate(45deg);
+    box-shadow: 0 0 8px rgba(232,207,143,0.5);
+  }
+
+  /* ---- invitation body ---- */
+  .body-text {
+    margin-top: 26px;
+    text-align: center;
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-dim);
+    max-width: 500px;
+    align-self: center;
+  }
+
+  /* ---- event highlight ---- */
+  .event {
+    margin-top: 26px;
+    text-align: center;
+  }
+  .event .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+  }
+  .event .headline {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1;
+    margin-top: 10px;
+    color: var(--ink);
+    letter-spacing: 0.004em;
+    background: linear-gradient(180deg, #ffffff 0%, #e8cf8f 62%, #c9a227 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ---- details: location + date in grid ---- */
+  .details {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    align-items: center;
+    gap: 0 30px;
+    padding: 22px 6px 0;
+  }
+  .details .col { text-align: center; }
+  .details .divider {
+    width: 1px;
+    height: 62px;
+    background: linear-gradient(to bottom, transparent, var(--gold-line-strong), transparent);
+  }
+  .details .k {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 9px;
+  }
+  .details .v-strong {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .details .v-sub {
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+  .details .time {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: var(--gold-bright);
+  }
+
+  /* ---- footer / sponsors ---- */
+  .footer {
+    margin-top: auto;
+    padding-top: 22px;
+    border-top: 1px solid var(--gold-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sponsor {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .sponsor .glyph {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+  }
+  .sponsor .txt {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .sponsor .txt .lead {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .sponsor .txt .brand {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .sponsor .txt .brand span { color: var(--gold-bright); }
+  .footer .center-mark {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .footer .center-mark .em { color: var(--gold-soft); }
+  .footer .sponsor.right { flex-direction: row-reverse; }
+  .footer .sponsor.right .txt { align-items: flex-end; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="grid-coarse"></div>
+    <div class="grid-fine"></div>
+    <div class="frame"></div>
+    <div class="ticks top"></div>
+    <div class="ticks bottom"></div>
+    <span class="reg tl"></span>
+    <span class="reg tr"></span>
+    <span class="reg bl"></span>
+    <span class="reg br"></span>
+
+    <!-- decorative isometric wireframe node-graph, top-right, very subtle -->
+    <svg width="330" height="300" viewBox="0 0 330 300" fill="none"
+         style="position:absolute; top:26px; right:6px; z-index:1; opacity:0.5; pointer-events:none;">
+      <defs>
+        <linearGradient id="wire" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#e8cf8f" stop-opacity="0.55"/>
+          <stop offset="1" stop-color="#c9a227" stop-opacity="0.12"/>
+        </linearGradient>
+      </defs>
+      <g stroke="url(#wire)" stroke-width="1">
+        <!-- isometric cube stack -->
+        <path d="M230 60 L280 88 L280 140 L230 168 L180 140 L180 88 Z"/>
+        <path d="M230 60 L230 112 M180 88 L230 112 L280 88"/>
+        <path d="M230 112 L230 168"/>
+        <!-- floating node graph edges -->
+        <path d="M120 40 L200 70 M200 70 L262 46 M120 40 L96 108 M96 108 L180 140 M262 46 L300 96 M300 96 L280 140 M96 108 L150 190 M150 190 L230 168 M180 140 L150 190"/>
+      </g>
+      <g fill="#e8cf8f">
+        <circle cx="120" cy="40" r="2.4" opacity="0.9"/>
+        <circle cx="200" cy="70" r="2.4" opacity="0.9"/>
+        <circle cx="262" cy="46" r="2.4" opacity="0.9"/>
+        <circle cx="96" cy="108" r="2.4" opacity="0.9"/>
+        <circle cx="300" cy="96" r="2.4" opacity="0.9"/>
+        <circle cx="150" cy="190" r="2.4" opacity="0.9"/>
+      </g>
+    </svg>
+
+    <!-- decorative dimension line, bottom-left -->
+    <svg width="220" height="120" viewBox="0 0 220 120" fill="none"
+         style="position:absolute; bottom:96px; left:20px; z-index:1; opacity:0.4; pointer-events:none;">
+      <g stroke="#c9a227" stroke-width="1" opacity="0.7">
+        <path d="M20 90 L20 40 M20 90 L200 90 M200 90 L200 40"/>
+        <path d="M14 40 L26 40 M194 40 L206 40"/>
+        <path d="M20 65 L200 65" stroke-dasharray="2 5" opacity="0.5"/>
+      </g>
+    </svg>
+
+    <div class="content">
+
+      <!-- meta line -->
+      <div class="meta-row">
+        <span>UFRN <span class="dot">/</span> Bacharelado em TI</span>
+        <span>Fig. 2026.1 <span class="dot">·</span> Rev. A</span>
+      </div>
+
+      <!-- identity -->
+      <div class="identity">
+        <!-- refined monogram: interlocking T · I inside a hex ring -->
+        <svg class="monogram" viewBox="0 0 100 100" fill="none">
+          <defs>
+            <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#e8cf8f"/>
+              <stop offset="0.55" stop-color="#d4af37"/>
+              <stop offset="1" stop-color="#c9a227"/>
+            </linearGradient>
+          </defs>
+          <!-- outer hex ring -->
+          <path d="M50 5 L88.9 27.5 L88.9 72.5 L50 95 L11.1 72.5 L11.1 27.5 Z"
+                stroke="url(#mg)" stroke-width="1.4" opacity="0.85"/>
+          <!-- inner thin hex -->
+          <path d="M50 16 L79.7 33 L79.7 67 L50 84 L20.3 67 L20.3 33 Z"
+                stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+          <!-- monogram T I -->
+          <g stroke="url(#mg)" stroke-width="2.4" stroke-linecap="round">
+            <!-- T -->
+            <path d="M34 38 L52 38"/>
+            <path d="M43 38 L43 64"/>
+            <!-- I -->
+            <path d="M60 38 L60 64"/>
+            <path d="M55 38 L65 38"/>
+            <path d="M55 64 L65 64"/>
+          </g>
+          <!-- corner ticks on hex -->
+          <g fill="#e8cf8f">
+            <circle cx="50" cy="5" r="1.5"/>
+            <circle cx="88.9" cy="27.5" r="1.5"/>
+            <circle cx="88.9" cy="72.5" r="1.5"/>
+            <circle cx="50" cy="95" r="1.5"/>
+            <circle cx="11.1" cy="72.5" r="1.5"/>
+            <circle cx="11.1" cy="27.5" r="1.5"/>
+          </g>
+        </svg>
+
+        <div class="id-eyebrow">Universidade Federal do Rio Grande do Norte</div>
+        <h1 class="id-title">Tecnologia<br/>da <span class="em">Informação</span></h1>
+        <div class="id-class">
+          <span class="rule"></span>
+          <span>Turma <b>2026.1</b></span>
+          <span class="rule"></span>
+        </div>
+      </div>
+
+      <!-- portrait -->
+      <div class="portrait-wrap">
+        <div class="portrait">
+          <div class="annot">x: 26.4571° S<br/>y: 84.9°<br/>id: grad_01</div>
+          <div class="annot-l">scale 1:1<br/>portrait_ratio<br/>0.836</div>
+          <div class="arch"></div>
+          <div class="fill">
+            <div class="silhouette"></div>
+            <div class="label">Foto do Formando<span class="sub">área reservada · retrato</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- name -->
+      <div class="name-block">
+        <div class="name-kicker">Convida com honra</div>
+        <div class="name">Nome do Formando</div>
+        <div class="name-rule"></div>
+      </div>
+
+      <!-- body -->
+      <p class="body-text">
+        formando em Tecnologia da Informação, turma 2026.1, da Universidade
+        Federal do Rio Grande do Norte, tem a honra de convidá-lo para a
+      </p>
+
+      <!-- event highlight -->
+      <div class="event">
+        <div class="tag">Cerimônia Solene de</div>
+        <div class="headline">Colação de Grau</div>
+      </div>
+
+      <!-- details -->
+      <div class="details">
+        <div class="col">
+          <div class="k">Local</div>
+          <div class="v-strong">Ginásio Poliesportivo 1</div>
+          <div class="v-sub">UFRN · Rua da Saúde<br/>Lagoa Nova — Natal/RN</div>
+        </div>
+        <div class="divider"></div>
+        <div class="col">
+          <div class="k">Data</div>
+          <div class="v-strong">28 de Julho</div>
+          <div class="v-sub">de 2026</div>
+          <div class="time">· 19h00 ·</div>
+        </div>
+      </div>
+
+      <!-- footer / sponsors -->
+      <div class="footer">
+        <div class="sponsor">
+          <svg class="glyph" viewBox="0 0 32 32" fill="none">
+            <rect x="2" y="2" width="28" height="28" rx="6" stroke="#c9a227" stroke-width="1.2" opacity="0.55"/>
+            <path d="M11 11 L16 16 L11 21 M21 11 L16 16 L21 21" stroke="#e8cf8f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="txt">
+            <span class="lead">Realização</span>
+            <span class="brand"><span>PIX</span> Formaturas</span>
+          </div>
+        </div>
+
+        <div class="center-mark">
+          Colação de Grau<br/><span class="em">TI · 2026.1</span>
+        </div>
+
+        <div class="sponsor right">
+          <svg class="glyph" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="13.4" stroke="#c9a227" stroke-width="1.2" opacity="0.55"/>
+            <path d="M11 10 L11 18 A5 5 0 0 0 21 18 L21 10" stroke="#e8cf8f" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M16 22 L16 25" stroke="#e8cf8f" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <div class="txt">
+            <span class="lead">Instituição</span>
+            <span class="brand">UFRN</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

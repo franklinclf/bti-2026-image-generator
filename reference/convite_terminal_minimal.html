@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Convite — Colacao de Grau · TI 2026.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-950: #060a14;
+    --navy-900: #0a1122;
+    --navy-850: #0d1730;
+    --navy-800: #101d3c;
+    --navy-700: #16264c;
+    --gold: #c9a227;
+    --gold-bright: #d4af37;
+    --gold-champagne: #e8cf8f;
+    --gold-soft: #b8973a;
+    --ink-line: rgba(232, 207, 143, 0.22);
+    --offwhite: #eef1f6;
+    --slate: #97a6c2;
+    --slate-dim: #61708d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background:
+      radial-gradient(1200px 900px at 20% -10%, #0c1428 0%, transparent 60%),
+      radial-gradient(1000px 800px at 110% 120%, #0b1526 0%, transparent 55%),
+      #070a12;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 44px;
+    font-family: "Sora", sans-serif;
+  }
+
+  .card {
+    width: 860px;
+    height: 1216px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow:
+      0 2px 0 rgba(232, 207, 143, 0.06) inset,
+      0 40px 120px -30px rgba(0, 0, 0, 0.85),
+      0 8px 30px -12px rgba(0, 0, 0, 0.6);
+    background:
+      radial-gradient(1100px 760px at 78% -6%, #14213f 0%, rgba(20,33,63,0) 52%),
+      radial-gradient(900px 900px at -12% 108%, #0f1b38 0%, rgba(15,27,56,0) 50%),
+      linear-gradient(158deg, #0c1428 0%, #0a1122 46%, #080d1c 100%);
+    color: var(--offwhite);
+    isolation: isolate;
+  }
+
+  /* ---- Ambient depth layers (abstract, not literal tech) ---- */
+
+  /* faint dotted grid — a discreet nod to a coordinate / build system */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(rgba(151, 166, 194, 0.06) 1px, transparent 1.4px);
+    background-size: 34px 34px;
+    background-position: 8px 8px;
+    -webkit-mask-image: radial-gradient(720px 640px at 50% 40%, #000 0%, transparent 78%);
+            mask-image: radial-gradient(720px 640px at 50% 40%, #000 0%, transparent 78%);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* soft champagne glow bloom top-right */
+  .card::after {
+    content: "";
+    position: absolute;
+    top: -160px;
+    right: -140px;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle at center, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.04) 42%, transparent 68%);
+    filter: blur(6px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* thin luminous hairline that anchors the layout vertically */
+  .spine {
+    position: absolute;
+    left: 92px;
+    top: 150px;
+    bottom: 150px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, var(--gold) 12%, var(--gold-champagne) 50%, var(--gold) 88%, transparent 100%);
+    opacity: 0.5;
+    z-index: 1;
+  }
+  .spine::before,
+  .spine::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold-champagne);
+    box-shadow: 0 0 8px rgba(232,207,143,0.6);
+  }
+  .spine::before { top: 0; }
+  .spine::after { bottom: 0; }
+
+  /* abstract corner brackets — like editor selection handles, minimal */
+  .frame {
+    position: absolute;
+    inset: 30px;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 6px;
+  }
+  .frame span {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-color: var(--ink-line);
+    border-style: solid;
+    border-width: 0;
+  }
+  .frame .tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; border-top-left-radius: 4px; }
+  .frame .tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; border-top-right-radius: 4px; }
+  .frame .bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; border-bottom-left-radius: 4px; }
+  .frame .br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; border-bottom-right-radius: 4px; }
+
+  /* ---- Content shell ---- */
+  .content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 70px 74px 58px 74px;
+  }
+
+  .mono {
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.04em;
+  }
+
+  /* ======= HEADER / IDENTITY ======= */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .monogram {
+    width: 54px;
+    height: 54px;
+    flex: 0 0 auto;
+    display: block;
+  }
+
+  .brand-lines .prompt {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.28em;
+    color: var(--gold-champagne);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .brand-lines .prompt .caret {
+    color: var(--gold-bright);
+    font-weight: 500;
+  }
+  .brand-lines .org {
+    margin-top: 6px;
+    font-family: "Sora", sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+
+  .edition {
+    text-align: right;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    color: var(--slate-dim);
+    padding-top: 4px;
+  }
+  .edition b {
+    color: var(--gold-champagne);
+    font-weight: 500;
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+  }
+
+  /* comment marker line, the intellectual tech wink */
+  .code-note {
+    margin-top: 44px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--slate-dim);
+  }
+  .code-note .kw { color: var(--gold-soft); }
+
+  /* ======= IDENTITY LOCKUP ======= */
+  .lockup {
+    margin-top: 22px;
+  }
+  .lockup .over {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 14px;
+  }
+  .lockup h1 {
+    font-family: "Fraunces", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: 47px;
+    line-height: 0.98;
+    letter-spacing: -0.012em;
+    color: var(--offwhite);
+  }
+  .lockup h1 .light { font-weight: 300; color: #cdd6e6; }
+  .lockup .idrow {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .lockup .rule {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, var(--gold) 0%, rgba(201,162,39,0.12) 100%);
+  }
+  .lockup .year {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    letter-spacing: 0.34em;
+    color: var(--gold-champagne);
+    padding: 5px 12px;
+    border: 1px solid var(--ink-line);
+    border-radius: 4px;
+    background: rgba(232,207,143,0.04);
+  }
+
+  /* ======= BODY COPY ======= */
+  .invite-body {
+    margin-top: 40px;
+    max-width: 540px;
+    font-family: "Sora", sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--slate);
+    letter-spacing: 0.005em;
+  }
+  .invite-body .name-inline {
+    color: var(--offwhite);
+    font-weight: 400;
+  }
+
+  /* ======= NAME + PORTRAIT ROW ======= */
+  .stage {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .stage .namewrap {
+    flex: 1;
+    min-width: 0;
+  }
+  .stage .namewrap .label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stage .namewrap .label::before {
+    content: "{ }";
+    color: var(--slate-dim);
+    letter-spacing: 0.05em;
+  }
+  .stage .name {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 58px;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: #fff;
+    background: linear-gradient(180deg, #ffffff 0%, #e8eef8 60%, #cfd8ea 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stage .name .em {
+    font-style: italic;
+    font-weight: 300;
+    background: linear-gradient(180deg, var(--gold-champagne) 0%, var(--gold-bright) 70%, var(--gold) 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stage .name-tag {
+    margin-top: 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    color: var(--slate-dim);
+  }
+  .stage .name-tag .c { color: var(--gold-soft); }
+  .cursor {
+    display: inline-block;
+    width: 9px;
+    height: 1.05em;
+    margin-left: 3px;
+    transform: translateY(2px);
+    background: var(--gold-champagne);
+    box-shadow: 0 0 8px rgba(232,207,143,0.5);
+    border-radius: 1px;
+  }
+
+  /* Portrait — arch frame, duotone navy->gold */
+  .portrait {
+    position: relative;
+    flex: 0 0 auto;
+    width: 214px;
+    height: 274px;
+  }
+  .portrait .arch {
+    position: absolute;
+    inset: 0;
+    border-radius: 107px 107px 14px 14px;
+    padding: 1.5px;
+    background: linear-gradient(160deg, var(--gold-champagne) 0%, rgba(201,162,39,0.35) 35%, rgba(232,207,143,0.12) 60%, var(--gold-soft) 100%);
+    box-shadow:
+      0 24px 50px -22px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(232,207,143,0.06);
+  }
+  .portrait .inner {
+    position: absolute;
+    inset: 1.5px;
+    border-radius: 106px 106px 13px 13px;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 50% 8%, rgba(232,207,143,0.30) 0%, rgba(201,162,39,0.06) 34%, rgba(16,29,60,0) 55%),
+      linear-gradient(168deg, #1a2b52 0%, #12203f 45%, #0b1526 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  /* duotone texture — soft diagonal weave + fine grain, all CSS */
+  .portrait .inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(46deg, rgba(232,207,143,0.05) 0px, rgba(232,207,143,0.05) 1px, transparent 1px, transparent 9px),
+      radial-gradient(rgba(255,255,255,0.04) 0.6px, transparent 0.8px);
+    background-size: auto, 6px 6px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,0.35) 62%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,0.35) 62%, transparent 100%);
+    opacity: 0.9;
+  }
+  /* abstract silhouette — bust shape hinted with a soft radial, keeps it elegant */
+  .portrait .inner::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 150px;
+    height: 150px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle at 50% 40%, rgba(9,15,28,0.55) 0%, rgba(9,15,28,0.15) 46%, transparent 62%);
+  }
+  .portrait .plabel {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 22px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(238,241,246,0.72);
+    text-align: center;
+    line-height: 1.6;
+  }
+  .portrait .plabel .ic {
+    display: block;
+    margin: 0 auto 9px auto;
+    opacity: 0.85;
+  }
+  /* tiny bracket ticks on the portrait — framing marks */
+  .portrait .tick {
+    position: absolute;
+    z-index: 3;
+    width: 12px; height: 12px;
+    border: 1px solid rgba(232,207,143,0.55);
+  }
+  .portrait .tick.bl { left: 10px; bottom: 10px; border-top: 0; border-right: 0; }
+  .portrait .tick.br { right: 10px; bottom: 10px; border-top: 0; border-left: 0; }
+
+  /* ======= EVENT HIGHLIGHT ======= */
+  .event {
+    margin-top: 44px;
+    position: relative;
+  }
+  .event .kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--slate-dim);
+    margin-bottom: 10px;
+  }
+  .event .kicker .run { color: var(--gold-soft); }
+  .event h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 52px;
+    line-height: 1.0;
+    letter-spacing: -0.015em;
+    color: var(--gold-champagne);
+    background: linear-gradient(96deg, #f2e2b4 0%, var(--gold-bright) 48%, var(--gold) 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+  .event .underrule {
+    margin-top: 18px;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(201,162,39,0.55) 0%, rgba(201,162,39,0.14) 55%, transparent 100%);
+  }
+
+  /* ======= DETAILS GRID (local + data) ======= */
+  .details {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 34px;
+  }
+  .detail .dk {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin-bottom: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .detail .dk .dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--gold-champagne);
+    box-shadow: 0 0 6px rgba(232,207,143,0.6);
+  }
+  .detail .dv {
+    font-family: "Sora", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--offwhite);
+  }
+  .detail .dv .sub {
+    display: block;
+    margin-top: 5px;
+    font-weight: 300;
+    font-size: 13px;
+    color: var(--slate);
+  }
+  .detail.time .dv {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    color: var(--gold-champagne);
+  }
+  .detail.time .dv .sub {
+    font-family: "Sora", sans-serif;
+    color: var(--slate);
+    letter-spacing: 0;
+  }
+
+  /* ======= FOOTER / SPONSORS ======= */
+  .footer {
+    margin-top: auto;
+    padding-top: 26px;
+    border-top: 1px solid rgba(151,166,194,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer .fmeta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    color: var(--slate-dim);
+    line-height: 1.7;
+  }
+  .footer .fmeta .end { color: var(--gold-soft); }
+
+  .sponsors {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .sponsors .plead {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--slate-dim);
+    writing-mode: horizontal-tb;
+  }
+  .seal {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .seal .mark {
+    display: grid;
+    place-items: center;
+    width: 30px; height: 30px;
+    border: 1px solid var(--ink-line);
+    border-radius: 7px;
+    background: rgba(232,207,143,0.04);
+  }
+  .seal .txt {
+    line-height: 1.1;
+  }
+  .seal .txt .t1 {
+    font-family: "Sora", sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--offwhite);
+  }
+  .seal .txt .t2 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--slate-dim);
+    margin-top: 2px;
+  }
+  .seal .divline {
+    width: 1px;
+    height: 28px;
+    background: rgba(151,166,194,0.16);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="spine"></div>
+
+    <div class="frame">
+      <span class="tl"></span><span class="tr"></span>
+      <span class="bl"></span><span class="br"></span>
+    </div>
+
+    <div class="content">
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="brand">
+          <!-- Refined monogram: interlocking T·I inside a soft-cornered mark -->
+          <svg class="monogram" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TI monograma">
+            <defs>
+              <linearGradient id="gm" x1="6" y1="6" x2="54" y2="54" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e8cf8f"/>
+                <stop offset="0.55" stop-color="#d4af37"/>
+                <stop offset="1" stop-color="#b8973a"/>
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="54" height="54" rx="14" stroke="url(#gm)" stroke-width="1.1" opacity="0.55"/>
+            <!-- T -->
+            <path d="M15 21 H32" stroke="url(#gm)" stroke-width="2.1" stroke-linecap="round"/>
+            <path d="M23.5 21 V41" stroke="url(#gm)" stroke-width="2.1" stroke-linecap="round"/>
+            <!-- I -->
+            <path d="M40 21 V41" stroke="url(#gm)" stroke-width="2.1" stroke-linecap="round"/>
+            <path d="M35 21 H45" stroke="url(#gm)" stroke-width="2.1" stroke-linecap="round" opacity="0.8"/>
+            <path d="M35 41 H45" stroke="url(#gm)" stroke-width="2.1" stroke-linecap="round" opacity="0.8"/>
+            <!-- terminal caret accent -->
+            <path d="M18 46 l3 3 l-3 3" stroke="#e8cf8f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+            <path d="M24 52 h6" stroke="#e8cf8f" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+          </svg>
+
+          <div class="brand-lines">
+            <div class="prompt"><span class="caret">&gt;_</span> curso&nbsp;/&nbsp;ti</div>
+            <div class="org">Universidade Federal do Rio Grande do Norte</div>
+          </div>
+        </div>
+
+        <div class="edition">
+          convite<br />
+          <b>N&ordm; 2026 · 001</b>
+        </div>
+      </header>
+
+      <!-- CODE NOTE (intellectual tech wink) -->
+      <div class="code-note mono">
+        <span class="kw">//</span> class Formando <span class="kw">extends</span> UFRN { <span class="kw">await</span> colacao; }
+      </div>
+
+      <!-- IDENTITY LOCKUP -->
+      <div class="lockup">
+        <div class="over">Turma de Graduacao</div>
+        <h1>Tecnologia<br /><span class="light">da</span> Informa&ccedil;&atilde;o</h1>
+        <div class="idrow">
+          <span class="year">2026.1</span>
+          <span class="rule"></span>
+        </div>
+      </div>
+
+      <!-- BODY COPY -->
+      <p class="invite-body">
+        <span class="name-inline">Nome do Formando</span>, formando em Tecnologia da
+        Informa&ccedil;&atilde;o, turma 2026.1, da Universidade Federal do Rio Grande
+        do Norte, tem a honra de convid&aacute;-lo para a
+      </p>
+
+      <!-- NAME + PORTRAIT -->
+      <div class="stage">
+        <div class="namewrap">
+          <div class="label">formando</div>
+          <div class="name">Nome do<br /><span class="em">Formando</span><span class="cursor"></span></div>
+          <div class="name-tag mono"><span class="c">const</span> convidado = <span class="c">true</span>;</div>
+        </div>
+
+        <div class="portrait">
+          <div class="arch">
+            <div class="inner">
+              <span class="tick bl"></span>
+              <span class="tick br"></span>
+              <div class="plabel">
+                <svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="9" r="3.6" stroke="#e8cf8f" stroke-width="1.1" opacity="0.85"/>
+                  <path d="M5.5 19.5c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6" stroke="#e8cf8f" stroke-width="1.1" stroke-linecap="round" opacity="0.85"/>
+                </svg>
+                Foto do<br />Formando
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENT HIGHLIGHT -->
+      <div class="event">
+        <div class="kicker"><span class="run">return</span>&nbsp;&mdash;&nbsp;cerimonia de</div>
+        <h2>Cola&ccedil;&atilde;o de Grau</h2>
+        <div class="underrule"></div>
+      </div>
+
+      <!-- DETAILS -->
+      <div class="details">
+        <div class="detail place">
+          <div class="dk"><span class="dot"></span> Local</div>
+          <div class="dv">
+            Gin&aacute;sio Poliesportivo 1 &mdash; UFRN
+            <span class="sub">Rua da Sa&uacute;de, Lagoa Nova &mdash; Natal/RN</span>
+          </div>
+        </div>
+        <div class="detail time">
+          <div class="dk"><span class="dot"></span> Data</div>
+          <div class="dv">
+            28.07.2026
+            <span class="sub">Ter&ccedil;a-feira &middot; 19h00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER / SPONSORS -->
+      <footer class="footer">
+        <div class="fmeta mono">
+          convite@ti-2026.1<br />
+          <span class="end">EOF</span> &middot; presen&ccedil;a confirmada
+        </div>
+
+        <div class="sponsors">
+          <span class="plead">Realizacao</span>
+
+          <!-- SEAL: PIX Formaturas -->
+          <div class="seal">
+            <div class="mark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3.2 L16.6 7.8 A2.6 2.6 0 0 1 16.6 11.4 L12 16 L7.4 11.4 A2.6 2.6 0 0 1 7.4 7.8 Z" stroke="#e8cf8f" stroke-width="1.2" stroke-linejoin="round"/>
+                <path d="M12 12.8 L16.6 17.4 A2.6 2.6 0 0 1 16.6 21 H7.4 A2.6 2.6 0 0 1 7.4 17.4 Z" stroke="#c9a227" stroke-width="1.1" stroke-linejoin="round" opacity="0.7"/>
+              </svg>
+            </div>
+            <div class="txt">
+              <div class="t1">PIX Formaturas</div>
+              <div class="t2">Producao</div>
+            </div>
+          </div>
+
+          <span class="divline"></span>
+
+          <!-- SEAL: UFRN -->
+          <div class="seal">
+            <div class="mark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.5 L20.5 7 V12 C20.5 17 16.7 20.2 12 21.5 C7.3 20.2 3.5 17 3.5 12 V7 Z" stroke="#e8cf8f" stroke-width="1.1" stroke-linejoin="round"/>
+                <path d="M8.4 11 h7.2 M12 8 v7.5" stroke="#c9a227" stroke-width="1.05" stroke-linecap="round" opacity="0.8"/>
+              </svg>
+            </div>
+            <div class="txt">
+              <div class="t1">UFRN</div>
+              <div class="t2">Instituicao</div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+[
+  {
+    "idx": 1,
+    "name": "Blueprint 2026.1 — Engenharia como Arte",
+    "fname": "direcao-1-blueprint-de-engenharia.html",
+    "dir": "Blueprint de Engenharia",
+    "tagline": "Um projeto tecnico de engenharia elevado a joia: precisao em fio de ouro sobre navy profundo.",
+    "palette": [
+      "Midnight #060b16",
+      "Navy 900 #0a1122",
+      "Navy 800 #0f1a30",
+      "Navy 700 #152442",
+      "Ouro velho #c9a227",
+      "Dourado #d4af37",
+      "Champagne #e8cf8f",
+      "Off-white/ink #eef2fb",
+      "Cinza-azulado #aab6cf",
+      "Azul-fumaca faint #6d7c9c"
+    ],
+    "typography": "Fraunces (serif display de opsz variavel) para a identidade, o nome do formando (italico) e o destaque \"Colacao de Grau\" — elegante e contemporanea, longe do ar de casamento do Playfair. Sora (sans humanista) para o corpo do convite e leads, em peso leve para respiro. JetBrains Mono para todas as micro-anotacoes tecnicas (coordenadas, \"Fig. 2026.1\", ticks, rotulos de campo) — o detalhe que assina a linguagem de blueprint.",
+    "tech": "A tecnologia aparece como LINGUAGEM DE PROJETO TECNICO, nunca como clipart: uma malha fina de grid dourado (fino + grosso) mascarada em radial para nunca competir com o texto; marcas de registro (crosshair) e regua de ticks nas bordas como numa prancha de desenho; um pequeno grafo de nos-e-arestas com um cubo isometrico em fio de ouro no canto superior; uma linha de cota (dimension line) discreta no rodape; e legendas mono com coordenadas geograficas de Natal/RN e \"id: grad_01\". O monograma e um \"TI\" geometrico dentro de um anel hexagonal com vertices marcados — abstrato, preciso, sem cerebro-circuito nem PCB verde.",
+    "rationale": "Substitui o preto chapado por camadas de navy com gradientes radiais e uma vinheta de profundidade, e troca a textura de PCB generica por um sistema visual coerente de \"prancha de engenharia\" — inteligente e contido. O dourado e sempre champagne/ouro velho (nunca amarelo saturado), usado em traco fino e em um unico gradiente de texto no destaque. A hierarquia e limpa: monograma > identidade serif > retrato em arco > nome > corpo > destaque > local/data em grid com divisor. A foto do formando ganha uma moldura em ARCO (nao a seta/chevron brega) com borda em gradiente dourado via mask-composite, preenchimento duotone navy-dourado, textura sutil, silhueta esfumacada de ombros e rotulo mono discreto, mostrando exatamente como a foto real se integra. Rodape com dois selos em lettering refinado (PIX Formaturas / UFRN) e glifos SVG proprios. Sao apenas 3 familias tipograficas, grid alinhado e respiros generosos — le impecavel como still e resiste a impressao."
+  },
+  {
+    "idx": 2,
+    "name": "Constelação — Grafo do Conhecimento",
+    "fname": "direcao-2-grafo-constelacao-de-dados.html",
+    "dir": "Grafo / Constelacao de Dados",
+    "tagline": "Conhecimento conectado: cada nó, um passo; cada aresta, uma conquista.",
+    "palette": [
+      "Midnight Navy #070d1c",
+      "Deep Navy #0d1a38",
+      "Azure Depth #16305e",
+      "Slate Blue-Grey #8ea4c8",
+      "Off-White #eef2fb",
+      "Old Gold #c9a227",
+      "Champagne #e8cf8f",
+      "Gold #d4af37"
+    ],
+    "typography": "Fraunces (display serif, alto contraste) para nome do formando e o destaque \"Colação de Grau\"; Sora (sans geometrica fina) para corpo, rótulos e o lockup da identidade; JetBrains Mono (mono de detalhe) para o eyebrow tech, coordenadas e microlegendas — reforçando a referência de engenharia de software sem clichês.",
+    "tech": "A tecnologia aparece como um grafo de conhecimento / rede neural reinterpretado em constelação: linework fino em ouro velho com nós luminosos (glow champagne suave), distribuído como mapa estelar sobre um navy com gradiente profundo. É a releitura sofisticada do antigo cérebro-circuito — abstrato, aspiracional, \"conhecimento conectado\". Detalhes mono reforçam a leitura de engenharia: o eyebrow em caixa alta espaçada, um par de coordenadas discretas e a barra de nós no rodapé que evoca um grafo de dependências, tudo sem PCB verde nem ícones tech desbotados.",
+    "rationale": "Supera o modelo antigo em cada ponto: o preto chapado vira um navy em camadas com gradiente radial e vinheta, dando profundidade real; a textura de PCB e os ícones tech desbotados dão lugar a um grafo constelar elegante em espaço negativo generoso, que envolve o texto como herói gráfico sem poluir; o cérebro-circuito dourado é substituído por um monograma \"TI\" refinado inscrito num nó de grafo em SVG; a divisória em seta/chevron com contorno dourado desaparece — a foto do formando agora habita uma moldura em arco com máscara duotone navy→dourado e borda esfumaçada, integrada ao grid; e a mistura desordenada de fontes cede a uma hierarquia disciplinada de três famílias com papéis claros. O dourado é champagne/ouro velho, nunca amarelo saturado, e cada filete tem peso de ourivesaria."
+  },
+  {
+    "idx": 3,
+    "name": "Terminal Minimal-Luxo",
+    "fname": "direcao-3-terminal-minimal-luxo.html",
+    "dir": "Terminal Minimal-Luxo",
+    "tagline": "O silencio de uma marca tech premium: muito espaco, uma linha dourada, um cursor que pisca.",
+    "palette": [
+      "Midnight #060a14",
+      "Navy 900 #0a1122",
+      "Navy 800 #101d3c",
+      "Navy 700 #16264c",
+      "Ouro velho #c9a227",
+      "Dourado #d4af37",
+      "Champagne #e8cf8f",
+      "Off-white #eef1f6",
+      "Cinza-azulado #97a6c2",
+      "Slate dim #61708d"
+    ],
+    "typography": "Fraunces (serif display de eixo optico) para o Nome do Formando, a identidade do curso e o destaque Colacao de Grau, com um italico champagne para dar voz e confianca. Sora (sans humanista, pesos 300 a 500) para o corpo do convite e valores. JetBrains Mono para os micro-detalhes de terminal: prompt, rotulos em caixa alta, comentario e o \"EOF\" do rodape. Tres familias, hierarquia inequivoca.",
+    "tech": "A tecnologia aparece como intelecto, nunca como decoracao literal: um prompt \">_\" no cabecalho, um comentario elegante \"// class Formando extends UFRN { await colacao; }\", marcadores \"{ }\" e \"const convidado = true;\", um \"return\" antes da cerimonia e um cursor dourado que \"pisca\" ao lado do nome. Nada de PCB verde, cerebro-circuito ou icones desbotados. O monograma T·I e desenhado em SVG com um caret de terminal integrado. A grade pontilhada ao fundo evoca um sistema de coordenadas/build, esfumacada com mascara radial para virar atmosfera, nao ruido.",
+    "rationale": "Supera o modelo brego trocando o preto chapado por um navy em camadas (gradientes radiais + linear, glow champagne, hairline luminosa vertical) que da profundidade real de impressao. Elimina o chevron dourado, a textura de placa e o cerebro-circuito, substituindo-os por uma unica regra dourada fina como acento e cantos em bracket minimos, no lugar de molduras carregadas. A foto do formando ganha uma moldura em arco com borda champagne e interior duotone navy->ouro, integrada com transicao suave (sem recorte abrupto). A tipografia e disciplinada em 3 familias com papeis claros, ao inves da mistura serif+script+serif. O resultado respira: espaco negativo generoso, alinhamento em grid, brilhos de ouro velho refinado. Le como identidade de estudio, nao como template de formatura."
+  },
+  {
+    "idx": 4,
+    "name": "Meridiano — Art Deco Geometrico-Tech",
+    "fname": "direcao-4-art-deco-geometrico-tech.html",
+    "dir": "Art Deco Geometrico-Tech",
+    "tagline": "Cerimonia atemporal com alma de engenharia: linework dourado que traduz fluxo de dados em ornamento.",
+    "palette": [
+      "Midnight core #070c1a",
+      "Navy profundo #0e1730",
+      "Navy medio #16264c",
+      "Ouro velho #c9a227",
+      "Ouro brilho #d4af37",
+      "Champagne #e8cf8f",
+      "Off-white #f3f0e6",
+      "Cinza-azulado #9fb0c9",
+      "Cinza-azulado dim #6a7d9c"
+    ],
+    "typography": "Marcellus (display serif em caixa alta) para identidade, nome do formando e o destaque 'Colacao de Grau' — elegante e cerimonial sem parecer casamento. Cormorant Garamond (inclui italico) para o corpo do convite e frases de acento, dando fluidez editorial. JetBrains Mono para micro-rotulos (kickers, labels de local/data, tags de patrocinio) — o unico toque 'tech' explicito, discreto e monospaced. Tres familias, hierarquia limpa.",
+    "tech": "A tecnologia aparece de forma abstrata e ceremonial, nunca literal: um leque/sunburst Art Deco no topo cujos raios sao 'sinais' com nos luminosos (pontos-bit) ao longo das linhas, uma faixa lateral de modulos hexagonais/losangos que evocam 'componentes' sem virar PCB, e um monograma em SVG onde as letras T e I se dissolvem em linhas de sinal que se cruzam com nos de dados dentro de um octogono deco. Os micro-rotulos em fonte mono e o timestamp '19h' completam o vocabulario de software de maneira sofisticada. Zero cerebro-circuito, zero verde PCB, zero divisoria em seta.",
+    "rationale": "Supera a arte antiga substituindo o preto chapado por navy multicamada (radiais + gradientes + vinheta + grao + sheen metalico) que da profundidade real; troca a textura de PCB generica por geometria Art Deco simetrica que carrega senso de ocasiao, apropriado a uma colacao. O dourado e tratado como folha metalica (champagne->ouro velho, sem amarelo saturado), com gradientes de texto para o nome e o destaque. A foto do formando ganha uma moldura em arco com keystone (pedra angular) deco, mascara duotone navy->dourado e borda em linework — integrada com elegancia, sem recorte abrupto ou chevron. A tipografia foi reduzida a tres familias com hierarquia rigorosa, eliminando a mistura desordenada serif+script+serif. O resultado le como peca de estudio premium: simetrico, arejado, alinhado em grid e impecavel como still estatico."
+  },
+  {
+    "idx": 5,
+    "name": "Signal &amp; Grau — Editorial / Swiss-Grid Tech",
+    "fname": "direcao-5-editorial-swiss-grid-tech.html",
+    "dir": "Editorial / Swiss-Grid Tech",
+    "tagline": "Um convite-keynote: grid suico, tipografia confiante e ouro cirurgico sobre um midnight com profundidade.",
+    "palette": [
+      "Midnight Base #080d1a",
+      "Deep Navy #0a1122",
+      "Navy Layer #0c1528",
+      "Signal Navy #1c355f",
+      "Champagne Gold #e8cf8f",
+      "Gold #d4af37",
+      "Old Gold #c9a227",
+      "Ink Off-white #e8eefc",
+      "Blue-grey Soft #aab6d4",
+      "Blue-grey Mute #6a789e"
+    ],
+    "typography": "Fraunces (display serif, opsz variavel) para os grandes titulos, o numero 2026.1 e o nome do formando — traz calor editorial sem cair no \"casamento\" do Playfair; o italico da Fraunces vira acento em \"Informacao\" e \"Colacao de Grau\". Space Grotesk (sans tech) para corpo do convite, selos e valores — voz contemporanea de marca de tecnologia. JetBrains Mono para os micro-labels em caixa alta, indices [01], coordenadas e metadados — a camada \"engenharia\" que estrutura o grid.",
+    "tech": "A referencia tech e abstrata e precisa, nunca literal: uma coluna de dados / malha de fios (node-and-line) desenhada em SVG no canto superior direito, com nos ocos de contorno ouro e um unico no com halo — sugere um grafo de dependencias / fluxo de sinal. Um hairline grid isometrico (36px) esvanece com mascara no mesmo quadrante, evocando um plano de engenharia. O sistema de labels monospace, o indice \"[ 01 ]\" na foto e a data formatada como \"28 Jul 2026 / 19H00 · SEG\" tratam o convite como a spec de um evento. Nada de PCB, cerebro-circuito ou icones desbotados — a tecnologia aparece como rigor de composicao e linguagem, o dourado usado como acento cirurgico e nao como decoracao.",
+    "rationale": "O modelo antigo empilhava clichês (preto chapado, textura de PCB verde, cerebro dourado, divisoria em chevron, tres familias de fonte brigando). Aqui a hierarquia e editorial e assimetrica: o olho entra pelo lockup \"Tecnologia da Informacao\" com o 2026.1 gigante em ouro escovado, desce para o par foto+convite alinhado a base num grid de 2 colunas, cruza a info-strip (local | data) delimitada por hairlines e fecha no rodape com os dois selos. O preto virou um midnight com camadas de radial-gradients (profundidade real), o dourado e champagne/ouro-velho aplicado so onde importa (numero do ano, acentos italicos, nos do grafo, molduras finas). A foto ganha uma moldura em arco duotone navy-champagne com borda esfumacada e halo superior, mostrando como o retrato se integra sem recorte abrupto — o oposto do chevron colado. Uma unica familia display + uma sans + uma mono dao disciplina tipografica. O resultado le como material de keynote de uma marca de tecnologia premium, elegante e impecavel como imagem estatica."
+  }
+]

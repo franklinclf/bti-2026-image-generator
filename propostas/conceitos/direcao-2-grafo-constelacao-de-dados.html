@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite · Colação de Grau · Tecnologia da Informação 2026.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Sora:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#070d1c;
+    --navy-900:#0a1226;
+    --navy-800:#0d1a38;
+    --navy-700:#122murky;
+    --navy-600:#16305e;
+    --ink:#eef2fb;
+    --slate:#8ea4c8;
+    --slate-dim:#61759b;
+    --gold:#c9a227;
+    --gold-bright:#d4af37;
+    --champagne:#e8cf8f;
+    --gold-line:rgba(201,162,39,.55);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    background:
+      radial-gradient(1200px 900px at 50% -10%, #0b1430 0%, #070b18 55%, #05080f 100%);
+    min-height:100%;
+  }
+
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px;
+    font-family:'Sora',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ============ CARD ============ */
+  .card{
+    position:relative;
+    width:860px;
+    height:1216px;
+    box-sizing:border-box;
+    overflow:hidden;
+    border-radius:14px;
+    background:
+      radial-gradient(120% 80% at 50% -8%, #1a2f5c 0%, #10203f 34%, #0a1530 60%, #070d1e 100%);
+    box-shadow:
+      0 40px 120px -30px rgba(0,0,0,.85),
+      0 2px 0 0 rgba(255,255,255,.04) inset,
+      0 0 0 1px rgba(148,178,232,.06) inset;
+    color:var(--ink);
+  }
+
+  /* subtle top light bloom + bottom vignette for depth */
+  .card::before{
+    content:"";
+    position:absolute;inset:0;
+    background:
+      radial-gradient(70% 42% at 50% 4%, rgba(120,160,235,.18), rgba(120,160,235,0) 60%),
+      radial-gradient(90% 60% at 50% 118%, rgba(0,0,0,.55), rgba(0,0,0,0) 55%);
+    pointer-events:none;
+    z-index:2;
+  }
+
+  /* faint film grain via layered dots — keeps navy from looking flat */
+  .card::after{
+    content:"";
+    position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.035) 0.5px, transparent 0.6px);
+    background-size:3px 3px;
+    opacity:.5;
+    mix-blend-mode:screen;
+    pointer-events:none;
+    z-index:3;
+  }
+
+  /* ============ GRAPH / CONSTELLATION ============ */
+  .constellation{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+  }
+  .constellation svg{width:100%;height:100%;display:block;}
+
+  /* ============ GOLD HAIRLINE FRAME ============ */
+  .frame{
+    position:absolute;
+    inset:26px;
+    border:1px solid rgba(201,162,39,.32);
+    border-radius:6px;
+    z-index:4;
+    pointer-events:none;
+  }
+  .frame::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(201,162,39,.12);
+    border-radius:3px;
+  }
+  /* corner ticks */
+  .corner{
+    position:absolute;width:18px;height:18px;z-index:5;pointer-events:none;
+  }
+  .corner span{position:absolute;background:linear-gradient(90deg,var(--gold-bright),var(--gold));}
+  .corner .h{height:1px;width:18px;top:0;left:0;}
+  .corner .v{width:1px;height:18px;top:0;left:0;}
+  .corner.tl{top:34px;left:34px;}
+  .corner.tr{top:34px;right:34px;transform:scaleX(-1);}
+  .corner.bl{bottom:34px;left:34px;transform:scaleY(-1);}
+  .corner.br{bottom:34px;right:34px;transform:scale(-1,-1);}
+
+  /* ============ CONTENT LAYOUT ============ */
+  .content{
+    position:relative;
+    z-index:6;
+    height:100%;
+    padding:74px 84px 66px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---- HEADER / IDENTITY ---- */
+  .identity{
+    display:flex;
+    align-items:center;
+    gap:20px;
+  }
+  .monogram{
+    width:66px;height:66px;flex:0 0 auto;filter:drop-shadow(0 0 10px rgba(212,175,55,.35));
+  }
+  .id-lock{display:flex;flex-direction:column;gap:7px;}
+  .id-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.42em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+  .id-title{
+    font-family:'Sora',sans-serif;
+    font-weight:300;
+    font-size:19px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .id-title .yr{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:400;
+    font-size:14px;
+    letter-spacing:.12em;
+    color:var(--champagne);
+    padding:3px 9px;
+    border:1px solid rgba(201,162,39,.4);
+    border-radius:3px;
+    background:linear-gradient(180deg,rgba(201,162,39,.10),rgba(201,162,39,0));
+  }
+
+  .rule{
+    margin-top:30px;
+    height:1px;
+    width:100%;
+    background:linear-gradient(90deg,
+      transparent,
+      rgba(142,164,200,.18) 12%,
+      rgba(201,162,39,.55) 50%,
+      rgba(142,164,200,.18) 88%,
+      transparent);
+  }
+
+  /* ---- INVITE INTRO ---- */
+  .intro{
+    margin-top:46px;
+    text-align:center;
+  }
+  .intro .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:.5em;
+    text-transform:uppercase;
+    color:var(--slate);
+    margin-bottom:20px;
+  }
+  .name{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:400;
+    font-size:56px;
+    line-height:1.02;
+    letter-spacing:.005em;
+    background:linear-gradient(180deg,#ffffff 0%,#eaf0fb 40%,#c3d0ea 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 1px 40px rgba(150,180,240,.12);
+  }
+  .name-sub{
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    margin-top:18px;
+  }
+  .name-sub .dot{width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(212,175,55,.7);}
+  .name-sub .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--slate-dim);
+  }
+
+  .body-text{
+    margin:34px auto 0;
+    max-width:560px;
+    text-align:center;
+    font-family:'Sora',sans-serif;
+    font-weight:300;
+    font-size:15.5px;
+    line-height:2.0;
+    letter-spacing:.015em;
+    color:#c9d5ec;
+  }
+  .body-text b{color:var(--ink);font-weight:400;}
+
+  /* ---- HERO: COLAÇÃO DE GRAU ---- */
+  .hero{
+    text-align:center;
+    margin-top:40px;
+  }
+  .hero .mini{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.46em;text-transform:uppercase;color:var(--gold);
+    margin-bottom:12px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-style:italic;
+    font-size:72px;
+    line-height:.98;
+    letter-spacing:.01em;
+    background:linear-gradient(180deg,#f6e7b6 0%,#e8cf8f 34%,#d4af37 66%,#b98f22 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 2px 26px rgba(201,162,39,.28));
+  }
+  .hero .flank{
+    display:flex;align-items:center;justify-content:center;gap:18px;margin-top:20px;
+  }
+  .hero .flank .ln{height:1px;width:90px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.6));}
+  .hero .flank .ln.r{background:linear-gradient(270deg,transparent,rgba(201,162,39,.6));}
+  .hero .flank .gem{
+    width:8px;height:8px;transform:rotate(45deg);
+    background:linear-gradient(135deg,var(--champagne),var(--gold));
+    box-shadow:0 0 10px rgba(212,175,55,.6);
+  }
+
+  /* ---- PORTRAIT + DETAILS ROW ---- */
+  .lower{
+    margin-top:auto;
+    display:flex;
+    align-items:flex-end;
+    gap:44px;
+  }
+
+  /* portrait — arch frame with duotone fill */
+  .portrait-wrap{flex:0 0 auto;}
+  .portrait{
+    position:relative;
+    width:212px;
+    height:268px;
+    border-radius:106px 106px 10px 10px; /* arch top */
+    padding:6px;
+    background:linear-gradient(160deg,rgba(232,207,143,.9),rgba(201,162,39,.35) 45%,rgba(142,164,200,.18));
+    box-shadow:0 20px 44px -18px rgba(0,0,0,.7);
+  }
+  .portrait .inner{
+    position:relative;
+    width:100%;height:100%;
+    border-radius:100px 100px 6px 6px;
+    overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 30% 18%, rgba(232,207,143,.42), rgba(232,207,143,0) 55%),
+      linear-gradient(155deg,#1c3766 0%,#12244a 42%,#0c1832 100%);
+  }
+  /* duotone texture: soft diagonal light + node dots inside portrait */
+  .portrait .inner::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(232,207,143,.16) 0.7px,transparent 0.8px);
+    background-size:11px 11px;
+    opacity:.6;
+    -webkit-mask-image:radial-gradient(120% 100% at 30% 20%, #000, transparent 75%);
+            mask-image:radial-gradient(120% 100% at 30% 20%, #000, transparent 75%);
+  }
+  .portrait .inner::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:55%;
+    background:linear-gradient(180deg,transparent,rgba(6,11,24,.55));
+  }
+  .portrait .ph-label{
+    position:absolute;
+    left:0;right:0;bottom:20px;
+    z-index:2;
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:rgba(238,242,251,.72);
+  }
+  .portrait .ph-label span{
+    display:block;
+    font-size:8px;
+    letter-spacing:.28em;
+    color:rgba(232,207,143,.6);
+    margin-top:5px;
+  }
+  /* silhouette hint */
+  .portrait .silo{
+    position:absolute;z-index:1;left:50%;bottom:0;transform:translateX(-50%);
+    width:130px;height:150px;
+    background:radial-gradient(60% 42% at 50% 30%, rgba(9,16,34,.55), rgba(9,16,34,0) 70%);
+    border-radius:65px 65px 0 0;
+  }
+  /* small graph node badge overlapping the arch */
+  .portrait .node-badge{
+    position:absolute;z-index:3;top:-6px;right:-6px;
+    width:34px;height:34px;
+    filter:drop-shadow(0 0 8px rgba(212,175,55,.5));
+  }
+
+  /* details column */
+  .details{flex:1 1 auto;display:flex;flex-direction:column;gap:26px;padding-bottom:6px;}
+  .detail{position:relative;padding-left:26px;}
+  .detail::before{
+    content:"";position:absolute;left:0;top:4px;
+    width:9px;height:9px;transform:rotate(45deg);
+    background:linear-gradient(135deg,var(--champagne),var(--gold));
+    box-shadow:0 0 8px rgba(212,175,55,.5);
+  }
+  .detail .d-lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);
+    margin-bottom:9px;
+  }
+  .detail .d-main{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-size:21px;
+    line-height:1.28;
+    color:var(--ink);
+    letter-spacing:.005em;
+  }
+  .detail .d-sub{
+    font-family:'Sora',sans-serif;
+    font-weight:300;
+    font-size:12.5px;
+    letter-spacing:.02em;
+    color:var(--slate);
+    margin-top:5px;
+  }
+  .detail .d-main .accent{color:var(--champagne);}
+
+  /* ---- FOOTER / SPONSORS ---- */
+  .footer{
+    margin-top:34px;
+    padding-top:22px;
+    border-top:1px solid rgba(142,164,200,.14);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .foot-note{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--slate-dim);
+  }
+  .sponsors{display:flex;align-items:center;gap:26px;}
+  .sponsor{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .sponsor .s-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:7.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--slate-dim);
+  }
+  .sponsor .s-name{
+    font-family:'Sora',sans-serif;font-weight:500;font-size:14px;letter-spacing:.12em;
+    color:var(--ink);
+  }
+  .sponsor .s-name .g{color:var(--gold-bright);}
+  .sp-divider{width:1px;height:34px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.4),transparent);}
+</style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- ===== CONSTELLATION / KNOWLEDGE GRAPH ===== -->
+    <div class="constellation">
+      <svg viewBox="0 0 860 1216" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f3e3ad" stop-opacity="0.95"/>
+            <stop offset="35%" stop-color="#d4af37" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#c9a227" stop-opacity="0.05"/>
+            <stop offset="50%" stop-color="#e8cf8f" stop-opacity="0.30"/>
+            <stop offset="100%" stop-color="#c9a227" stop-opacity="0.05"/>
+          </linearGradient>
+          <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.2"/>
+          </filter>
+        </defs>
+
+        <!-- EDGES (fine gold linework) -->
+        <g stroke="url(#edge)" stroke-width="0.9" fill="none">
+          <!-- top cluster -->
+          <path d="M120,150 L250,90 L392,140 L470,72 L640,120 L742,210"/>
+          <path d="M250,90 L300,220 L392,140"/>
+          <path d="M640,120 L560,230 L470,72"/>
+          <path d="M120,150 L96,300 L220,340 L300,220"/>
+          <path d="M742,210 L700,360 L560,230"/>
+          <path d="M220,340 L360,410 L500,360 L700,360"/>
+          <path d="M360,410 L392,140"/>
+          <!-- mid faint web -->
+          <path d="M96,300 L60,520 L150,690" opacity="0.7"/>
+          <path d="M742,210 L806,470 L720,700" opacity="0.7"/>
+          <path d="M60,520 L150,690 L90,880 L180,1010"/>
+          <path d="M806,470 L720,700 L790,900 L680,1040"/>
+          <!-- bottom cluster around footer -->
+          <path d="M180,1010 L320,1070 L470,1020 L610,1082 L680,1040"/>
+          <path d="M320,1070 L360,1150"/>
+          <path d="M610,1082 L560,1160"/>
+          <path d="M470,1020 L470,1120"/>
+          <path d="M90,880 L180,1010 L230,900"/>
+          <path d="M790,900 L680,1040 L640,910"/>
+          <!-- long connective strands -->
+          <path d="M150,690 L360,410" opacity="0.5"/>
+          <path d="M720,700 L500,360" opacity="0.5"/>
+        </g>
+
+        <!-- glow halos on select nodes -->
+        <g>
+          <circle cx="392" cy="140" r="16" fill="url(#nodeGlow)"/>
+          <circle cx="470" cy="72"  r="12" fill="url(#nodeGlow)"/>
+          <circle cx="96"  cy="300" r="13" fill="url(#nodeGlow)"/>
+          <circle cx="742" cy="210" r="13" fill="url(#nodeGlow)"/>
+          <circle cx="360" cy="410" r="14" fill="url(#nodeGlow)"/>
+          <circle cx="60"  cy="520" r="11" fill="url(#nodeGlow)"/>
+          <circle cx="806" cy="470" r="11" fill="url(#nodeGlow)"/>
+          <circle cx="470" cy="1020" r="14" fill="url(#nodeGlow)"/>
+          <circle cx="180" cy="1010" r="11" fill="url(#nodeGlow)"/>
+          <circle cx="680" cy="1040" r="11" fill="url(#nodeGlow)"/>
+        </g>
+
+        <!-- node points -->
+        <g fill="#f3e6b8">
+          <circle cx="120" cy="150" r="1.6"/>
+          <circle cx="250" cy="90"  r="1.6"/>
+          <circle cx="392" cy="140" r="2.6"/>
+          <circle cx="470" cy="72"  r="2.2"/>
+          <circle cx="640" cy="120" r="1.8"/>
+          <circle cx="742" cy="210" r="2.4"/>
+          <circle cx="300" cy="220" r="1.5"/>
+          <circle cx="560" cy="230" r="1.5"/>
+          <circle cx="96"  cy="300" r="2.2"/>
+          <circle cx="220" cy="340" r="1.6"/>
+          <circle cx="700" cy="360" r="1.6"/>
+          <circle cx="360" cy="410" r="2.6"/>
+          <circle cx="500" cy="360" r="1.7"/>
+          <circle cx="60"  cy="520" r="2.0"/>
+          <circle cx="806" cy="470" r="2.0"/>
+          <circle cx="150" cy="690" r="1.6"/>
+          <circle cx="720" cy="700" r="1.6"/>
+          <circle cx="90"  cy="880" r="1.6"/>
+          <circle cx="790" cy="900" r="1.6"/>
+          <circle cx="230" cy="900" r="1.3"/>
+          <circle cx="640" cy="910" r="1.3"/>
+          <circle cx="180" cy="1010" r="2.2"/>
+          <circle cx="320" cy="1070" r="1.7"/>
+          <circle cx="470" cy="1020" r="2.6"/>
+          <circle cx="610" cy="1082" r="1.7"/>
+          <circle cx="680" cy="1040" r="2.2"/>
+          <circle cx="360" cy="1150" r="1.4"/>
+          <circle cx="560" cy="1160" r="1.4"/>
+          <circle cx="470" cy="1120" r="1.4"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ===== GOLD FRAME + CORNERS ===== -->
+    <div class="frame"></div>
+    <div class="corner tl"><span class="h"></span><span class="v"></span></div>
+    <div class="corner tr"><span class="h"></span><span class="v"></span></div>
+    <div class="corner bl"><span class="h"></span><span class="v"></span></div>
+    <div class="corner br"><span class="h"></span><span class="v"></span></div>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="content">
+
+      <!-- IDENTITY -->
+      <div class="identity">
+        <svg class="monogram" viewBox="0 0 66 66" fill="none" aria-label="Monograma TI">
+          <defs>
+            <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f3e3ad"/>
+              <stop offset="0.55" stop-color="#d4af37"/>
+              <stop offset="1" stop-color="#b1861f"/>
+            </linearGradient>
+          </defs>
+          <!-- outer graph hexagon -->
+          <polygon points="33,4 57,17 57,49 33,62 9,49 9,17"
+                   stroke="url(#mg)" stroke-width="1.2" fill="none" opacity="0.85"/>
+          <!-- inner connective edges -->
+          <g stroke="url(#mg)" stroke-width="0.9" opacity="0.55">
+            <line x1="33" y1="4"  x2="33" y2="33"/>
+            <line x1="9"  y1="17" x2="33" y2="33"/>
+            <line x1="57" y1="17" x2="33" y2="33"/>
+            <line x1="9"  y1="49" x2="33" y2="33"/>
+            <line x1="57" y1="49" x2="33" y2="33"/>
+            <line x1="33" y1="62" x2="33" y2="33"/>
+          </g>
+          <!-- corner nodes -->
+          <g fill="#f3e6b8">
+            <circle cx="33" cy="4"  r="2"/>
+            <circle cx="57" cy="17" r="2"/>
+            <circle cx="57" cy="49" r="2"/>
+            <circle cx="33" cy="62" r="2"/>
+            <circle cx="9"  cy="49" r="2"/>
+            <circle cx="9"  cy="17" r="2"/>
+          </g>
+          <!-- TI letterform, center node -->
+          <circle cx="33" cy="33" r="12.5" fill="#0b1530" stroke="url(#mg)" stroke-width="1"/>
+          <text x="33" y="38.4" text-anchor="middle"
+                font-family="'Fraunces', serif" font-size="15" font-weight="500"
+                fill="url(#mg)" letter-spacing="0.5">TI</text>
+        </svg>
+        <div class="id-lock">
+          <div class="id-eyebrow">Colação de Grau · UFRN</div>
+          <div class="id-title">Tecnologia da Informação <span class="yr">2026.1</span></div>
+        </div>
+      </div>
+
+      <div class="rule"></div>
+
+      <!-- INTRO / NAME -->
+      <div class="intro">
+        <div class="kicker">É com honra que se convida</div>
+        <div class="name">Nome do Formando</div>
+        <div class="name-sub">
+          <span class="dot"></span>
+          <span class="lbl">Turma 2026.1</span>
+          <span class="dot"></span>
+        </div>
+
+        <p class="body-text">
+          formando em <b>Tecnologia da Informação</b>, turma 2026.1, da
+          <b>Universidade Federal do Rio Grande do Norte</b>, tem a honra
+          de convidá-lo para a
+        </p>
+      </div>
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="mini">Cerimônia solene de</div>
+        <h1>Colação de Grau</h1>
+        <div class="flank">
+          <span class="ln"></span>
+          <span class="gem"></span>
+          <span class="ln r"></span>
+        </div>
+      </div>
+
+      <!-- LOWER: PORTRAIT + DETAILS -->
+      <div class="lower">
+        <div class="portrait-wrap">
+          <div class="portrait">
+            <div class="inner">
+              <div class="silo"></div>
+              <div class="ph-label">
+                Foto do Formando
+                <span>retrato · duotone</span>
+              </div>
+            </div>
+            <!-- small node badge on the arch -->
+            <svg class="node-badge" viewBox="0 0 34 34" fill="none">
+              <circle cx="17" cy="17" r="16" fill="#0b1530" stroke="url(#mg)" stroke-width="1"/>
+              <g stroke="url(#mg)" stroke-width="0.8" opacity="0.7">
+                <line x1="17" y1="17" x2="17" y2="6"/>
+                <line x1="17" y1="17" x2="27" y2="22"/>
+                <line x1="17" y1="17" x2="8"  y2="23"/>
+              </g>
+              <g fill="#f3e6b8">
+                <circle cx="17" cy="17" r="2"/>
+                <circle cx="17" cy="6"  r="1.5"/>
+                <circle cx="27" cy="22" r="1.5"/>
+                <circle cx="8"  cy="23" r="1.5"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail">
+            <div class="d-lbl">Data · Horário</div>
+            <div class="d-main">28 de Julho de 2026 <span class="accent">·</span> 19h</div>
+            <div class="d-sub">Recepção a partir das 18h30</div>
+          </div>
+          <div class="detail">
+            <div class="d-lbl">Local</div>
+            <div class="d-main">Ginásio Poliesportivo 1 — UFRN</div>
+            <div class="d-sub">Rua da Saúde, Lagoa Nova — Natal / RN</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER / SPONSORS -->
+      <div class="footer">
+        <div class="foot-note">Realização</div>
+        <div class="sponsors">
+          <div class="sponsor">
+            <span class="s-eyebrow">Formaturas</span>
+            <span class="s-name"><span class="g">PIX</span> Formaturas</span>
+          </div>
+          <div class="sp-divider"></div>
+          <div class="sponsor">
+            <span class="s-eyebrow">Universidade</span>
+            <span class="s-name">UFRN</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

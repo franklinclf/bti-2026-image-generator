@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite · Colacao de Grau · Tecnologia da Informacao 2026.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#070a12;
+    --navy-900:#0b1226;
+    --navy-850:#0e1730;
+    --navy-800:#122040;
+    --navy-700:#17294f;
+    --gold:#c9a227;
+    --gold-bright:#d4af37;
+    --gold-champ:#e8cf8f;
+    --gold-soft:#b8923a;
+    --offwhite:#f3f0e6;
+    --bluegrey:#9fb0c9;
+    --bluegrey-dim:#6a7d9c;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{background:#050710;}
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #0a0f1e 0%, #050710 60%, #030509 100%);
+    font-family:'Space Grotesk',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .card{
+    width:860px;
+    height:1216px;
+    box-sizing:border-box;
+    position:relative;
+    overflow:hidden;
+    border-radius:6px;
+    background:
+      radial-gradient(140% 100% at 50% -10%, #16264c 0%, #0e1730 42%, #0a1024 68%, #070c1a 100%);
+    box-shadow:
+      0 2px 0 rgba(232,207,143,0.06) inset,
+      0 40px 90px -30px rgba(0,0,0,0.85),
+      0 0 0 1px rgba(201,162,39,0.10);
+    color:var(--offwhite);
+    isolation:isolate;
+  }
+
+  /* ---------- ambient depth layers ---------- */
+  .grain{
+    position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0.05;
+    background-image:radial-gradient(rgba(255,255,255,0.9) 0.5px, transparent 0.6px);
+    background-size:3px 3px;
+    mix-blend-mode:overlay;
+  }
+  .vignette{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(120% 80% at 50% 42%, transparent 55%, rgba(3,5,12,0.55) 100%);
+  }
+  .sheen{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(115deg, transparent 40%, rgba(232,207,143,0.05) 49%, rgba(232,207,143,0.12) 50%, rgba(232,207,143,0.04) 51%, transparent 60%);
+  }
+
+  /* ---------- deco frame (SVG linework) ---------- */
+  .deco-frame{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+  }
+  .bg-geo{
+    position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0.9;
+  }
+
+  /* ---------- content grid ---------- */
+  .content{
+    position:relative; z-index:5;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:66px 74px 58px;
+    text-align:center;
+  }
+
+  /* ---------- top identity monogram ---------- */
+  .crest{
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  .monogram{
+    width:82px; height:82px; display:block;
+  }
+  .id-lockup{ display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px; letter-spacing:0.42em; text-transform:uppercase;
+    color:var(--gold-champ);
+    padding-left:0.42em;
+  }
+  .id-title{
+    font-family:'Marcellus',serif;
+    font-size:25px; letter-spacing:0.30em; text-transform:uppercase;
+    color:var(--offwhite);
+    line-height:1;
+    padding-left:0.30em;
+  }
+  .id-year{
+    display:flex; align-items:center; gap:14px; margin-top:4px;
+  }
+  .id-year .line{ width:46px; height:1px; background:linear-gradient(90deg,transparent,var(--gold)); }
+  .id-year .line.rev{ background:linear-gradient(90deg,var(--gold),transparent); }
+  .id-year .yr{
+    font-family:'Marcellus',serif;
+    font-size:15px; letter-spacing:0.44em; color:var(--gold-bright);
+    padding-left:0.44em;
+  }
+
+  /* ---------- invite body ---------- */
+  .invite-block{ margin-top:28px; display:flex; flex-direction:column; align-items:center; }
+  .invite-lead{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic; font-size:19px; letter-spacing:0.02em;
+    color:var(--bluegrey);
+    margin-bottom:14px;
+  }
+  .grad-name{
+    font-family:'Marcellus',serif;
+    font-size:48px; line-height:1.02; letter-spacing:0.015em;
+    color:var(--offwhite);
+    position:relative;
+    background:linear-gradient(180deg,#fbf7ea 0%,#e8cf8f 62%,#c9a227 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    padding:0 4px;
+  }
+  .name-rule{
+    display:flex; align-items:center; justify-content:center; gap:12px; margin-top:14px;
+  }
+  .name-rule .seg{ width:70px; height:1px; background:linear-gradient(90deg,transparent,var(--gold-soft),transparent); }
+  .name-rule .dot{ width:5px; height:5px; transform:rotate(45deg); background:var(--gold-bright); box-shadow:0 0 8px rgba(212,175,55,0.6); }
+
+  .invite-body{
+    margin-top:18px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:18.5px; line-height:1.62; letter-spacing:0.012em;
+    color:var(--bluegrey);
+    max-width:452px;
+  }
+
+  /* ---------- ceremony highlight ---------- */
+  .ceremony{
+    margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:0;
+  }
+  .ceremony-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px; letter-spacing:0.4em; text-transform:uppercase;
+    color:var(--bluegrey-dim); margin-bottom:10px; padding-left:0.4em;
+  }
+  .ceremony-title{
+    font-family:'Marcellus',serif;
+    font-size:52px; line-height:0.98; text-transform:uppercase;
+    letter-spacing:0.06em; padding-left:0.06em;
+    background:linear-gradient(180deg,#f4e6bd 0%,#d4af37 55%,#a9821f 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 1px 0 rgba(0,0,0,0.35));
+  }
+
+  /* ---------- portrait area ---------- */
+  .portrait-wrap{
+    margin-top:26px; position:relative; width:250px; height:270px;
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .portrait-arch{
+    position:relative; width:204px; height:256px;
+  }
+  .portrait-fill{
+    position:absolute; inset:0;
+    border-radius:102px 102px 14px 14px;
+    background:
+      linear-gradient(160deg, rgba(212,175,55,0.20) 0%, rgba(20,32,64,0.2) 30%, #0b1428 62%, #0a1122 100%),
+      radial-gradient(120% 80% at 50% 12%, rgba(232,207,143,0.28) 0%, transparent 55%);
+    box-shadow:
+      inset 0 0 0 1px rgba(201,162,39,0.35),
+      inset 0 30px 60px -20px rgba(232,207,143,0.18),
+      inset 0 -40px 60px -20px rgba(0,0,0,0.5);
+    overflow:hidden;
+  }
+  .portrait-fill::after{
+    content:""; position:absolute; inset:0;
+    background-image:radial-gradient(rgba(232,207,143,0.5) 0.5px, transparent 0.6px);
+    background-size:5px 5px; opacity:0.10;
+  }
+  .portrait-label{
+    position:absolute; left:0; right:0; bottom:30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; letter-spacing:0.34em; text-transform:uppercase;
+    color:var(--gold-champ); opacity:0.85; z-index:3; padding-left:0.34em;
+  }
+  .portrait-frame{ position:absolute; inset:-13px; z-index:4; pointer-events:none; }
+
+  /* ---------- logistics: local + data ---------- */
+  .logistics{
+    margin-top:26px; width:100%;
+    display:flex; align-items:stretch; justify-content:center; gap:0;
+  }
+  .log-col{ flex:1; padding:0 26px; display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .log-divider{ width:1px; align-self:stretch;
+    background:linear-gradient(180deg,transparent,rgba(201,162,39,0.5),transparent); }
+  .log-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; letter-spacing:0.38em; text-transform:uppercase; color:var(--gold);
+    padding-left:0.38em;
+  }
+  .log-primary{
+    font-family:'Marcellus',serif; font-size:17px; letter-spacing:0.02em; color:var(--offwhite);
+    line-height:1.3;
+  }
+  .log-secondary{
+    font-family:'Cormorant Garamond',serif; font-size:15.5px; color:var(--bluegrey); line-height:1.35;
+  }
+  .log-time{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.16em; color:var(--gold-champ);
+  }
+
+  /* ---------- footer sponsors ---------- */
+  .footer{
+    margin-top:auto; width:100%;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+  }
+  .footer-rule{
+    display:flex; align-items:center; justify-content:center; gap:14px; width:100%;
+  }
+  .footer-rule .seg{ flex:1; height:1px; max-width:150px;
+    background:linear-gradient(90deg,transparent,rgba(201,162,39,0.45),transparent); }
+  .footer-diamond{ width:7px; height:7px; transform:rotate(45deg);
+    border:1px solid var(--gold); background:rgba(212,175,55,0.15); }
+  .sponsors{
+    display:flex; align-items:center; justify-content:center; gap:0; width:100%;
+  }
+  .sponsor{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .sponsor-tag{
+    font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:0.32em;
+    text-transform:uppercase; color:var(--bluegrey-dim); padding-left:0.32em;
+  }
+  .sponsor-name{
+    font-family:'Marcellus',serif; font-size:16px; letter-spacing:0.14em; color:var(--gold-champ);
+    padding-left:0.14em; display:flex; align-items:center; gap:9px;
+  }
+  .sponsor-name .glyph{ display:flex; }
+  .sponsor-sep{ width:1px; align-self:center; height:38px;
+    background:linear-gradient(180deg,transparent,rgba(201,162,39,0.4),transparent); }
+</style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- ============ BACKGROUND GEOMETRY (abstract data-flow deco) ============ -->
+    <svg class="bg-geo" viewBox="0 0 860 1216" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="rayFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e8cf8f" stop-opacity="0.34"/>
+          <stop offset="1" stop-color="#c9a227" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="rayFadeB" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#c9a227" stop-opacity="0.22"/>
+          <stop offset="1" stop-color="#e8cf8f" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="topGlow" cx="50%" cy="0%" r="70%">
+          <stop offset="0" stop-color="#1a2e5c" stop-opacity="0.9"/>
+          <stop offset="1" stop-color="#0c1428" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <rect width="860" height="1216" fill="url(#topGlow)"/>
+
+      <!-- top ceremonial sunburst / data-rays fan -->
+      <g stroke="url(#rayFade)" stroke-width="1" fill="none">
+        <line x1="430" y1="120" x2="430" y2="-60"/>
+        <line x1="430" y1="120" x2="370" y2="-52"/>
+        <line x1="430" y1="120" x2="490" y2="-52"/>
+        <line x1="430" y1="120" x2="312" y2="-30"/>
+        <line x1="430" y1="120" x2="548" y2="-30"/>
+        <line x1="430" y1="120" x2="256" y2="4"/>
+        <line x1="430" y1="120" x2="604" y2="4"/>
+        <line x1="430" y1="120" x2="204" y2="46"/>
+        <line x1="430" y1="120" x2="656" y2="46"/>
+        <line x1="430" y1="120" x2="158" y2="96"/>
+        <line x1="430" y1="120" x2="702" y2="96"/>
+      </g>
+
+      <!-- bottom mirrored fan -->
+      <g stroke="url(#rayFadeB)" stroke-width="1" fill="none" opacity="0.7">
+        <line x1="430" y1="1120" x2="430" y2="1276"/>
+        <line x1="430" y1="1120" x2="360" y2="1266"/>
+        <line x1="430" y1="1120" x2="500" y2="1266"/>
+        <line x1="430" y1="1120" x2="292" y2="1240"/>
+        <line x1="430" y1="1120" x2="568" y2="1240"/>
+        <line x1="430" y1="1120" x2="230" y2="1208"/>
+        <line x1="430" y1="1120" x2="630" y2="1208"/>
+      </g>
+
+      <!-- abstract "signal nodes" along rays -->
+      <g fill="#e8cf8f" opacity="0.5">
+        <circle cx="430" cy="40" r="1.6"/>
+        <circle cx="370" cy="30" r="1.3"/><circle cx="490" cy="30" r="1.3"/>
+        <circle cx="312" cy="52" r="1.2"/><circle cx="548" cy="52" r="1.2"/>
+        <circle cx="256" cy="76" r="1.1"/><circle cx="604" cy="76" r="1.1"/>
+      </g>
+
+      <!-- faint modular lattice band (hex/lozenge components) -->
+      <g stroke="#c9a227" stroke-width="0.6" fill="none" opacity="0.10">
+        <path d="M100 470 l24 -14 l24 14 l0 28 l-24 14 l-24 -14 z"/>
+        <path d="M148 498 l24 -14 l24 14 l0 28 l-24 14 l-24 -14 z"/>
+        <path d="M712 470 l24 -14 l24 14 l0 28 l-24 14 l-24 -14 z"/>
+        <path d="M664 498 l24 -14 l24 14 l0 28 l-24 14 l-24 -14 z"/>
+      </g>
+    </svg>
+
+    <!-- ============ DECO ORNAMENTAL FRAME ============ -->
+    <svg class="deco-frame" viewBox="0 0 860 1216" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="goldStroke" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#e8cf8f"/>
+          <stop offset="0.5" stop-color="#c9a227"/>
+          <stop offset="1" stop-color="#8f6f22"/>
+        </linearGradient>
+      </defs>
+      <!-- outer double rule -->
+      <rect x="30" y="30" width="800" height="1156" fill="none" stroke="url(#goldStroke)" stroke-width="1.4" opacity="0.9"/>
+      <rect x="40" y="40" width="780" height="1136" fill="none" stroke="url(#goldStroke)" stroke-width="0.7" opacity="0.5"/>
+
+      <!-- corner deco brackets (stepped art-deco) -->
+      <g stroke="url(#goldStroke)" stroke-width="1.4" fill="none">
+        <!-- TL -->
+        <path d="M30 92 L30 58 Q30 30 58 30 L92 30"/>
+        <path d="M58 66 L58 58 L66 58"/>
+        <path d="M74 84 L74 74 L84 74"/>
+        <!-- TR -->
+        <path d="M830 92 L830 58 Q830 30 802 30 L768 30"/>
+        <path d="M802 66 L802 58 L794 58"/>
+        <path d="M786 84 L786 74 L776 74"/>
+        <!-- BL -->
+        <path d="M30 1124 L30 1158 Q30 1186 58 1186 L92 1186"/>
+        <path d="M58 1150 L58 1158 L66 1158"/>
+        <path d="M74 1132 L74 1142 L84 1142"/>
+        <!-- BR -->
+        <path d="M830 1124 L830 1158 Q830 1186 802 1186 L768 1186"/>
+        <path d="M802 1150 L802 1158 L794 1158"/>
+        <path d="M786 1132 L786 1142 L776 1142"/>
+      </g>
+
+      <!-- corner diamonds -->
+      <g fill="#d4af37">
+        <rect x="46" y="46" width="6" height="6" transform="rotate(45 49 49)"/>
+        <rect x="808" y="46" width="6" height="6" transform="rotate(45 811 49)"/>
+        <rect x="46" y="1164" width="6" height="6" transform="rotate(45 49 1167)"/>
+        <rect x="808" y="1164" width="6" height="6" transform="rotate(45 811 1167)"/>
+      </g>
+    </svg>
+
+    <div class="grain"></div>
+    <div class="sheen"></div>
+    <div class="vignette"></div>
+
+    <!-- ============ CONTENT ============ -->
+    <div class="content">
+
+      <!-- (1) Redesigned identity: monogram + lockup -->
+      <div class="crest">
+        <svg class="monogram" viewBox="0 0 100 100" aria-label="Monograma Tecnologia da Informacao">
+          <defs>
+            <linearGradient id="mgFill" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f4e6bd"/>
+              <stop offset="0.55" stop-color="#d4af37"/>
+              <stop offset="1" stop-color="#a9821f"/>
+            </linearGradient>
+          </defs>
+          <!-- outer deco ring: octagon (stepped) -->
+          <polygon points="50,6 74,16 84,40 84,60 74,84 50,94 26,84 16,60 16,40 26,16"
+                   fill="none" stroke="url(#mgFill)" stroke-width="1.4" opacity="0.85"/>
+          <polygon points="50,14 68,22 78,42 78,58 68,78 50,86 32,78 22,58 22,42 32,22"
+                   fill="none" stroke="url(#mgFill)" stroke-width="0.6" opacity="0.5"/>
+          <!-- abstract T + I as intersecting signal lines (data-flow monogram) -->
+          <g stroke="url(#mgFill)" stroke-width="2.4" fill="none" stroke-linecap="round">
+            <!-- T crossbar -->
+            <line x1="34" y1="38" x2="66" y2="38"/>
+            <!-- T stem -->
+            <line x1="50" y1="38" x2="50" y2="66"/>
+          </g>
+          <!-- I as flanking nodes / bit dots -->
+          <g fill="url(#mgFill)">
+            <circle cx="34" cy="38" r="2.6"/>
+            <circle cx="66" cy="38" r="2.6"/>
+            <circle cx="50" cy="66" r="2.6"/>
+          </g>
+          <!-- tiny orbiting signal dots -->
+          <g fill="#e8cf8f" opacity="0.8">
+            <circle cx="50" cy="24" r="1.4"/>
+            <circle cx="50" cy="76" r="1.4"/>
+          </g>
+        </svg>
+
+        <div class="id-lockup">
+          <div class="kicker">Universidade Federal do Rio Grande do Norte</div>
+          <div class="id-title">Tecnologia da Informacao</div>
+          <div class="id-year">
+            <span class="line"></span>
+            <span class="yr">2026.1</span>
+            <span class="line rev"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- (2) + (3) name + body -->
+      <div class="invite-block">
+        <div class="invite-lead">com grande alegria, apresenta</div>
+        <div class="grad-name">Nome do Formando</div>
+        <div class="name-rule">
+          <span class="seg"></span><span class="dot"></span><span class="seg"></span>
+        </div>
+        <p class="invite-body">
+          formando em Tecnologia da Informacao, turma 2026.1, da Universidade
+          Federal do Rio Grande do Norte, tem a honra de convida-lo para a
+        </p>
+      </div>
+
+      <!-- (4) ceremony highlight -->
+      <div class="ceremony">
+        <div class="ceremony-eyebrow">Cerimonia de</div>
+        <div class="ceremony-title">Colacao de Grau</div>
+      </div>
+
+      <!-- (7) portrait area -->
+      <div class="portrait-wrap">
+        <div class="portrait-arch">
+          <div class="portrait-fill"></div>
+          <div class="portrait-label">Foto do Formando</div>
+          <svg class="portrait-frame" viewBox="0 0 230 282" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="pFrame" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e8cf8f"/>
+                <stop offset="1" stop-color="#a9821f"/>
+              </linearGradient>
+            </defs>
+            <!-- arched outer frame following the mask -->
+            <path d="M15 270 L15 118 A100 100 0 0 1 215 118 L215 270"
+                  fill="none" stroke="url(#pFrame)" stroke-width="1.4" opacity="0.85"/>
+            <path d="M6 270 L6 118 A109 109 0 0 1 224 118 L224 270"
+                  fill="none" stroke="url(#pFrame)" stroke-width="0.6" opacity="0.45"/>
+            <!-- keystone diamond at apex -->
+            <rect x="110" y="10" width="10" height="10" transform="rotate(45 115 15)" fill="#d4af37"/>
+            <!-- small deco ticks flanking base -->
+            <line x1="15" y1="258" x2="31" y2="258" stroke="url(#pFrame)" stroke-width="1.2"/>
+            <line x1="215" y1="258" x2="199" y2="258" stroke="url(#pFrame)" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- (5) + (6) logistics -->
+      <div class="logistics">
+        <div class="log-col">
+          <div class="log-label">Local</div>
+          <div class="log-primary">Ginasio Poliesportivo 1 — UFRN</div>
+          <div class="log-secondary">Rua da Saude, Lagoa Nova — Natal/RN</div>
+        </div>
+        <div class="log-divider"></div>
+        <div class="log-col">
+          <div class="log-label">Data</div>
+          <div class="log-primary">28 de Julho de 2026</div>
+          <div class="log-time">· 19h ·</div>
+        </div>
+      </div>
+
+      <!-- (8) footer sponsors -->
+      <div class="footer">
+        <div class="footer-rule">
+          <span class="seg"></span>
+          <span class="footer-diamond"></span>
+          <span class="seg"></span>
+        </div>
+        <div class="sponsors">
+          <div class="sponsor">
+            <div class="sponsor-tag">Realizacao</div>
+            <div class="sponsor-name">
+              <span class="glyph">
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="8" y="0.6" width="10.4" height="10.4" transform="rotate(45 8 8)"
+                        fill="none" stroke="#e8cf8f" stroke-width="1"/>
+                  <rect x="8" y="4" width="5.66" height="5.66" transform="rotate(45 8 8)"
+                        fill="#d4af37" opacity="0.85"/>
+                </svg>
+              </span>
+              PIX Formaturas
+            </div>
+          </div>
+          <div class="sponsor-sep"></div>
+          <div class="sponsor">
+            <div class="sponsor-tag">Instituicao</div>
+            <div class="sponsor-name">
+              <span class="glyph">
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                  <circle cx="8" cy="8" r="6.8" fill="none" stroke="#e8cf8f" stroke-width="1"/>
+                  <path d="M4.6 5.6 L4.6 9.2 A3.4 3.4 0 0 0 11.4 9.2 L11.4 5.6"
+                        fill="none" stroke="#d4af37" stroke-width="1.1"/>
+                </svg>
+              </span>
+              UFRN
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /card -->
+</body>
+</html>
