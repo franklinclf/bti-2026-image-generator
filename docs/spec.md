@@ -22,7 +22,9 @@ em seguida, sobre o template escolhido.
 - **Print-grade**: exportar em alta (300 DPI) com sangria.
 - **Orientação/proporção**: paisagem **1600 × 1149** (≈1.393), refletindo o display físico.
   Convite e display compartilham o mesmo sistema; muda o conteúdo (foto é a mesma).
-- **Foto**: corpo inteiro, estúdio, **fundo branco** → removido (cutout) e posto sobre o navy.
+- **Foto**: corpo inteiro, estúdio, fundo branco → **mantida num painel lateral** (retangular,
+  `object-fit: cover` com posição/zoom ajustáveis). **Determinístico.** Cutout/remoção de fundo foi
+  **descartado** por não-determinismo em 52 fotos (risco de falha de borda/cabelo). Template = Merge 1.
 
 ## 3. Sistema visual (direção fundida B+A+C)
 
@@ -64,8 +66,9 @@ em seguida, sobre o template escolhido.
   - rasterização com **@resvg/resvg-wasm** (PNG 300 DPI) e/ou canvas;
   - PDF vetorial com **svg2pdf.js + jsPDF** (mm + sangria);
   - lote com **JSZip**.
-  - remoção de fundo: **@imgly/background-removal** (WASM, client-side, grátis) — opcional, já que
-    as fotos vêm de estúdio com fundo branco.
+  - **foto:** colocada num **painel lateral fixo** (retangular, `object-fit: cover`) com pan/zoom
+    ajustáveis por foto. **Sem remoção de fundo / sem ML** — determinístico (decisão de 2026-07-18,
+    após testar cutout). Fundo de estúdio é mantido; a moldura do painel integra a foto ao design.
 - **DevTools screenshot / DPR alto**: só conferência manual, não é o pipeline. Fallback de
   escalonamento grátis: Puppeteer/Playwright local ou GitHub Actions.
 
