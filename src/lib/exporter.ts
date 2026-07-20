@@ -1,8 +1,9 @@
-// exporter.ts — renderiza TemplateCard no servidor via Puppeteer,
-// captura PNG, converte para PDF (opcional) num JSZip e baixa o .zip.
-// Processamento paralelo (até 10 grads simultâneos) em Vercel Serverless.
+// exporter.ts — renderiza cada TemplateCard num container offscreen (1600x1149),
+// captura com html-to-image, junta PNG (e PDF opcional) num JSZip e baixa o .zip.
+// 100% client-side; sequencial (um item por vez) com unmount/cleanup entre capturas.
 import { createElement } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
+import { toBlob } from 'html-to-image';
 import JSZip from 'jszip';
 import { jsPDF } from 'jspdf';
 import TemplateCard from '../components/TemplateCard';
@@ -22,6 +23,20 @@ function fileBase(nome: string): string {
     .trim()
     .replace(/\s+/g, '_'); // espacos -> underscore
   return base || 'formando';
+}
+
+// Cria o container offscreen (fixo, fora da viewport, tamanho real do card).
+function makeOffscreen(): HTMLDivElement {
+  const host = document.createElement('div');
+  host.style.position = 'fixed';
+  host.style.left = '-99999px';
+  host.style.top = '0';
+  host.style.width = `${CARD_W}px`;
+  host.style.height = `${CARD_H}px`;
+  host.style.pointerEvents = 'none';
+  host.style.zIndex = '-1';
+  document.body.appendChild(host);
+  return host;
 }
 
 // Espera o proximo (ou proximos) frames pra garantir que o React pintou o DOM.
@@ -60,73 +75,43 @@ function waitImg(node: HTMLElement): Promise<void> {
   ).then(() => undefined);
 }
 
-// Renderiza um TemplateCard via API do servidor (Vercel Serverless)
-async function renderCaptureViaAPI(
+// Renderiza um TemplateCard no host e captura como PNG blob.
+async function renderCapture(
+  root: Root,
+  host: HTMLElement,
   variant: Variant,
   nome: string,
   photoUrl: string | null,
   transform: Grad['transform'],
   pixelRatio: number,
 ): Promise<Blob> {
-  // Renderiza o HTML localmente (sem canvas)
-  const host = document.createElement('div');
-  host.style.position = 'absolute';
-  host.style.left = '-99999px';
-  host.style.width = `${CARD_W}px`;
-  host.style.height = `${CARD_H}px`;
-  document.body.appendChild(host);
-
-  const root = createRoot(host);
   root.render(
     createElement(TemplateCard, { variant, nome, photoUrl, transform }),
   );
-
+  // aguarda pintura + fontes + imagem
   await nextFrame();
   await document.fonts.ready;
   await waitImg(host);
   await nextFrame();
 
-  // Serializa o HTML renderizado
-  const html = host.innerHTML;
-
-  // Limpa
-  root.unmount();
-  host.remove();
-
-  // Envia para o servidor renderizar
-  const response = await fetch('/api/render-grad', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      html: `<style>${getCardStyles()}</style><div class="card">${html}</div>`,
-      width: CARD_W,
-      height: CARD_H,
-      pixelRatio,
-    }),
+  const target = host.firstElementChild as HTMLElement | null;
+  
+  // Hide images that fail to load to prevent canvas corruption
+  const imgs = (target ?? host).querySelectorAll('img');
+  imgs.forEach((img) => {
+    if (!img.complete || img.naturalWidth === 0) {
+      (img as HTMLElement).style.display = 'none';
+    }
   });
 
-  if (!response.ok) {
-    throw new Error(`Falha ao renderizar no servidor: ${response.statusText}`);
-  }
-
-  return response.blob();
-}
-
-// Extrai os estilos CSS necessários
-function getCardStyles(): string {
-  const styleSheets = Array.from(document.styleSheets);
-  let cssText = '';
-  for (const sheet of styleSheets) {
-    try {
-      const rules = sheet.cssRules || sheet.rules;
-      for (const rule of rules) {
-        cssText += rule.cssText;
-      }
-    } catch (e) {
-      // Ignora stylesheets externas (CORS)
-    }
-  }
-  return cssText;
+  const blob = await toBlob(target ?? host, {
+    pixelRatio,
+    width: CARD_W,
+    height: CARD_H,
+    backgroundColor: '#0b1424',
+  });
+  if (!blob) throw new Error(`Falha ao capturar o card (${variant}, ${nome}).`);
+  return blob;
 }
 
 // Executa promessas com limite de concorrência
@@ -214,17 +199,21 @@ export async function exportGrads(
   // Map para armazenar blobs de cada grad+variant
   const blobMap = new Map<string, { png: Blob; pdf?: Blob }>();
 
-  // Processa grads em paralelo via servidor (máximo 10 simultâneos)
+  // Processa grads em paralelo (3 por vez pra maximizar throughput)
   await promisePool(
     grads,
     async (grad) => {
       const base = fileBase(grad.nome);
+      const host = makeOffscreen();
+      const root = createRoot(host);
 
       try {
         for (const variant of VARIANTS) {
           onProgress?.(done, total, `${grad.nome} · ${variant}`);
 
-          const pngBlob = await renderCaptureViaAPI(
+          const pngBlob = await renderCapture(
+            root,
+            host,
             variant,
             grad.nome,
             grad.url || null,
@@ -240,13 +229,17 @@ export async function exportGrads(
           blobMap.set(`${base}_${variant}`, { png: pngBlob, pdf: pdfBlob });
           done += 1;
           onProgress?.(done, total, `${grad.nome} · ${variant}`);
+
+          // limpa o card renderizado entre capturas (libera memoria)
+          root.render(null);
+          await nextFrame();
         }
-      } catch (error) {
-        console.error(`Falha ao processar ${grad.nome}:`, error);
-        onProgress?.(done + VARIANTS.length, total, `Erro em ${grad.nome}`);
+      } finally {
+        root.unmount();
+        host.remove();
       }
     },
-    10, // concorrência: 10 requisições simultâneas (API é muito rápida)
+    8, // concorrência: 8 grads por vez (muito rápido, sem servidor)
   );
 
   // Agora monta o zip com todos os blobs (já completos)
