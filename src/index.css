@@ -1,0 +1,461 @@
+/* ============================================================
+   UI do APP (gerador). NAO contem estilos do card da arte
+   (esses ficam em src/styles/template.css). Tema navy + ouro
+   combinando com a arte aprovada.
+   ============================================================ */
+
+:root {
+  --navy-950: #05070d;
+  --navy-900: #070a12;
+  --navy-850: #0a1122;
+  --navy-800: #0f1a30;
+  --navy-700: #152442;
+  --navy-600: #1c2e50;
+  --gold: #c9a227;
+  --gold-bright: #d4af37;
+  --gold-champagne: #e8cf8f;
+  --ink: #eef2fb;
+  --ink-dim: #aab6cf;
+  --slate: #8ea4c8;
+  --slate-dim: #61708d;
+  --line: rgba(201, 162, 39, 0.15);
+  --line-strong: rgba(212, 175, 55, 0.4);
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Fraunces', serif;
+  --sans: 'Space Grotesk', sans-serif;
+
+  --toolbar-h: 60px;
+  --sidebar-w: 340px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(1400px 1000px at 50% -8%, #0c1220 0%, transparent 60%),
+    var(--navy-950);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* ---- shell ---- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---- toolbar ---- */
+.toolbar {
+  flex: 0 0 auto;
+  min-height: var(--toolbar-h);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 4px 24px -12px rgba(0, 0, 0, 0.8);
+  flex-wrap: wrap;
+}
+
+.toolbar__title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.toolbar__title small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.toolbar__spacer {
+  flex: 1 1 auto;
+}
+
+.toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---- workspace ---- */
+.workspace {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 0;
+}
+
+.gradlist {
+  border-right: 1px solid var(--line);
+  background: var(--navy-900);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview {
+  overflow: auto;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  align-items: center;
+}
+
+/* ---- controles genericos ---- */
+.btn {
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, var(--navy-700), var(--navy-800));
+  color: var(--ink);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.05s;
+}
+
+.btn:hover {
+  border-color: var(--gold-bright);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold-soft, #b8973a));
+  border-color: var(--gold-champagne);
+  color: var(--navy-950);
+  font-weight: 600;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--line);
+}
+
+.select,
+.input {
+  appearance: none;
+  background: var(--navy-850);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--gold-bright);
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+.dim {
+  color: var(--ink-dim);
+}
+
+/* ---- estado vazio ---- */
+.empty {
+  margin: auto;
+  text-align: center;
+  color: var(--slate);
+  max-width: 460px;
+}
+
+.empty h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 24px;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.preview--empty {
+  justify-content: center;
+}
+
+/* ---- toolbar: checkbox PDF + barra de progresso ---- */
+.toolbar__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toolbar__check input {
+  accent-color: var(--gold-bright);
+  cursor: pointer;
+}
+
+.export-progress {
+  min-width: 260px;
+}
+
+.progress {
+  flex: 1 1 auto;
+  min-width: 160px;
+  height: 8px;
+  border-radius: 6px;
+  background: var(--navy-850);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-champagne));
+  transition: width 0.2s ease;
+}
+
+.export-progress__label {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.export-error {
+  font-size: 11px;
+  color: #ff8a8a;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   PREVIEW — cards escalados (convite + display)
+   ============================================================ */
+.preview__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.preview__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview__label {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.preview__label-idx {
+  color: var(--gold-champagne);
+}
+
+/* O stage reserva o tamanho final (ja escalado); o scaler contem o card 1600px. */
+.preview__stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 24px 70px -24px rgba(0, 0, 0, 0.85);
+}
+
+.preview__scaler {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ============================================================
+   PHOTO ADJUST — controles de enquadramento da foto
+   ============================================================ */
+.adjust {
+  width: 100%;
+  max-width: 720px;
+  background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.adjust__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.adjust__title {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.adjust__kw {
+  color: var(--gold-champagne);
+}
+
+.adjust__reset {
+  padding: 5px 12px;
+  font-size: 12px;
+}
+
+.adjust__body {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.adjust__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adjust__field:first-child {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.adjust__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--slate);
+}
+
+.adjust__val {
+  color: var(--gold-champagne);
+  font-size: 12px;
+}
+
+.adjust__slider {
+  width: 100%;
+  accent-color: var(--gold-bright);
+  cursor: pointer;
+}
+
+.adjust__pos {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Pad 2D de posicao (drag). */
+.adjust__pad {
+  position: relative;
+  width: 120px;
+  height: 86px;
+  border-radius: 8px;
+  background: var(--navy-850);
+  border: 1px solid var(--line);
+  cursor: grab;
+  touch-action: none;
+  overflow: hidden;
+}
+
+.adjust__pad.is-live {
+  cursor: grabbing;
+  border-color: var(--gold-bright);
+}
+
+.adjust__cross-h,
+.adjust__cross-v {
+  position: absolute;
+  background: var(--line);
+}
+
+.adjust__cross-h {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+
+.adjust__cross-v {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+
+.adjust__knob {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--gold-champagne);
+  border: 2px solid var(--navy-950);
+  box-shadow: 0 0 0 1px var(--gold);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Grade de setas (cruz + centro). */
+.adjust__arrows {
+  display: grid;
+  grid-template-columns: repeat(3, 28px);
+  grid-template-rows: repeat(3, 28px);
+  gap: 4px;
+}
+
+.adjust__arrow {
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adjust__arrow--up { grid-area: 1 / 2; }
+.adjust__arrow--left { grid-area: 2 / 1; }
+.adjust__arrow--center { grid-area: 2 / 2; color: var(--gold-champagne); }
+.adjust__arrow--right { grid-area: 2 / 3; }
+.adjust__arrow--down { grid-area: 3 / 2; }
