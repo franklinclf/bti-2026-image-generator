@@ -199,7 +199,7 @@ export async function exportGrads(
   // Map para armazenar blobs de cada grad+variant
   const blobMap = new Map<string, { png: Blob; pdf?: Blob }>();
 
-  // Processa grads em paralelo (2 por vez pra nao sobrecarregar memoria)
+  // Processa grads em paralelo (3 por vez pra maximizar throughput)
   await promisePool(
     grads,
     async (grad) => {
@@ -239,7 +239,7 @@ export async function exportGrads(
         host.remove();
       }
     },
-    2, // concorrência: 2 grads por vez
+    3, // concorrência: 3 grads por vez
   );
 
   // Agora monta o zip com todos os blobs (já completos)
