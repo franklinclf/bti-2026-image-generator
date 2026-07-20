@@ -526,7 +526,7 @@
   font-family: var(--serif);
   font-weight: 400;
   font-size: 42px;
-  line-height: 1.0;
+  line-height: 1.2;
   letter-spacing: -0.01em;
   display: inline-block;
   background: linear-gradient(96deg, #f2e2b4 0%, var(--gold-bright) 50%, var(--gold) 100%);

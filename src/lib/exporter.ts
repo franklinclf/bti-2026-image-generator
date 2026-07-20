@@ -46,25 +46,33 @@ function nextFrame(): Promise<void> {
   });
 }
 
-// Espera a <img> da foto carregar de fato (complete + naturalWidth), com timeout de seguranca.
+// Espera TODAS as <img> carregarem (complete + naturalWidth), com timeout de seguranca.
 function waitImg(node: HTMLElement): Promise<void> {
-  const img = node.querySelector('img');
-  if (!img) return Promise.resolve();
-  if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-  return new Promise((resolve) => {
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      img.removeEventListener('load', finish);
-      img.removeEventListener('error', finish);
-      resolve();
-    };
-    img.addEventListener('load', finish);
-    img.addEventListener('error', finish); // erro tambem resolve (nao trava o lote)
-    // fallback: nao esperar pra sempre
-    setTimeout(finish, 8000);
-  });
+  const imgs = Array.from(node.querySelectorAll('img'));
+  if (imgs.length === 0) return Promise.resolve();
+  
+  return Promise.all(
+    imgs.map((img) => {
+      return new Promise<void>((resolve) => {
+        if (img.complete && img.naturalWidth > 0) {
+          resolve();
+          return;
+        }
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          img.removeEventListener('load', finish);
+          img.removeEventListener('error', finish);
+          resolve();
+        };
+        img.addEventListener('load', finish);
+        img.addEventListener('error', finish); // erro tambem resolve (nao trava o lote)
+        // fallback: nao esperar pra sempre
+        setTimeout(finish, 3000);
+      });
+    })
+  ).then(() => undefined);
 }
 
 // Renderiza um TemplateCard no host e captura como PNG blob.
@@ -87,12 +95,20 @@ async function renderCapture(
   await nextFrame();
 
   const target = host.firstElementChild as HTMLElement | null;
+  
+  // Hide images that fail to load to prevent canvas corruption
+  const imgs = (target ?? host).querySelectorAll('img');
+  imgs.forEach((img) => {
+    if (!img.complete || img.naturalWidth === 0) {
+      (img as HTMLElement).style.display = 'none';
+    }
+  });
+
   const blob = await toBlob(target ?? host, {
     pixelRatio,
     width: CARD_W,
     height: CARD_H,
-    cacheBust: true,
-    backgroundColor: '#0b1424', // fundo do card (evita transparencia no PNG)
+    backgroundColor: '#0b1424',
   });
   if (!blob) throw new Error(`Falha ao capturar o card (${variant}, ${nome}).`);
   return blob;
