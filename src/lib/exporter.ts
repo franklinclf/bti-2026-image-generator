@@ -114,6 +114,25 @@ async function renderCapture(
   return blob;
 }
 
+// Executa promessas com limite de concorrência
+async function promisePool<T>(
+  items: T[],
+  fn: (item: T) => Promise<any>,
+  concurrency: number,
+): Promise<void> {
+  const executing: Promise<void>[] = [];
+  for (const item of items) {
+    const promise = Promise.resolve().then(() => fn(item)).then(() => {
+      executing.splice(executing.indexOf(promise), 1);
+    });
+    executing.push(promise);
+    if (executing.length >= concurrency) {
+      await Promise.race(executing);
+    }
+  }
+  await Promise.all(executing);
+}
+
 // Converte um Blob PNG em dataURL (necessario pro jsPDF.addImage).
 function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -177,52 +196,67 @@ export async function exportGrads(
   const total = grads.length * VARIANTS.length;
   let done = 0;
 
-  const host = makeOffscreen();
-  const root = createRoot(host);
+  // Map para armazenar blobs de cada grad+variant
+  const blobMap = new Map<string, { png: Blob; pdf?: Blob }>();
 
-  try {
-    for (const grad of grads) {
+  // Processa grads em paralelo (2 por vez pra nao sobrecarregar memoria)
+  await promisePool(
+    grads,
+    async (grad) => {
       const base = fileBase(grad.nome);
-      for (const variant of VARIANTS) {
-        onProgress?.(done, total, `${grad.nome} · ${variant}`);
+      const host = makeOffscreen();
+      const root = createRoot(host);
 
-        const pngBlob = await renderCapture(
-          root,
-          host,
-          variant,
-          grad.nome,
-          grad.url || null,
-          grad.transform,
-          pixelRatio,
-        );
-        zip.file(`${base}_${variant}.png`, pngBlob);
+      try {
+        for (const variant of VARIANTS) {
+          onProgress?.(done, total, `${grad.nome} · ${variant}`);
 
-        if (withPdf) {
-          const pdfBlob = await makePdf(pngBlob);
-          zip.file(`${base}_${variant}.pdf`, pdfBlob);
+          const pngBlob = await renderCapture(
+            root,
+            host,
+            variant,
+            grad.nome,
+            grad.url || null,
+            grad.transform,
+            pixelRatio,
+          );
+
+          let pdfBlob: Blob | undefined;
+          if (withPdf) {
+            pdfBlob = await makePdf(pngBlob);
+          }
+
+          blobMap.set(`${base}_${variant}`, { png: pngBlob, pdf: pdfBlob });
+          done += 1;
+          onProgress?.(done, total, `${grad.nome} · ${variant}`);
+
+          // limpa o card renderizado entre capturas (libera memoria)
+          root.render(null);
+          await nextFrame();
         }
-
-        done += 1;
-        onProgress?.(done, total, `${grad.nome} · ${variant}`);
-
-        // limpa o card renderizado entre capturas (libera memoria)
-        root.render(null);
-        await nextFrame();
+      } finally {
+        root.unmount();
+        host.remove();
       }
+    },
+    2, // concorrência: 2 grads por vez
+  );
+
+  // Agora monta o zip com todos os blobs (já completos)
+  for (const [key, { png, pdf }] of blobMap.entries()) {
+    zip.file(`${key}.png`, png);
+    if (pdf) {
+      zip.file(`${key}.pdf`, pdf);
     }
-
-    onProgress?.(done, total, 'Compactando .zip…');
-    const zipBlob = await zip.generateAsync(
-      { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } },
-      (meta) => onProgress?.(done, total, `Compactando ${Math.round(meta.percent)}%`),
-    );
-
-    const stamp = new Date().toISOString().slice(0, 10);
-    downloadBlob(zipBlob, `formatura-ti-2026_${stamp}.zip`);
-    onProgress?.(total, total, 'Concluído');
-  } finally {
-    // cleanup: desmonta a root e remove o host offscreen
-    root.unmount();
-    host.remove();
   }
+
+  onProgress?.(done, total, 'Compactando .zip…');
+  const zipBlob = await zip.generateAsync(
+    { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } },
+    (meta) => onProgress?.(done, total, `Compactando ${Math.round(meta.percent)}%`),
+  );
+
+  const stamp = new Date().toISOString().slice(0, 10);
+  downloadBlob(zipBlob, `formatura-ti-2026_${stamp}.zip`);
+  onProgress?.(total, total, 'Concluído');
 }
