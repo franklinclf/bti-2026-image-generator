@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm ci && npm run build",
+  "outputDirectory": "dist",
+  "env": {
+    "npm_config_fetch_timeout": "120000",
+    "npm_config_fetch_retry_mintimeout": "20000",
+    "npm_config_fetch_retry_maxtimeout": "120000"
+  }
+}
