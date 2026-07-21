@@ -22,10 +22,13 @@ export default function TemplateCard({
   nome,
   photoUrl,
   transform,
+  gender,
 }: TemplateCardProps) {
   const { scale, x, y } = transform;
   // ID unico do gradiente do monograma por variant (evita colisao com 2 cards na pagina).
   const hxgId = `hxg-${variant}`;
+  // Genero: F ajusta os textos PT (feminino); M mantem como esta.
+  const g = gender === 'F';
 
   return (
     <div className="card">
@@ -267,7 +270,8 @@ export default function TemplateCard({
             </div>
             <div className="code-note mono">
               <span className="kw">//</span> <span className="kw">const</span>{' '}
-              formando = <span className="kw">new</span> Graduando(
+              formando = <span className="kw">new</span>{' '}
+              {g ? 'Graduanda' : 'Graduando'}(
               <span style={{ color: '#e8cf8f' }}>"TI"</span>,{' '}
               <span style={{ color: '#e8cf8f' }}>"2026.1"</span>);
             </div>
@@ -278,15 +282,17 @@ export default function TemplateCard({
                 <span className="cursor" />
               </div>
               <div className="name-tag mono">
-                <span className="c">const</span> convidado ={' '}
+                <span className="c">const</span>{' '}
+                {g ? 'convidada' : 'convidado'} ={' '}
                 <span className="c">true</span>;
               </div>
             </div>
 
             <p className="body-copy">
-              <span className="strong">{nome}</span>, formando em Tecnologia da
-              Informação, turma 2026.1, da Universidade Federal do Rio Grande do
-              Norte, tem a honra de convidá-lo para a
+              <span className="strong">{nome}</span>,{' '}
+              {g ? 'formanda' : 'formando'} em Tecnologia da Informação, turma
+              2026.1, da Universidade Federal do Rio Grande do Norte, tem a
+              honra de {g ? 'convidá-la' : 'convidá-lo'} para a
             </p>
 
             <div className="event">
@@ -392,7 +398,7 @@ export default function TemplateCard({
                 transformar meus sonhos em realidade.{' '}
                 <span className="hl">Este momento é nosso.</span>
               </p>
-              <div className="close">Muito obrigado!</div>
+              <div className="close">{g ? 'Muito obrigada!' : 'Muito obrigado!'}</div>
               <div className="close-tag mono">
                 <span className="c">return</span> gratidão;
               </div>

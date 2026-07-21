@@ -40,6 +40,7 @@ function ScaledCard({ variant }: { variant: Variant }) {
           <TemplateCard
             variant={variant}
             nome={current.nome}
+            gender={current.gender}
             photoUrl={current.url}
             transform={current.transform}
           />

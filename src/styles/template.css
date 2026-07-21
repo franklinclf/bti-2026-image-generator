@@ -98,6 +98,7 @@
   font-size: 176px;
   line-height: 0.72;
   letter-spacing: -0.03em;
+  padding-bottom: 0.16em;
   white-space: nowrap;
   background: linear-gradient(158deg, #f6ecc9 0%, var(--gold-bright) 40%, var(--gold) 78%, #8f6f1e 100%);
   -webkit-background-clip: text; background-clip: text;
@@ -144,7 +145,7 @@
   bottom: 220px;
   z-index: 2;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.2em;
   color: var(--slate-dim);
   background: linear-gradient(180deg, rgba(8,13,28,0.9), rgba(8,13,28,0.6));
@@ -230,7 +231,7 @@
   top: 60px; right: 60px;
   z-index: 4;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(238,241,246,0.72);
@@ -249,7 +250,7 @@
 .photo-tag .lead { color: var(--gold-soft); }
 /* rede/grafo + coordenadas SOBRE a foto (nao sobre o rosto) */
 .photo-net { position:absolute; top:34px; right:34px; bottom:34px; width:640px; z-index:4; pointer-events:none; overflow:hidden; }
-.photo-coord { position:absolute; right:56px; bottom:60px; z-index:4; font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:rgba(238,241,246,0.66); text-align:right; line-height:1.7; pointer-events:none; }
+.photo-coord { position:absolute; right:56px; bottom:60px; z-index:4; font-family:var(--mono); font-size:11px; letter-spacing:.16em; color:rgba(238,241,246,0.66); text-align:right; line-height:1.7; pointer-events:none; }
 .photo-coord .g { color: var(--gold-soft); }
 
 /* ================= LAYOUT (coluna de conteúdo à esquerda) ================= */
@@ -281,7 +282,7 @@
 
 .brand-lines .prompt {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 13.5px;
   letter-spacing: 0.26em;
   color: var(--gold-champagne);
   text-transform: uppercase;
@@ -293,7 +294,7 @@
   font-family: var(--serif);
   font-optical-sizing: auto;
   font-weight: 400;
-  font-size: 27px;
+  font-size: 21px;
   line-height: 1.0;
   letter-spacing: 0.01em;
   color: var(--ink);
@@ -302,7 +303,7 @@
   margin-top: 8px;
   font-family: var(--sans);
   font-weight: 300;
-  font-size: 11.5px;
+  font-size: 13px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--slate);
@@ -315,7 +316,7 @@
 }
 .edition .mod {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11.5px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--slate-dim);
@@ -327,7 +328,7 @@
 }
 .edition .year {
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 15.5px;
   letter-spacing: 0.3em;
   color: var(--gold-champagne);
   border: 1px solid var(--gold-line-strong);
@@ -347,7 +348,7 @@
 /* rótulo de módulo mono genérico */
 .mlabel {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12.5px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--gold-soft);
@@ -359,7 +360,7 @@
 
 .code-note {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 13.5px;
   letter-spacing: 0.01em;
   color: var(--slate-dim);
   margin-bottom: 22px;
@@ -372,8 +373,9 @@
   font-family: var(--serif);
   font-weight: 400;
   font-size: 70px;
-  line-height: 0.98;
+  line-height: 1.1;
   letter-spacing: -0.018em;
+  padding-bottom: 0.16em;
   background: linear-gradient(180deg, #ffffff 0%, #e8eef8 58%, #cfd8ea 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -397,7 +399,7 @@
 .name-tag {
   margin-top: 14px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.02em;
   color: var(--slate-dim);
 }
@@ -407,7 +409,7 @@
 .body-copy {
   font-family: var(--sans);
   font-weight: 300;
-  font-size: 24px;
+  font-size: 21px;
   line-height: 1.7;
   color: var(--ink-dim);
   margin-bottom: 28px;
@@ -429,9 +431,10 @@
   font-family: var(--serif);
   font-weight: 400;
   font-size: 64px;
-  line-height: 0.98;
+  line-height: 1.1;
   letter-spacing: -0.015em;
   display: inline-block;
+  padding-bottom: 0.16em;
   background: linear-gradient(96deg, #f2e2b4 0%, var(--gold-bright) 46%, var(--gold) 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -465,7 +468,7 @@
 }
 .mod-card .dk {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11.5px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--gold-soft);
@@ -482,7 +485,7 @@
 .mod-card .dv {
   font-family: var(--sans);
   font-weight: 500;
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.38;
   color: var(--ink);
 }
@@ -490,12 +493,12 @@
   display: block;
   margin-top: 6px;
   font-weight: 300;
-  font-size: 14px;
+  font-size: 15.5px;
   color: var(--slate);
 }
 .mod-card.time .dv {
   font-family: var(--mono);
-  font-size: 16.5px;
+  font-size: 18.5px;
   letter-spacing: 0.01em;
   color: var(--gold-champagne);
   font-weight: 500;
@@ -508,15 +511,16 @@
   font-style: italic;
   font-weight: 300;
   font-size: 37px;
-  line-height: 1.0;
+  line-height: 1.1;
   color: var(--gold-champagne);
   margin-bottom: 24px;
   letter-spacing: 0.005em;
+  padding-bottom: 0.16em;
 }
 .dedic .prose {
   font-family: var(--sans);
   font-weight: 300;
-  font-size: 24px;
+  font-size: 21px;
   line-height: 1.66;
   color: var(--ink-dim);
   margin-bottom: 26px;
@@ -529,6 +533,7 @@
   line-height: 1.2;
   letter-spacing: -0.01em;
   display: inline-block;
+  padding-bottom: 0.16em;
   background: linear-gradient(96deg, #f2e2b4 0%, var(--gold-bright) 50%, var(--gold) 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -557,7 +562,7 @@
 }
 .footer .fmeta {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   color: var(--slate-dim);
   line-height: 1.8;
@@ -571,7 +576,7 @@
 .sp img { display: block; }
 .sp .lead {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10.5px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--slate-dim);

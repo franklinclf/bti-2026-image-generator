@@ -18,6 +18,7 @@ export interface Grad {
   url: string;
   transform: PhotoTransform;
   selected: boolean;
+  gender: 'M' | 'F';
 }
 
 // Props do card parametrizado (convite ou display).
@@ -26,4 +27,5 @@ export interface TemplateCardProps {
   nome: string;
   photoUrl: string | null;
   transform: PhotoTransform;
+  gender: 'M' | 'F';
 }

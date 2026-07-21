@@ -21,6 +21,7 @@ type Action =
   | { type: 'REMOVE'; id: string }
   | { type: 'NOME'; id: string; nome: string }
   | { type: 'TRANSFORM'; id: string; transform: PhotoTransform }
+  | { type: 'GENDER'; id: string; gender: 'M' | 'F' }
   | { type: 'TOGGLE'; id: string }
   | { type: 'SELECT_ALL'; value: boolean }
   | { type: 'CURRENT'; id: string | null };
@@ -58,6 +59,13 @@ function reducer(state: State, action: Action): State {
           g.id === action.id ? { ...g, transform: action.transform } : g,
         ),
       };
+    case 'GENDER':
+      return {
+        ...state,
+        grads: state.grads.map((g) =>
+          g.id === action.id ? { ...g, gender: action.gender } : g,
+        ),
+      };
     case 'TOGGLE':
       return {
         ...state,
@@ -86,6 +94,7 @@ interface AppApi {
   removeGrad(id: string): void;
   updateNome(id: string, nome: string): void;
   updateTransform(id: string, t: PhotoTransform): void;
+  updateGender(id: string, gender: 'M' | 'F'): void;
   toggleSelect(id: string): void;
   setSelectAll(v: boolean): void;
   setCurrent(id: string | null): void;
@@ -113,6 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           url: URL.createObjectURL(file),
           transform: { ...DEFAULT_TRANSFORM },
           selected: true,
+          gender: 'M',
         }));
         if (novos.length) dispatch({ type: 'ADD', grads: novos });
       },
@@ -124,6 +134,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       },
       updateTransform(id, t) {
         dispatch({ type: 'TRANSFORM', id, transform: t });
+      },
+      updateGender(id, gender) {
+        dispatch({ type: 'GENDER', id, gender });
       },
       toggleSelect(id) {
         dispatch({ type: 'TOGGLE', id });

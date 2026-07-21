@@ -459,3 +459,69 @@ select {
 .adjust__arrow--center { grid-area: 2 / 2; color: var(--gold-champagne); }
 .adjust__arrow--right { grid-area: 2 / 3; }
 .adjust__arrow--down { grid-area: 3 / 2; }
+
+/* ============================================================
+   GRADLIST ROW — controles por formando (genero + download)
+   ============================================================ */
+.row__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-left: 50px; /* alinha sob o nome (checkbox + thumb + gap) */
+}
+
+/* Toggle segmentado M/F (formando/formanda). */
+.gender {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--navy-850);
+  flex: 0 0 auto;
+}
+
+.gender__opt {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--slate);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.gender__opt + .gender__opt {
+  border-left: 1px solid var(--line);
+}
+
+.gender__opt:hover {
+  color: var(--ink);
+}
+
+.gender__opt.is-active {
+  background: linear-gradient(180deg, var(--gold-bright), #b8973a);
+  color: var(--navy-950);
+  font-weight: 600;
+}
+
+/* Botoes de download individual por linha. */
+.row__dl {
+  display: inline-flex;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.row__dl-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+

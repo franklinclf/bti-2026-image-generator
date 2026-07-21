@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useApp } from '../state';
 import Dropzone from './Dropzone';
 import { exportGrads } from '../lib/exporter';
-import type { Grad } from '../types';
+import type { Grad, Variant } from '../types';
 
 // Estado do progresso da exportacao em andamento.
 interface Progress {
@@ -14,10 +14,21 @@ interface Progress {
   label: string;
 }
 
+// Peca do lote: ambos os cards, so o convite ou so o display.
+type Piece = 'ambos' | 'convite' | 'display';
+
+// Traduz a peca escolhida na lista de variants passada ao exporter.
+function piecesToVariants(piece: Piece): Variant[] {
+  if (piece === 'convite') return ['convite'];
+  if (piece === 'display') return ['display'];
+  return ['convite', 'display'];
+}
+
 export default function Toolbar() {
   const { grads } = useApp();
   const [pdf, setPdf] = useState(true);
   const [scale, setScale] = useState(3); // 2x/3x/4x — 3x ~ 300 DPI no card
+  const [piece, setPiece] = useState<Piece>('ambos'); // peca do lote (default Ambos)
   const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,13 +36,14 @@ export default function Toolbar() {
   const selectedCount = grads.filter((g) => g.selected).length;
   const hasGrads = grads.length > 0;
 
-  // Dispara a exportacao de um subconjunto de grads.
+  // Dispara a exportacao de um subconjunto de grads (com a peca escolhida).
   async function run(subset: Grad[]) {
     if (!subset.length || exporting) return;
+    const variants = piecesToVariants(piece);
     setError(null);
-    setProgress({ done: 0, total: subset.length * 2, label: 'preparando…' });
+    setProgress({ done: 0, total: subset.length * variants.length, label: 'preparando…' });
     try {
-      await exportGrads(subset, { scale, pdf }, (done, total, label) => {
+      await exportGrads(subset, { scale, pdf, variants }, (done, total, label) => {
         setProgress({ done, total, label });
       });
     } catch (err) {
@@ -81,6 +93,18 @@ export default function Toolbar() {
             />
             PDF
           </label>
+
+          <select
+            className="select"
+            value={piece}
+            onChange={(e) => setPiece(e.target.value as Piece)}
+            title="Peça a exportar no lote"
+            aria-label="Peça a exportar"
+          >
+            <option value="ambos">Ambos</option>
+            <option value="convite">Convite</option>
+            <option value="display">Display</option>
+          </select>
 
           <select
             className="select"
