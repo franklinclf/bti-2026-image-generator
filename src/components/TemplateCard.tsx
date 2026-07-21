@@ -3,6 +3,7 @@
 // O chrome (fundo, grafo, foto, costura, moldura, header, rodape) e comum
 // aos dois variants; so o miolo (.main), o selo de edicao e o code-note mudam.
 import type { TemplateCardProps } from '../types';
+import { resolveSlot } from '../lib/typeSlots';
 import '../styles/template.css';
 
 // Placeholder cinza (data-URI) quando nao ha foto.
@@ -23,12 +24,23 @@ export default function TemplateCard({
   photoUrl,
   transform,
   gender,
+  typeStyles,
 }: TemplateCardProps) {
   const { scale, x, y } = transform;
   // ID unico do gradiente do monograma por variant (evita colisao com 2 cards na pagina).
   const hxgId = `hxg-${variant}`;
   // Genero: F ajusta os textos PT (feminino); M mantem como esta.
   const g = gender === 'F';
+
+  // Resolves de tipografia (default do template + override do formando).
+  // 'nome' e comum aos dois variants; os demais slots so existem na variant atual.
+  const sNome = resolveSlot('nome', typeStyles);
+  const sCorpo = resolveSlot('corpo', typeStyles);
+  const sEvento = resolveSlot('evento', typeStyles);
+  const sModulos = resolveSlot('modulos', typeStyles);
+  const sSaudacao = resolveSlot('saudacao', typeStyles);
+  const sDedicatoria = resolveSlot('dedicatoria', typeStyles);
+  const sFecho = resolveSlot('fecho', typeStyles);
 
   return (
     <div className="card">
@@ -277,7 +289,13 @@ export default function TemplateCard({
             </div>
 
             <div className="namewrap">
-              <div className="name">
+              <div
+                className="name"
+                style={{
+                  fontSize: sNome.fontSize + 'px',
+                  lineHeight: sNome.lineHeight,
+                }}
+              >
                 {nome}
                 <span className="cursor" />
               </div>
@@ -288,18 +306,31 @@ export default function TemplateCard({
               </div>
             </div>
 
-            <p className="body-copy">
+            <p
+              className="body-copy"
+              style={{
+                fontSize: sCorpo.fontSize + 'px',
+                lineHeight: sCorpo.lineHeight,
+              }}
+            >
               <span className="strong">{nome}</span>,{' '}
               {g ? 'formanda' : 'formando'} em Tecnologia da Informação, turma
               2026.1, da Universidade Federal do Rio Grande do Norte, tem a
-              honra de {g ? 'convidá-la' : 'convidá-lo'} para a
+              honra de convidá-lo(a) para a
             </p>
 
             <div className="event">
               <div className="kicker">
                 <span className="run">return</span> &mdash; cerimônia de
               </div>
-              <h2>Colação de Grau</h2>
+              <h2
+                style={{
+                  fontSize: sEvento.fontSize + 'px',
+                  lineHeight: sEvento.lineHeight,
+                }}
+              >
+                Colação de Grau
+              </h2>
             </div>
 
             <div className="modules">
@@ -322,7 +353,7 @@ export default function TemplateCard({
                   <span className="dot" /> Local{' '}
                   <span className="idx">[ 03 ]</span>
                 </div>
-                <div className="dv">
+                <div className="dv" style={{ fontSize: sModulos.fontSize + 'px' }}>
                   Ginásio Poliesportivo 1 &mdash; UFRN
                   <span className="sub">
                     Rua da Saúde, Lagoa Nova &mdash; Natal/RN
@@ -348,7 +379,7 @@ export default function TemplateCard({
                   <span className="dot" /> Data{' '}
                   <span className="idx">[ 04 ]</span>
                 </div>
-                <div className="dv">
+                <div className="dv" style={{ fontSize: sModulos.fontSize + 'px' }}>
                   28.07.2026 &middot; 19h
                   <span
                     className="sub"
@@ -377,7 +408,13 @@ export default function TemplateCard({
             </div>
 
             <div className="namewrap">
-              <div className="name">
+              <div
+                className="name"
+                style={{
+                  fontSize: sNome.fontSize + 'px',
+                  lineHeight: sNome.lineHeight,
+                }}
+              >
                 {nome}
                 <span className="cursor" />
               </div>
@@ -388,8 +425,22 @@ export default function TemplateCard({
             </div>
 
             <div className="dedic">
-              <div className="overline">Aos que amo,</div>
-              <p className="prose">
+              <div
+                className="overline"
+                style={{
+                  fontSize: sSaudacao.fontSize + 'px',
+                  lineHeight: sSaudacao.lineHeight,
+                }}
+              >
+                Aos que amo,
+              </div>
+              <p
+                className="prose"
+                style={{
+                  fontSize: sDedicatoria.fontSize + 'px',
+                  lineHeight: sDedicatoria.lineHeight,
+                }}
+              >
                 A vocês, que acreditaram em mim e me impulsionaram a seguir em
                 frente, <span className="hl">dedico esta conquista</span>. Foi
                 ao lado de pessoas tão especiais como vocês que encontrei a força
@@ -398,7 +449,15 @@ export default function TemplateCard({
                 transformar meus sonhos em realidade.{' '}
                 <span className="hl">Este momento é nosso.</span>
               </p>
-              <div className="close">{g ? 'Muito obrigada!' : 'Muito obrigado!'}</div>
+              <div
+                className="close"
+                style={{
+                  fontSize: sFecho.fontSize + 'px',
+                  lineHeight: sFecho.lineHeight,
+                }}
+              >
+                {g ? 'Muito obrigada!' : 'Muito obrigado!'}
+              </div>
               <div className="close-tag mono">
                 <span className="c">return</span> gratidão;
               </div>

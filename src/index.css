@@ -461,6 +461,141 @@ select {
 .adjust__arrow--down { grid-area: 3 / 2; }
 
 /* ============================================================
+   PREVIEW CONTROLS — coluna com enquadramento + tipografia
+   ============================================================ */
+.preview__controls {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Os paineis internos ocupam a largura da coluna. */
+.preview__controls .adjust,
+.preview__controls .type {
+  max-width: none;
+}
+
+/* ============================================================
+   TYPOGRAPHY CONTROLS — tamanho + entrelinha por slot
+   ============================================================ */
+.type {
+  width: 100%;
+  max-width: 720px;
+  background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.type__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.type__title {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.type__kw {
+  color: var(--gold-champagne);
+}
+
+.type__actions {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.type__btn {
+  padding: 5px 12px;
+  font-size: 12px;
+}
+
+.type__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.type__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.type__group-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--slate);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.type__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.type__label {
+  font-size: 12px;
+  color: var(--ink-dim);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.type__fields {
+  display: inline-flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.type__field {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.type__field-tag {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--slate);
+  text-transform: uppercase;
+}
+
+.type__field--empty {
+  /* Reserva o espaco de um campo (tag + input) para alinhar as linhas sem lh. */
+  width: 84px;
+}
+
+.type__num {
+  width: 62px;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-family: var(--mono);
+  text-align: right;
+}
+
+/* Mostra sempre os spinners do number no tema escuro. */
+.type__num::-webkit-outer-spin-button,
+.type__num::-webkit-inner-spin-button {
+  opacity: 1;
+}
+
+
+/* ============================================================
    GRADLIST ROW — controles por formando (genero + download)
    ============================================================ */
 .row__controls {

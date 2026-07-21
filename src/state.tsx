@@ -5,7 +5,12 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { Grad, PhotoTransform } from './types';
+import type {
+  Grad,
+  PhotoTransform,
+  SlotKey,
+  SlotOverride,
+} from './types';
 import { parseNameFromFile } from './lib/parseName';
 
 // Transform inicial neutro (foto centralizada, sem zoom extra).
@@ -22,6 +27,9 @@ type Action =
   | { type: 'NOME'; id: string; nome: string }
   | { type: 'TRANSFORM'; id: string; transform: PhotoTransform }
   | { type: 'GENDER'; id: string; gender: 'M' | 'F' }
+  | { type: 'TYPESTYLE'; id: string; slot: SlotKey; patch: SlotOverride }
+  | { type: 'TYPERESET'; id: string }
+  | { type: 'TYPEALL'; id: string }
   | { type: 'TOGGLE'; id: string }
   | { type: 'SELECT_ALL'; value: boolean }
   | { type: 'CURRENT'; id: string | null };
@@ -66,6 +74,44 @@ function reducer(state: State, action: Action): State {
           g.id === action.id ? { ...g, gender: action.gender } : g,
         ),
       };
+    case 'TYPESTYLE':
+      // Mescla (por formando) o override de um slot.
+      return {
+        ...state,
+        grads: state.grads.map((g) =>
+          g.id === action.id
+            ? {
+                ...g,
+                typeStyles: {
+                  ...g.typeStyles,
+                  [action.slot]: {
+                    ...g.typeStyles[action.slot],
+                    ...action.patch,
+                  },
+                },
+              }
+            : g,
+        ),
+      };
+    case 'TYPERESET':
+      return {
+        ...state,
+        grads: state.grads.map((g) =>
+          g.id === action.id ? { ...g, typeStyles: {} } : g,
+        ),
+      };
+    case 'TYPEALL': {
+      // Aplica a tipografia do formando `id` a TODOS os formandos.
+      const src = state.grads.find((g) => g.id === action.id);
+      if (!src) return state;
+      return {
+        ...state,
+        grads: state.grads.map((g) => ({
+          ...g,
+          typeStyles: { ...src.typeStyles },
+        })),
+      };
+    }
     case 'TOGGLE':
       return {
         ...state,
@@ -95,6 +141,9 @@ interface AppApi {
   updateNome(id: string, nome: string): void;
   updateTransform(id: string, t: PhotoTransform): void;
   updateGender(id: string, gender: 'M' | 'F'): void;
+  updateTypeStyle(id: string, slot: SlotKey, patch: SlotOverride): void;
+  resetTypeStyles(id: string): void;
+  applyTypeStylesToAll(id: string): void;
   toggleSelect(id: string): void;
   setSelectAll(v: boolean): void;
   setCurrent(id: string | null): void;
@@ -123,6 +172,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           transform: { ...DEFAULT_TRANSFORM },
           selected: true,
           gender: 'M',
+          typeStyles: {},
         }));
         if (novos.length) dispatch({ type: 'ADD', grads: novos });
       },
@@ -137,6 +187,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       },
       updateGender(id, gender) {
         dispatch({ type: 'GENDER', id, gender });
+      },
+      updateTypeStyle(id, slot, patch) {
+        dispatch({ type: 'TYPESTYLE', id, slot, patch });
+      },
+      resetTypeStyles(id) {
+        dispatch({ type: 'TYPERESET', id });
+      },
+      applyTypeStylesToAll(id) {
+        dispatch({ type: 'TYPEALL', id });
       },
       toggleSelect(id) {
         dispatch({ type: 'TOGGLE', id });

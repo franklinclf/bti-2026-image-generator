@@ -4,6 +4,7 @@
 import { useApp } from '../state';
 import TemplateCard from './TemplateCard';
 import PhotoAdjust from './PhotoAdjust';
+import TypographyControls from './TypographyControls';
 import Dropzone from './Dropzone';
 import type { Variant } from '../types';
 
@@ -43,6 +44,7 @@ function ScaledCard({ variant }: { variant: Variant }) {
             gender={current.gender}
             photoUrl={current.url}
             transform={current.transform}
+            typeStyles={current.typeStyles}
           />
         </div>
       </div>
@@ -77,7 +79,10 @@ export default function Preview() {
 
   return (
     <section className="preview">
-      <PhotoAdjust />
+      <div className="preview__controls">
+        <PhotoAdjust />
+        <TypographyControls />
+      </div>
       <div className="preview__cards">
         <ScaledCard variant="convite" />
         <ScaledCard variant="display" />

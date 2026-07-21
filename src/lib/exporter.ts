@@ -91,9 +91,17 @@ async function renderCapture(
   transform: Grad['transform'],
   pixelRatio: number,
   fontEmbedCSS: string,
+  typeStyles: Grad['typeStyles'],
 ): Promise<Blob> {
   root.render(
-    createElement(TemplateCard, { variant, nome, gender, photoUrl, transform }),
+    createElement(TemplateCard, {
+      variant,
+      nome,
+      gender,
+      photoUrl,
+      transform,
+      typeStyles,
+    }),
   );
   // aguarda pintura + fontes + imagem
   await nextFrame();
@@ -253,6 +261,7 @@ export async function exportGrads(
         gender: sampleGrad.gender,
         photoUrl: sampleGrad.url || null,
         transform: sampleGrad.transform,
+        typeStyles: sampleGrad.typeStyles,
       }),
     );
     await nextFrame();
@@ -295,6 +304,7 @@ export async function exportGrads(
             grad.transform,
             pixelRatio,
             fontEmbedCSS,
+            grad.typeStyles,
           );
 
           let pdfBlob: Blob | undefined;

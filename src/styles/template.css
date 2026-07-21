@@ -282,7 +282,7 @@
 
 .brand-lines .prompt {
   font-family: var(--mono);
-  font-size: 13.5px;
+  font-size: 19px;
   letter-spacing: 0.26em;
   color: var(--gold-champagne);
   text-transform: uppercase;
@@ -294,7 +294,7 @@
   font-family: var(--serif);
   font-optical-sizing: auto;
   font-weight: 400;
-  font-size: 21px;
+  font-size: 26px;
   line-height: 1.0;
   letter-spacing: 0.01em;
   color: var(--ink);
@@ -303,7 +303,7 @@
   margin-top: 8px;
   font-family: var(--sans);
   font-weight: 300;
-  font-size: 13px;
+  font-size: 16px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--slate);
@@ -360,7 +360,7 @@
 
 .code-note {
   font-family: var(--mono);
-  font-size: 13.5px;
+  font-size: 15px;
   letter-spacing: 0.01em;
   color: var(--slate-dim);
   margin-bottom: 22px;
@@ -409,7 +409,7 @@
 .body-copy {
   font-family: var(--sans);
   font-weight: 300;
-  font-size: 21px;
+  font-size: 25px;
   line-height: 1.7;
   color: var(--ink-dim);
   margin-bottom: 28px;
@@ -520,7 +520,7 @@
 .dedic .prose {
   font-family: var(--sans);
   font-weight: 300;
-  font-size: 21px;
+  font-size: 25px;
   line-height: 1.66;
   color: var(--ink-dim);
   margin-bottom: 26px;
