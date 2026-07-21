@@ -1,22 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+// base: './' garante assets relativos no deploy estatico (Vercel)
 export default defineConfig({
   plugins: [react()],
-  build: {
-    // Use default esbuild minifier instead of experimental oxc
-    minify: 'esbuild',
-    // Ensure compatibility with Vercel
-    target: 'es2015',
-    rollupOptions: {
-      output: {
-        manualChunks: undefined
-      }
-    }
-  },
-  // Optimize dependencies for better build performance
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'html2canvas', 'jspdf']
-  }
-})
+  base: './',
+});
