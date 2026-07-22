@@ -490,10 +490,6 @@ export default function TemplateCard({
               <span className="lead">Curso</span>
             </div>
             <span className="sp-div" />
-            <div className="sp">
-              <img className="logo-pix" src="/brand/pix.png" alt="PIX Formaturas" />
-              <span className="lead">Realização</span>
-            </div>
           </div>
         </footer>
       </div>
