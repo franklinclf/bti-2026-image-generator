@@ -2,8 +2,8 @@
 import JSZip from 'jszip';
 import type { MuralDoc, ExportOptions } from '../types';
 import type { MuralModel } from '../compose';
-import { buildCutSvg, buildMontagem, fileViewBox, planFiles, type PlannedFile } from './plan';
-import { SAFARI_MAX_PX, inlineImages, isSafari, parseSvg, renderSvgString, svgToPdf, svgToPng } from './render';
+import { CANVAS_LIMITS, buildCutSvg, buildMontagem, fileViewBox, maxDpiFor, planFiles, type PlannedFile } from './plan';
+import { inlineImages, isSafari, parseSvg, renderSvgString, svgToPdf, svgToPng } from './render';
 
 export interface Progress { done: number; total: number; current: string }
 
@@ -15,15 +15,11 @@ async function renderFile(
   const svgText = isCut ? buildCutSvg(o.holeMm, holes) : renderSvgString(model, pf.file, o.bleedMm);
   if (isCut && pf.format === 'svg') return svgText;
   const el = parseSvg(svgText);
-  if (!isCut) await inlineImages(el, o.dpi, cache);
+  if (!isCut) await inlineImages(el, o.dpi, cache, pf.format === 'png' ? 'raster' : 'vector');
   if (pf.format === 'svg') return new XMLSerializer().serializeToString(el);
   if (pf.format === 'pdf') return svgToPdf(el, vb.w, vb.h);
-  let dpi: number = o.dpi;
-  const px = ((vb.w / 25.4) * dpi) * ((vb.h / 25.4) * dpi);
-  if (isSafari() && px > SAFARI_MAX_PX) {
-    dpi = 150;
-    warnings.push(`${pf.path}: o Safari limita o tamanho da imagem; exportado em 150 DPI (use o Chrome para 300 DPI)`);
-  }
+  const dpi = maxDpiFor(vb.w, vb.h, o.dpi, isSafari() ? CANVAS_LIMITS.safari : CANVAS_LIMITS.default);
+  if (dpi < o.dpi) warnings.push(`${pf.path}: exportado em ${dpi} DPI (limite do navegador)`);
   return svgToPng(new XMLSerializer().serializeToString(el), vb.w, vb.h, dpi);
 }
 

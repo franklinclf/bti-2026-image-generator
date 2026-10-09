@@ -168,7 +168,7 @@ function cleanExport(raw: unknown, fallback: ExportOptions): ExportOptions {
   return {
     files: cleanFlags(e.files, fallback.files),
     formats: cleanFlags(e.formats, fallback.formats),
-    dpi: e.dpi === 150 || e.dpi === 300 ? e.dpi : fallback.dpi,
+    dpi: e.dpi === 150 || e.dpi === 300 || e.dpi === 600 ? e.dpi : fallback.dpi,
     bleedMm: inRange(e.bleedMm, 0, 5, fallback.bleedMm),
     holeMm: inRange(e.holeMm, 2, 20, fallback.holeMm),
   };

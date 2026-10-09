@@ -8,8 +8,6 @@ import type { MuralModel } from '../compose';
 import type { ExportFileId } from '../types';
 import { fileLayers, fileViewBox } from './plan';
 
-export const SAFARI_MAX_PX = 16_777_216;
-
 export function isSafari(ua: string = navigator.userAgent): boolean {
   return /^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
 }
@@ -50,7 +48,11 @@ async function toDataUrl(href: string, targetPx: number): Promise<string> {
 }
 
 // Troca blob:/caminhos por data URLs (necessario para PNG via canvas e para o PDF).
-export async function inlineImages(svg: SVGSVGElement, dpi: number, cache: Map<string, string>): Promise<void> {
+// raster: reamostra para o dpi do PNG. vector (svg/pdf): resolucao original, limitada a 1200 DPI.
+export type ImageMode = 'raster' | 'vector';
+const VECTOR_MAX_DPI = 1200;
+
+export async function inlineImages(svg: SVGSVGElement, dpi: number, cache: Map<string, string>, mode: ImageMode): Promise<void> {
   const imgs = Array.from(svg.querySelectorAll('image'));
   await Promise.all(
     imgs.map(async (img) => {
@@ -58,8 +60,8 @@ export async function inlineImages(svg: SVGSVGElement, dpi: number, cache: Map<s
       if (!href || href.startsWith('data:')) return;
       const wMm = Number(img.getAttribute('width'));
       const hMm = Number(img.getAttribute('height'));
-      const target = Math.ceil((Math.max(wMm, hMm) / 25.4) * dpi);
-      const key = `${href}@${target}`;
+      const target = Math.ceil((Math.max(wMm, hMm) / 25.4) * (mode === 'vector' ? VECTOR_MAX_DPI : dpi));
+      const key = `${href}@${mode}@${target}`;
       let data = cache.get(key);
       if (!data) {
         data = await toDataUrl(href, target);

@@ -206,6 +206,7 @@ describe('loadDoc com projeto malformado', () => {
     expect(d.export).toEqual(def);
     const ok = { files: { ...def.files, corte: false }, formats: { pdf: false, svg: true, png: true }, dpi: 150 as const, bleedMm: 2.5, holeMm: 12 };
     expect(load({ export: ok }).export).toEqual(ok);
+    expect(load({ export: { ...ok, dpi: 600 } }).export.dpi).toBe(600);
     expect(load({ export: { bleedMm: 9, holeMm: 1 } }).export).toEqual(def);
   });
 });

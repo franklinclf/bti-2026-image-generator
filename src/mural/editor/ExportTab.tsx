@@ -62,12 +62,14 @@ export default function ExportTab() {
         ))}
         <label className="mural-check">
           PNG
-          <select value={o.dpi} onChange={(e) => set({ dpi: Number(e.target.value) as 150 | 300 })}>
+          <select value={o.dpi} onChange={(e) => set({ dpi: Number(e.target.value) as 150 | 300 | 600 })}>
+            <option value={600}>600 DPI</option>
             <option value={300}>300 DPI</option>
             <option value={150}>150 DPI</option>
           </select>
         </label>
       </div>
+      <p className="mural-hint">PDF e SVG são vetoriais; as fotos vão na resolução original (até 1200 DPI).</p>
 
       <h3 className="mural-h">// produção</h3>
       <label className="mural-field">

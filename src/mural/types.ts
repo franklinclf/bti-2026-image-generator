@@ -32,7 +32,7 @@ export type ExportFileId = 'composicao' | LayerId | 'corte';
 export interface ExportOptions {
   files: Record<ExportFileId, boolean>;
   formats: { pdf: boolean; svg: boolean; png: boolean };
-  dpi: 150 | 300;
+  dpi: 150 | 300 | 600;
   bleedMm: number;
   holeMm: number;
 }
