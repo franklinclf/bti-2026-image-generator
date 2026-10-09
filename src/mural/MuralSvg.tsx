@@ -1,4 +1,5 @@
-import { LAYER_IDS, MURAL_H, MURAL_W, PIECES, type LayerId, type Pt, type Rect } from './geometry';
+import { LAYER_IDS, MURAL_H, MURAL_W, type LayerId, type Pt, type Rect } from './geometry';
+import { createDefaultHoles } from './defaults';
 import { COLORS, type MuralModel } from './compose';
 import { MuralDefs } from './layers/common';
 import FundoLayer from './layers/FundoLayer';
@@ -20,7 +21,7 @@ export interface MuralSvgProps {
   highlightOverflow?: boolean;
 }
 
-const DEFAULT_HOLES = Object.fromEntries(LAYER_IDS.map((id) => [id, PIECES[id].holes])) as Record<LayerId, Pt[]>;
+const DEFAULT_HOLES = createDefaultHoles();
 
 export default function MuralSvg({
   model, layers = LAYER_IDS, bleed = 0, viewBox, sizing = 'fluid', guides, holes = DEFAULT_HOLES, badHoles, onHoleDrag, holeMm = 8,

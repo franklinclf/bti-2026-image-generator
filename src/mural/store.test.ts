@@ -229,13 +229,14 @@ describe('furos', () => {
   it('valida: descarta entradas invalidas e fora da area', () => {
     const base = JSON.parse(serializeDoc(createDefaultDoc()));
     base.holes = {
-      fundo: [{ x: 10, y: 10 }, { x: 'a', y: 1 }, { x: 900, y: 5 }, { x: 5, y: -1 }, null, { x: NaN, y: 2 }],
-      turma: 'x',
+      turma: [{ x: 10, y: 10 }, { x: 'a', y: 1 }, { x: 900, y: 5 }, { x: 5, y: -1 }, null, { x: NaN, y: 2 }],
+      fundo: 'x',
       hexagono: [],
     };
     const h = loadDoc(JSON.stringify(base)).holes;
-    expect(h.fundo).toEqual([{ x: 10, y: 10 }]);
-    expect(h.turma).toEqual([]);
+    expect(h.turma).toEqual([{ x: 10, y: 10 }]);
+    expect(h.fundo).toEqual(createDefaultDoc().holes.fundo);
+    expect(h.fundo).toHaveLength(4);
     expect(h.hexagono).toEqual([]);
     expect(h.homenagens).toEqual([]);
   });

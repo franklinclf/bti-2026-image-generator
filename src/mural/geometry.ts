@@ -133,19 +133,35 @@ export function pointInShape(s: Shape, p: Pt): boolean {
 
 const HOLE_EDGE_MIN = 3;
 
+function distToSegment(p: Pt, a: Pt, b: Pt): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len2 = dx * dx + dy * dy;
+  const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+
+// Distancia do ponto (dentro da peca) a borda mais proxima.
+function distToEdge(s: Shape, p: Pt): number {
+  if (s.kind === 'rrect') {
+    const { x, y, w, h } = s.rect;
+    return Math.min(p.x - x, x + w - p.x, p.y - y, y + h - p.y);
+  }
+  return Math.min(...s.pts.map((a, i) => distToSegment(p, a, s.pts[(i + 1) % s.pts.length])));
+}
+
 export interface HoleIssue { piece: LayerId; index: number; message: string }
 
 export function holeIssues(holes: Record<LayerId, Pt[]>, holeMm: number): HoleIssue[] {
   const out: HoleIssue[] = [];
   for (const id of LAYER_IDS) {
     const piece = PIECES[id];
-    const b = shapeBBox(piece.shape);
     (holes[id] ?? []).forEach((h, index) => {
       if (!pointInShape(piece.shape, h)) {
         out.push({ piece: id, index, message: `${piece.label}: furo ${index + 1} fora da peça` });
         return;
       }
-      const edge = Math.min(h.x - b.x, b.x + b.w - h.x, h.y - b.y, b.y + b.h - h.y);
+      const edge = distToEdge(piece.shape, h);
       if (edge - holeMm / 2 < HOLE_EDGE_MIN) {
         out.push({ piece: id, index, message: `${piece.label}: furo ${index + 1} a menos de ${HOLE_EDGE_MIN} mm da borda` });
       }

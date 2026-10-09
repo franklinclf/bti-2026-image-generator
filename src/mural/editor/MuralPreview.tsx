@@ -51,8 +51,11 @@ export default function MuralPreview({ model }: { model: MuralModel }) {
             holes={doc.holes}
             holeMm={doc.export.holeMm}
             badHoles={badHoles}
-            onHoleDrag={(piece, index, p) =>
-              dispatch({ type: 'SET_HOLES', piece, value: doc.holes[piece].map((h, i) => (i === index ? p : h)) })}
+            onHoleDrag={(piece, index, p) => {
+              const cur = doc.holes[piece][index];
+              if (cur && cur.x === p.x && cur.y === p.y) return;
+              dispatch({ type: 'SET_HOLES', piece, value: doc.holes[piece].map((h, i) => (i === index ? p : h)) });
+            }}
             highlightOverflow
           />
         </div>

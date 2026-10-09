@@ -117,4 +117,15 @@ describe('holeWarnings', () => {
     h.turma = [{ x: 27, y: 150 }];
     expect(holeWarnings(h, 8)).toEqual(['Turma: furo 1 a menos de 3 mm da borda']);
   });
+  it('furo perto de lado inclinado do hexagono', () => {
+    const [a, b] = HEX_PTS;
+    const c = HEX_PTS.reduce((m, p) => ({ x: m.x + p.x / HEX_PTS.length, y: m.y + p.y / HEX_PTS.length }), { x: 0, y: 0 });
+    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    let n = { x: -(b.y - a.y) / len, y: (b.x - a.x) / len };
+    if (n.x * (c.x - mid.x) + n.y * (c.y - mid.y) < 0) n = { x: -n.x, y: -n.y };
+    const h = defaultHoles();
+    h.hexagono = [{ x: mid.x + 4 * n.x, y: mid.y + 4 * n.y }];
+    expect(holeWarnings(h, 8)).toEqual(['Hexágono: furo 1 a menos de 3 mm da borda']);
+  });
 });
