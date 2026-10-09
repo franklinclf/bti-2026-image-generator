@@ -105,10 +105,14 @@ export async function svgToPng(svgText: string, wMm: number, hMm: number, dpi: n
     c.width = w;
     c.height = h;
     const ctx = c.getContext('2d');
-    if (!ctx) throw new Error('canvas indisponível');
-    ctx.drawImage(img, 0, 0, w, h);
-    // canvas grande demais falha em silencio (transparente); toda peca tem o centro opaco
-    if (ctx.getImageData(w >> 1, h >> 1, 1, 1).data[3] === 0) throw new CanvasTooLargeError(w, h);
+    if (!ctx) throw new CanvasTooLargeError(w, h);
+    try {
+      ctx.drawImage(img, 0, 0, w, h);
+      // canvas grande demais falha em silencio (transparente); toda peca tem o centro opaco
+      if (ctx.getImageData(w >> 1, h >> 1, 1, 1).data[3] === 0) throw new CanvasTooLargeError(w, h);
+    } catch {
+      throw new CanvasTooLargeError(w, h);
+    }
     return await new Promise<Blob>((resolve, reject) =>
       c.toBlob((b) => (b ? resolve(b) : reject(new CanvasTooLargeError(w, h))), 'image/png'),
     );
