@@ -141,7 +141,7 @@ export const DEFAULT_ESTILOS: Record<SlotKey, SlotStyle> = {
   snippet: { font: 'jetbrains-mono', weight: 400, italic: false, sizeMm: 6, tracking: 0 },
   secao: { font: 'jetbrains-mono', weight: 400, italic: false, sizeMm: 5.6, tracking: 0 },
   homenagem: { font: 'sora', weight: 600, italic: false, sizeMm: 4.2, tracking: 0 },
-  legenda: { font: 'sora', weight: 600, italic: false, sizeMm: 3.3, tracking: 0 },
+  legenda: { font: 'sora', weight: 600, italic: false, sizeMm: 3.1, tracking: 0 },
   hexTI: { font: 'fraunces', weight: 600, italic: true, sizeMm: 42.5, tracking: 0 },
   hexAno: { font: 'jetbrains-mono', weight: 400, italic: false, sizeMm: 8.2, tracking: 0.13 },
 };
