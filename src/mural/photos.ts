@@ -62,7 +62,10 @@ export function readImage(file: File): Promise<Photo> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve({ url, fileName: file.name, w: img.naturalWidth, h: img.naturalHeight });
-    img.onerror = () => reject(new Error(`não foi possível ler ${file.name}`));
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error(`não foi possível ler ${file.name}`));
+    };
     img.src = url;
   });
 }

@@ -28,7 +28,7 @@ export default function MuralPreview({ model }: { model: MuralModel }) {
       </div>
       <div className="mural-preview__scroll">
         <div style={{ width: `${zoom * 100}%` }}>
-          <MuralSvg model={model} bleed={guides ? doc.export.bleedMm : 0} guides={guides} highlightOverflow />
+          <MuralSvg model={model} bleed={guides ? doc.export.bleedMm : 0} guides={guides} holeMm={doc.export.holeMm} highlightOverflow />
         </div>
       </div>
     </div>

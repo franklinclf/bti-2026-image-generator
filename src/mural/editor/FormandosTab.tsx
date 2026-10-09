@@ -8,6 +8,7 @@ import PhotoAdjustControl from '../../components/PhotoAdjustControl';
 function FotoTurma() {
   const { doc, dispatch } = useMural();
   const ft = doc.fotoTurma;
+  const [erro, setErro] = useState<string | null>(null);
   return (
     <div className="mural-stack">
       <label className="btn btn--ghost">
@@ -19,10 +20,18 @@ function FotoTurma() {
           onChange={async (e) => {
             const f = e.target.files?.[0];
             e.target.value = '';
-            if (f) dispatch({ type: 'SET_FOTO_TURMA', photo: await readImage(f), transform: { scale: 1, x: 0, y: 0 } });
+            if (!f) return;
+            try {
+              const photo = await readImage(f);
+              setErro(null);
+              dispatch({ type: 'SET_FOTO_TURMA', photo, transform: { scale: 1, x: 0, y: 0 } });
+            } catch (err) {
+              setErro(err instanceof Error ? err.message : String(err));
+            }
           }}
         />
       </label>
+      {erro && <p className="mural__error">{erro}</p>}
       {ft.photo && (
         <PhotoAdjustControl value={ft.transform} onChange={(t) => dispatch({ type: 'SET_FOTO_TURMA', transform: t })} maxOffset={100} step={2} />
       )}
@@ -35,6 +44,7 @@ export default function FormandosTab() {
   const [open, setOpen] = useState<string | null>(null);
   const [orphans, setOrphans] = useState<Photo[]>([]);
   const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string[]>([]);
 
   const overflowIds = new Set(
     (model?.overflows ?? []).filter((o) => o.key.startsWith('legenda:')).map((o) => o.key.split(':')[1]),
@@ -45,8 +55,22 @@ export default function FormandosTab() {
     if (!list.length) return;
     setBusy(true);
     try {
-      const photos = await Promise.all(list.map(readImage));
-      const { matches, unmatched } = matchPortraits(doc.formandos, list.map((f) => f.name));
+      const results = await Promise.allSettled(list.map(readImage));
+      // so os arquivos lidos entram na associacao; os indices continuam relativos a esta lista
+      const files: File[] = [];
+      const photos: Photo[] = [];
+      const errs: string[] = [];
+      results.forEach((r, i) => {
+        if (r.status === 'fulfilled') {
+          files.push(list[i]);
+          photos.push(r.value);
+        } else {
+          errs.push(`não foi possível ler ${list[i].name}`);
+        }
+      });
+      setFailed(errs);
+      if (!photos.length) return;
+      const { matches, unmatched } = matchPortraits(doc.formandos, files.map((f) => f.name));
       dispatch({ type: 'ASSIGN_PHOTOS', photos: matches.map((m) => ({ formandoId: m.formandoId, photo: photos[m.fileIndex] })) });
       setOrphans((prev) => [...prev, ...unmatched.map((i) => photos[i])]);
     } finally {
@@ -70,6 +94,13 @@ export default function FormandosTab() {
           </label>
         )}
       </div>
+
+      {failed.length > 0 && (
+        <div className="mural-overflows">
+          <button className="btn btn--ghost" onClick={() => setFailed([])}>dispensar</button>
+          <ul>{failed.map((m) => <li key={m}>{m}</li>)}</ul>
+        </div>
+      )}
 
       {orphans.length > 0 && (
         <div className="mural-stack">

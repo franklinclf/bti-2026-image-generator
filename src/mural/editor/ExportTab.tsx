@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useMural } from '../state';
 import type { ExportFileId, ExportOptions } from '../types';
 import { FILE_LABELS, FILE_ORDER, planFiles, zipName } from '../export/plan';
-import { exportMural, type Progress } from '../export/bundle';
+import type { Progress } from '../export/bundle';
+import NumberField from './NumberField';
 import { downloadBlob } from '../download';
 
 export default function ExportTab() {
@@ -19,6 +20,7 @@ export default function ExportTab() {
     setBusy(true);
     setErrors([]);
     try {
+      const { exportMural } = await import('../export/bundle');
       const res = await exportMural(doc, model, setProgress);
       setErrors(res.errors);
       downloadBlob(res.blob, zipName(new Date()));
@@ -71,9 +73,8 @@ export default function ExportTab() {
         <input type="range" min={0} max={5} step={0.5} value={o.bleedMm} onChange={(e) => set({ bleedMm: Number(e.target.value) })} />
       </label>
       <label className="mural-field">
-        <span>Diâmetro dos furos (mm)</span>
-        <input type="text" inputMode="decimal" value={o.holeMm}
-          onChange={(e) => { const v = Number(e.target.value.replace(',', '.')); if (v > 0) set({ holeMm: v }); }} />
+        <span>Diâmetro dos furos (mm, 2 a 20)</span>
+        <NumberField value={o.holeMm} min={2} max={20} onCommit={(v) => set({ holeMm: v })} />
       </label>
       <p className="mural-hint">
         PDF e SVG saem com texto em contornos. O zip traz também <code>montagem.txt</code> (posição de cada peça e dos furos).

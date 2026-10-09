@@ -38,4 +38,11 @@ describe('MuralSvg', () => {
     expect(html).toContain('id="guides"');
     expect(count(html, 'stroke-dasharray="1.5 1.5"')).toBe(5);
   });
+
+  it('os furos das guias seguem o diametro informado', () => {
+    const html = renderToStaticMarkup(<MuralSvg model={model} guides holeMm={10} />);
+    const g = html.slice(html.indexOf('id="guides"'));
+    expect(g).toContain('r="5"');
+    expect(g).not.toContain('r="4"');
+  });
 });

@@ -1,6 +1,7 @@
 import { useMural } from '../state';
 import { SLOT_LABELS, SLOT_ORDER } from '../defaults';
 import { ITALIC_FONTS } from '../text/fonts';
+import NumberField from './NumberField';
 import type { FontId, SlotStyle } from '../types';
 
 const FONTS: [FontId, string][] = [
@@ -43,13 +44,11 @@ export default function TipografiaTab() {
             </select>
             <label>
               mm
-              <input type="number" step={0.1} min={1} max={80} value={s.sizeMm}
-                onChange={(e) => set({ sizeMm: Number(e.target.value) || s.sizeMm })} />
+              <NumberField value={s.sizeMm} min={1} max={80} clamp onCommit={(v) => set({ sizeMm: v })} />
             </label>
             <label>
               tracking
-              <input type="number" step={0.01} min={-0.1} max={0.5} value={s.tracking}
-                onChange={(e) => set({ tracking: Number(e.target.value) || 0 })} />
+              <NumberField value={s.tracking} min={-0.1} max={0.5} clamp onCommit={(v) => set({ tracking: v })} />
             </label>
             <label className="mural-check">
               <input type="checkbox" checked={s.italic} disabled={!ITALIC_FONTS.includes(s.font)}
