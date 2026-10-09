@@ -38,6 +38,35 @@ describe('matchPortraits', () => {
     expect(r.matches).toEqual([{ formandoId: idOf('WISLA ALVES ARGOLO'), fileIndex: 1 }]);
     expect(r.unmatched).toEqual([0]);
   });
+  it('ignora ruido de nome de arquivo', () => {
+    const r = matchPortraits(formandos, ['IMG_2231 - Maria Paz (final).jpg']);
+    expect(r.matches).toEqual([{ formandoId: idOf('MARIA PAZ MARCATO'), fileIndex: 0 }]);
+  });
+  it('ordem das palavras nao importa', () => {
+    const r = matchPortraits(formandos, ['MARCATO, Maria Paz.png']);
+    expect(r.matches).toEqual([{ formandoId: idOf('MARIA PAZ MARCATO'), fileIndex: 0 }]);
+  });
+  it('aceita abreviacao (prefixo)', () => {
+    const r = matchPortraits(formandos, ['rodr barbalho.jpg']);
+    expect(r.matches).toEqual([{ formandoId: idOf('RODRIGO EDUARDO DANTAS BARBALHO'), fileIndex: 0 }]);
+  });
+  it('tolera um erro de digitacao', () => {
+    const r = matchPortraits(formandos, ['wislla argolo.jpg', 'joaremio.jpg']);
+    expect(r.matches).toEqual([
+      { formandoId: idOf('WISLA ALVES ARGOLO'), fileIndex: 0 },
+      { formandoId: idOf('JOAREMIO MARINHO REVOREDO NETO'), fileIndex: 1 },
+    ]);
+  });
+  it('uma palavra so casa se for unica', () => {
+    const r = matchPortraits(formandos, ['gabriel.jpg', 'lucas silva.jpg', 'pedro.jpg']);
+    expect(r.matches).toEqual([{ formandoId: idOf('LUCAS DA SILVA BARBALHO'), fileIndex: 1 }]);
+    expect(r.unmatched).toEqual([0, 2]);
+  });
+  it('palavra unica nao toma o formando de um nome mais completo', () => {
+    const r = matchPortraits(formandos, ['matheus.jpg', 'matheus dias.jpg']);
+    expect(r.matches).toEqual([{ formandoId: idOf('MATHEUS DIAS ARAUJO DE MEDEIROS'), fileIndex: 1 }]);
+    expect(r.unmatched).toEqual([0]);
+  });
   it('arquivo com nome vazio nunca casa', () => {
     const r = matchPortraits(formandos, ['.jpg']);
     expect(r.matches).toEqual([]);
