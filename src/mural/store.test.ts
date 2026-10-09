@@ -154,4 +154,12 @@ describe('loadDoc com projeto malformado', () => {
     expect(d.comissao).toEqual(def.comissao);
     composes(d);
   });
+  it('export: opcoes invalidas voltam ao padrao, validas passam', () => {
+    const def = createDefaultDoc().export;
+    const d = load({ export: { bleedMm: '3', holeMm: 'x', dpi: 72, files: { corte: 'yes', lixo: true }, formats: null, extra: 1 } });
+    expect(d.export).toEqual(def);
+    const ok = { files: { ...def.files, corte: false }, formats: { pdf: false, svg: true, png: true }, dpi: 150 as const, bleedMm: 2.5, holeMm: 12 };
+    expect(load({ export: ok }).export).toEqual(ok);
+    expect(load({ export: { bleedMm: 9, holeMm: 1 } }).export).toEqual(def);
+  });
 });

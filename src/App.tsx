@@ -3,6 +3,7 @@ import { AppProvider } from './state';
 import Toolbar from './components/Toolbar';
 import GradList from './components/GradList';
 import Preview from './components/Preview';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const MuralEditor = lazy(() => import('./mural/editor/MuralEditor'));
 
@@ -37,9 +38,17 @@ export default function App() {
         </div>
         {muralSeen && (
           <div className="app-mode" hidden={mode !== 'mural'}>
-            <Suspense fallback={<p className="mural__loading">carregando…</p>}>
-              <MuralEditor />
-            </Suspense>
+            <ErrorBoundary
+              fallback={
+                <p className="mural__loading">
+                  Não foi possível carregar o mural. <button onClick={() => window.location.reload()}>Recarregar</button>
+                </p>
+              }
+            >
+              <Suspense fallback={<p className="mural__loading">carregando…</p>}>
+                <MuralEditor />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         )}
       </div>

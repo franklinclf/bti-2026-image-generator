@@ -147,6 +147,26 @@ function cleanNames(raw: unknown, fallback: string[]): string[] {
   return Array.isArray(raw) ? raw.filter(isStr) : fallback;
 }
 
+function cleanFlags<T extends string>(raw: unknown, fallback: Record<T, boolean>): Record<T, boolean> {
+  const src = isObj(raw) ? raw : {};
+  return Object.fromEntries(
+    (Object.keys(fallback) as T[]).map((k) => [k, typeof src[k] === 'boolean' ? src[k] : fallback[k]]),
+  ) as Record<T, boolean>;
+}
+
+// Opcoes de export: so chaves conhecidas, valores dentro da faixa, senao padrao.
+function cleanExport(raw: unknown, fallback: ExportOptions): ExportOptions {
+  const e = isObj(raw) ? raw : {};
+  const inRange = (v: unknown, min: number, max: number, def: number) => (isNum(v) && v >= min && v <= max ? v : def);
+  return {
+    files: cleanFlags(e.files, fallback.files),
+    formats: cleanFlags(e.formats, fallback.formats),
+    dpi: e.dpi === 150 || e.dpi === 300 ? e.dpi : fallback.dpi,
+    bleedMm: inRange(e.bleedMm, 0, 5, fallback.bleedMm),
+    holeMm: inRange(e.holeMm, 2, 20, fallback.holeMm),
+  };
+}
+
 // Aceita projeto parcial ou malformado: o que nao for valido volta ao padrao.
 export function loadDoc(raw: string | null): MuralDoc {
   const base = createDefaultDoc();
@@ -156,7 +176,6 @@ export function loadDoc(raw: string | null): MuralDoc {
     if (!isObj(d) || d.version !== 1) return base;
     const snip: Record<string, unknown> = isObj(d.snippets) ? d.snippets : {};
     const est: Record<string, unknown> = isObj(d.estilos) ? d.estilos : {};
-    const exp: Partial<ExportOptions> = isObj(d.export) ? d.export : {};
     return {
       ...base,
       ...d,
@@ -174,12 +193,7 @@ export function loadDoc(raw: string | null): MuralDoc {
       homenageados: cleanPairs(d.homenageados, base.homenageados),
       professores: cleanNames(d.professores, base.professores),
       comissao: cleanNames(d.comissao, base.comissao),
-      export: {
-        ...base.export,
-        ...exp,
-        files: { ...base.export.files, ...(isObj(exp.files) ? exp.files : {}) },
-        formats: { ...base.export.formats, ...(isObj(exp.formats) ? exp.formats : {}) },
-      },
+      export: cleanExport(d.export, base.export),
       formandos: cleanFormandos(d.formandos, base.formandos),
       fotoTurma: { transform: isObj(d.fotoTurma) ? cleanTransform(d.fotoTurma.transform) : base.fotoTurma.transform },
     };

@@ -98,7 +98,7 @@ export default function FormandosTab() {
       {failed.length > 0 && (
         <div className="mural-overflows">
           <button className="btn btn--ghost" onClick={() => setFailed([])}>dispensar</button>
-          <ul>{failed.map((m) => <li key={m}>{m}</li>)}</ul>
+          <ul>{failed.map((m, i) => <li key={`${i}-${m}`}>{m}</li>)}</ul>
         </div>
       )}
 
