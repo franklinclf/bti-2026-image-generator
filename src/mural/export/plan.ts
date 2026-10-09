@@ -107,3 +107,10 @@ export function maxDpiFor(wMm: number, hMm: number, dpi: number, limits: CanvasL
   while (d > 1 && !fits(d)) d--;
   return Math.max(1, d);
 }
+
+// Sequencia de DPIs para tentar o PNG: cada tentativa reduz 25%, ate 150 (o pedido sempre entra).
+export function retryDpis(start: number): number[] {
+  const out = [start];
+  for (let d = Math.floor(start * 0.75); d >= 150; d = Math.floor(d * 0.75)) out.push(d);
+  return out;
+}

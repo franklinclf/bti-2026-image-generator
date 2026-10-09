@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createDefaultDoc, DEFAULT_EXPORT } from '../defaults';
-import { CANVAS_LIMITS, buildCutSvg, buildMontagem, maxDpiFor, fileLayers, fileViewBox, planFiles, zipName } from './plan';
+import { CANVAS_LIMITS, buildCutSvg, buildMontagem, maxDpiFor, retryDpis, fileLayers, fileViewBox, planFiles, zipName } from './plan';
 
 const holes = () => createDefaultDoc().holes;
 const opts = () => structuredClone(DEFAULT_EXPORT);
@@ -88,5 +88,16 @@ describe('maxDpiFor', () => {
     expect(d).toBeLessThanOrEqual(150);
     expect(d).toBeGreaterThan(100);
     expect(fits(800, 600, d, CANVAS_LIMITS.safari)).toBe(true);
+  });
+});
+
+describe('retryDpis', () => {
+  it('reduz 25% por tentativa ate 150', () => {
+    expect(retryDpis(600)).toEqual([600, 450, 337, 252, 189]);
+    expect(retryDpis(150)).toEqual([150]);
+    expect(retryDpis(300)).toEqual([300, 225, 168]);
+  });
+  it('abaixo de 150 ainda tenta o pedido uma vez', () => {
+    expect(retryDpis(100)).toEqual([100]);
   });
 });

@@ -86,6 +86,13 @@ export async function svgToPdf(svg: SVGSVGElement, wMm: number, hMm: number): Pr
   return pdf.output('blob');
 }
 
+export class CanvasTooLargeError extends Error {
+  constructor(w: number, h: number) {
+    super(`canvas ${w}×${h} grande demais`);
+    this.name = 'CanvasTooLargeError';
+  }
+}
+
 export async function svgToPng(svgText: string, wMm: number, hMm: number, dpi: number): Promise<Blob> {
   const w = Math.round((wMm / 25.4) * dpi);
   const h = Math.round((hMm / 25.4) * dpi);
@@ -100,8 +107,10 @@ export async function svgToPng(svgText: string, wMm: number, hMm: number, dpi: n
     const ctx = c.getContext('2d');
     if (!ctx) throw new Error('canvas indisponível');
     ctx.drawImage(img, 0, 0, w, h);
+    // canvas grande demais falha em silencio (transparente); toda peca tem o centro opaco
+    if (ctx.getImageData(w >> 1, h >> 1, 1, 1).data[3] === 0) throw new CanvasTooLargeError(w, h);
     return await new Promise<Blob>((resolve, reject) =>
-      c.toBlob((b) => (b ? resolve(b) : reject(new Error(`falha ao gerar PNG ${w}×${h}`))), 'image/png'),
+      c.toBlob((b) => (b ? resolve(b) : reject(new CanvasTooLargeError(w, h))), 'image/png'),
     );
   } finally {
     URL.revokeObjectURL(url);
