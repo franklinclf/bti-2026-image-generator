@@ -60,7 +60,7 @@ select {
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -660,3 +660,43 @@ select {
   line-height: 1.2;
 }
 
+
+/* ---- modos (convite/display | mural) ---- */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-modes {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--navy-950);
+  border-bottom: 1px solid var(--line);
+}
+
+.app-modes button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-dim);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.app-modes button.is-active {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: var(--navy-800);
+}
+
+.app-shell__body {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-mode { height: 100%; }
+.app-mode[hidden] { display: none; }
