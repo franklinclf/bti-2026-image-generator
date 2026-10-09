@@ -1,6 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { createDefaultDoc, DEFAULT_ESTILOS } from './defaults';
 import { loadDoc, muralReducer, serializeDoc } from './store';
+import { composeMural } from './compose';
+import type { FontSet } from './text/fonts';
+import { loadFontsNode } from './text/fonts.node';
 
 const photo = { url: 'blob:a', fileName: 'a.jpg', w: 10, h: 12 };
 
@@ -73,5 +76,82 @@ describe('persistencia', () => {
     expect(back.snippets.return).toEqual(createDefaultDoc().snippets.return);
     expect(back.formandos).toHaveLength(52);
     expect(back.export.files.corte).toBe(true);
+  });
+});
+
+describe('loadDoc com projeto malformado', () => {
+  let fonts: FontSet;
+  beforeAll(() => {
+    fonts = loadFontsNode();
+  });
+  const load = (patch: object) => loadDoc(JSON.stringify({ version: 1, ...patch }));
+  const composes = (d: ReturnType<typeof loadDoc>) => expect(() => composeMural(d, fonts)).not.toThrow();
+
+  it('formando sem linhas ganha linhas do nome', () => {
+    const d = load({ formandos: [{ id: 'a', nome: 'ANA MARIA SOUZA', transform: { scale: 1, x: 0, y: 0 } }] });
+    expect(d.formandos).toHaveLength(1);
+    expect(d.formandos[0].linhas).toEqual(['ANA MARIA', 'SOUZA']);
+    expect(d.formandos[0].linhasManuais).toBe(false);
+    composes(d);
+  });
+
+  it('formandos invalidos sao descartados, ids repetidos regenerados, transform ruim vira identidade', () => {
+    const d = load({
+      formandos: [
+        { id: 'x', nome: 'A B', linhas: ['A', 'B'], linhasManuais: true, transform: { scale: 'a', x: 0, y: 0 } },
+        { id: 'x', nome: 'C D' },
+        { id: 'y' },
+        null,
+      ],
+    });
+    expect(d.formandos.map((f) => f.nome)).toEqual(['A B', 'C D']);
+    expect(new Set(d.formandos.map((f) => f.id)).size).toBe(2);
+    expect(d.formandos[0].transform).toEqual({ scale: 1, x: 0, y: 0 });
+    expect(d.formandos[0].linhasManuais).toBe(true);
+    composes(d);
+  });
+
+  it('sem formandos validos volta ao padrao', () => {
+    expect(load({ formandos: [{ foo: 1 }] }).formandos).toHaveLength(52);
+  });
+
+  it('snippet sem text ou com on invalido usa o padrao do id', () => {
+    const def = createDefaultDoc().snippets;
+    const d = load({ snippets: { git: { on: false }, coord: { text: 5, on: 'sim' }, return: { text: 'r', on: false } } });
+    expect(d.snippets.git).toEqual({ text: def.git.text, on: false });
+    expect(d.snippets.coord).toEqual(def.coord);
+    expect(d.snippets.return).toEqual({ text: 'r', on: false });
+    composes(d);
+  });
+
+  it('estilos parciais sao mesclados e invalidos voltam ao padrao do slot', () => {
+    const d = load({ estilos: { titulo: { sizeMm: 30 }, subtitulo: { font: 'comic', sizeMm: 9 }, rotulo: { weight: 500 }, snippet: { sizeMm: -1 } } });
+    expect(d.estilos.titulo).toEqual({ ...DEFAULT_ESTILOS.titulo, sizeMm: 30 });
+    expect(d.estilos.subtitulo).toEqual(DEFAULT_ESTILOS.subtitulo);
+    expect(d.estilos.rotulo).toEqual(DEFAULT_ESTILOS.rotulo);
+    expect(d.estilos.snippet).toEqual(DEFAULT_ESTILOS.snippet);
+    composes(d);
+  });
+
+  it('60 formandos viram 52', () => {
+    const formandos = Array.from({ length: 60 }, (_, i) => ({ id: `g${i}`, nome: `NOME ${i}` }));
+    const d = load({ formandos });
+    expect(d.formandos).toHaveLength(52);
+    composes(d);
+  });
+
+  it('listas: entradas invalidas saem, nao-array vira padrao', () => {
+    const def = createDefaultDoc();
+    const d = load({
+      administracao: [{ cargo: 'A', nome: 'B' }, { cargo: 1 }, null],
+      homenageados: 'x',
+      professores: ['P', 3, null],
+      comissao: {},
+    });
+    expect(d.administracao).toEqual([{ cargo: 'A', nome: 'B' }]);
+    expect(d.homenageados).toEqual(def.homenageados);
+    expect(d.professores).toEqual(['P']);
+    expect(d.comissao).toEqual(def.comissao);
+    composes(d);
   });
 });

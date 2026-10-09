@@ -697,3 +697,6 @@ select {
   flex: 1;
   min-height: 0;
 }
+
+.app-mode { height: 100%; }
+.app-mode[hidden] { display: none; }

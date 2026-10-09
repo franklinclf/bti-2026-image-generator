@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type Dispatch } from 'react';
 import { MuralProvider, useMural } from '../state';
 import { loadDoc, serializeDoc, type MuralAction } from '../store';
 import type { MuralDoc } from '../types';
+import { createDefaultDoc } from '../defaults';
 import { downloadBlob } from '../download';
 import MuralPreview from './MuralPreview';
 import TextosTab from './TextosTab';
@@ -40,7 +41,7 @@ async function openProject(e: ChangeEvent<HTMLInputElement>, dispatch: Dispatch<
 }
 
 function EditorBody() {
-  const { doc, dispatch, model, fontError } = useMural();
+  const { doc, dispatch, model, fontError, composeError } = useMural();
   const [tab, setTab] = useState<Tab>('textos');
   const overflowCount = model?.overflows.length ?? 0;
   return (
@@ -72,6 +73,13 @@ function EditorBody() {
       <main className="mural__main">
         {fontError ? (
           <p className="mural__error">Erro ao carregar as fontes: {fontError}</p>
+        ) : composeError ? (
+          <div className="mural__error">
+            <p>Não foi possível montar o mural: {composeError}</p>
+            <button className="btn btn--ghost" onClick={() => dispatch({ type: 'LOAD', doc: createDefaultDoc() })}>
+              Restaurar padrão
+            </button>
+          </div>
         ) : model ? (
           <MuralPreview model={model} />
         ) : (
