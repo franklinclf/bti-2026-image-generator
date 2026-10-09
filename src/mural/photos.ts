@@ -16,32 +16,43 @@ export interface MatchResult {
   unmatched: number[];
 }
 
-// 1) nome normalizado igual; 2) senao, todas as palavras do arquivo (>= 2)
-// contidas no nome de exatamente um formando ainda livre.
+// Duas passadas: 1) nome normalizado igual; 2) para os que sobraram, todas as
+// palavras do arquivo (>= 2) contidas no nome de exatamente um formando livre.
 export function matchPortraits(formandos: { id: string; nome: string }[], fileNames: string[]): MatchResult {
   const norm = formandos.map((f) => {
     const n = normalizeName(f.nome);
     return { id: f.id, n, tokens: new Set(n.split(' ')) };
   });
   const used = new Set<string>();
-  const matches: MatchResult['matches'] = [];
-  const unmatched: number[] = [];
-  fileNames.forEach((fn, i) => {
-    const n = normalizeName(fn);
-    let hit = norm.find((f) => !used.has(f.id) && f.n === n);
-    if (!hit) {
-      const toks = n.split(' ').filter(Boolean);
-      if (toks.length >= 2) {
-        const c = norm.filter((f) => !used.has(f.id) && toks.every((t) => f.tokens.has(t)));
-        if (c.length === 1) hit = c[0];
-      }
-    }
+  const byFile = new Map<number, string>();
+  const names = fileNames.map(normalizeName);
+
+  names.forEach((n, i) => {
+    if (!n) return;
+    const hit = norm.find((f) => !used.has(f.id) && f.n === n);
     if (hit) {
       used.add(hit.id);
-      matches.push({ formandoId: hit.id, fileIndex: i });
-    } else {
-      unmatched.push(i);
+      byFile.set(i, hit.id);
     }
+  });
+
+  names.forEach((n, i) => {
+    if (!n || byFile.has(i)) return;
+    const toks = n.split(' ');
+    if (toks.length < 2) return;
+    const c = norm.filter((f) => !used.has(f.id) && toks.every((t) => f.tokens.has(t)));
+    if (c.length === 1) {
+      used.add(c[0].id);
+      byFile.set(i, c[0].id);
+    }
+  });
+
+  const matches: MatchResult['matches'] = [];
+  const unmatched: number[] = [];
+  names.forEach((_, i) => {
+    const id = byFile.get(i);
+    if (id) matches.push({ formandoId: id, fileIndex: i });
+    else unmatched.push(i);
   });
   return { matches, unmatched };
 }

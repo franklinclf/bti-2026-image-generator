@@ -33,4 +33,14 @@ describe('matchPortraits', () => {
     expect(r.matches).toHaveLength(1);
     expect(r.unmatched).toEqual([1]);
   });
+  it('nome exato tem prioridade sobre parcial, independente da ordem', () => {
+    const r = matchPortraits(formandos, ['wisla-argolo.jpg', 'wisla alves argolo.jpg']);
+    expect(r.matches).toEqual([{ formandoId: idOf('WISLA ALVES ARGOLO'), fileIndex: 1 }]);
+    expect(r.unmatched).toEqual([0]);
+  });
+  it('arquivo com nome vazio nunca casa', () => {
+    const r = matchPortraits(formandos, ['.jpg']);
+    expect(r.matches).toEqual([]);
+    expect(r.unmatched).toEqual([0]);
+  });
 });
