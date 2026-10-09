@@ -8,11 +8,11 @@ import { SAFARI_MAX_PX, inlineImages, isSafari, parseSvg, renderSvgString, svgTo
 export interface Progress { done: number; total: number; current: string }
 
 async function renderFile(
-  pf: PlannedFile, model: MuralModel, o: ExportOptions, cache: Map<string, string>, warnings: string[],
+  pf: PlannedFile, model: MuralModel, o: ExportOptions, holes: MuralDoc['holes'], cache: Map<string, string>, warnings: string[],
 ): Promise<Blob | string> {
   const vb = fileViewBox(pf.file, o.bleedMm);
   const isCut = pf.file === 'corte';
-  const svgText = isCut ? buildCutSvg(o.holeMm) : renderSvgString(model, pf.file, o.bleedMm);
+  const svgText = isCut ? buildCutSvg(o.holeMm, holes) : renderSvgString(model, pf.file, o.bleedMm);
   if (isCut && pf.format === 'svg') return svgText;
   const el = parseSvg(svgText);
   if (!isCut) await inlineImages(el, o.dpi, cache);
@@ -40,12 +40,12 @@ export async function exportMural(
     const pf = plan[i];
     onProgress({ done: i, total, current: pf.path });
     try {
-      zip.file(pf.path, await renderFile(pf, model, o, cache, errors));
+      zip.file(pf.path, await renderFile(pf, model, o, doc.holes, cache, errors));
     } catch (e) {
       errors.push(`${pf.path}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
-  zip.file('montagem.txt', buildMontagem(o.bleedMm, o.holeMm));
+  zip.file('montagem.txt', buildMontagem(o.bleedMm, o.holeMm, doc.holes));
   onProgress({ done: total - 1, total, current: 'compactando…' });
   const blob = await zip.generateAsync({ type: 'blob' });
   onProgress({ done: total, total, current: 'pronto' });

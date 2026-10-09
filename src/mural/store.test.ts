@@ -209,3 +209,34 @@ describe('loadDoc com projeto malformado', () => {
     expect(load({ export: { bleedMm: 9, holeMm: 1 } }).export).toEqual(def);
   });
 });
+
+describe('furos', () => {
+  it('SET_HOLES troca so a peca informada', () => {
+    const d = muralReducer(createDefaultDoc(), { type: 'SET_HOLES', piece: 'turma', value: [{ x: 50, y: 120 }] });
+    expect(d.holes.turma).toEqual([{ x: 50, y: 120 }]);
+    expect(d.holes.fundo).toHaveLength(4);
+  });
+  it('padrao: fundo 4, hexagono 2, modulos nenhum', () => {
+    const h = createDefaultDoc().holes;
+    expect([h.fundo.length, h.hexagono.length, h.turma.length, h.homenagens.length, h.formandos.length]).toEqual([4, 2, 0, 0, 0]);
+  });
+  it('v1 e v2 sem holes ganham os padrao', () => {
+    const base = JSON.parse(JSON.stringify(createDefaultDoc()));
+    delete base.holes;
+    expect(loadDoc(JSON.stringify(base)).holes).toEqual(createDefaultDoc().holes);
+    expect(loadDoc(JSON.stringify({ ...base, version: 1 })).holes).toEqual(createDefaultDoc().holes);
+  });
+  it('valida: descarta entradas invalidas e fora da area', () => {
+    const base = JSON.parse(serializeDoc(createDefaultDoc()));
+    base.holes = {
+      fundo: [{ x: 10, y: 10 }, { x: 'a', y: 1 }, { x: 900, y: 5 }, { x: 5, y: -1 }, null, { x: NaN, y: 2 }],
+      turma: 'x',
+      hexagono: [],
+    };
+    const h = loadDoc(JSON.stringify(base)).holes;
+    expect(h.fundo).toEqual([{ x: 10, y: 10 }]);
+    expect(h.turma).toEqual([]);
+    expect(h.hexagono).toEqual([]);
+    expect(h.homenagens).toEqual([]);
+  });
+});

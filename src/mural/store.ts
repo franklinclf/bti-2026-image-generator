@@ -3,6 +3,7 @@ import type {
   CargoNome, ExportOptions, FontId, MuralDoc, MuralFormando, Photo, PhotoTransform, SlotKey, SlotStyle, Snippet, SnippetId,
 } from './types';
 import { createDefaultDoc, DEFAULT_ESTILOS } from './defaults';
+import { LAYER_IDS, MURAL_H, MURAL_W, type LayerId, type Pt } from './geometry';
 import { splitName } from './text/split';
 
 export const STORAGE_KEY = 'mural-ti-2026:v1';
@@ -21,6 +22,7 @@ export type MuralAction =
   | { type: 'SET_STYLE'; slot: SlotKey; patch: Partial<SlotStyle> }
   | { type: 'RESET_STYLE'; slot?: SlotKey }
   | { type: 'SET_EXPORT'; patch: Partial<ExportOptions> }
+  | { type: 'SET_HOLES'; piece: LayerId; value: Pt[] }
   | { type: 'LOAD'; doc: MuralDoc };
 
 const IDENTITY: PhotoTransform = { scale: 1, x: 0, y: 0 };
@@ -71,6 +73,8 @@ export function muralReducer(doc: MuralDoc, a: MuralAction): MuralDoc {
       };
     case 'SET_EXPORT':
       return { ...doc, export: { ...doc.export, ...a.patch } };
+    case 'SET_HOLES':
+      return { ...doc, holes: { ...doc.holes, [a.piece]: a.value } };
     case 'LOAD':
       return a.doc;
     default:
@@ -170,6 +174,22 @@ function cleanExport(raw: unknown, fallback: ExportOptions): ExportOptions {
   };
 }
 
+// Furos: pontos finitos dentro da area do mural; peca ausente ou invalida volta ao padrao.
+function cleanHoles(raw: unknown, fallback: Record<LayerId, Pt[]>): Record<LayerId, Pt[]> {
+  const src = isObj(raw) ? raw : {};
+  return Object.fromEntries(
+    LAYER_IDS.map((id) => {
+      const list = src[id];
+      if (!Array.isArray(list)) return [id, fallback[id]];
+      const pts = list
+        .filter((h): h is Record<string, unknown> => isObj(h) && isNum(h.x) && isNum(h.y))
+        .filter((h) => (h.x as number) >= 0 && (h.x as number) <= MURAL_W && (h.y as number) >= 0 && (h.y as number) <= MURAL_H)
+        .map((h) => ({ x: h.x as number, y: h.y as number }));
+      return [id, pts];
+    }),
+  ) as Record<LayerId, Pt[]>;
+}
+
 // Professores do padrao v1 (so para reconhecer listas nao editadas).
 const V1_PROFESSORES = [
   'Antonio Igor Silva de Oliveira', 'Roberta de Souza Coelho', 'Patrick Cesar Alves Terrematte',
@@ -227,6 +247,7 @@ export function loadDoc(raw: string | null): MuralDoc {
       memoriam: Array.isArray(d.memoriam) && d.memoriam.every(isStr) ? d.memoriam : base.memoriam,
       comissao: cleanNames(d.comissao, base.comissao),
       export: cleanExport(d.export, base.export),
+      holes: cleanHoles(d.holes, base.holes),
       formandos: cleanFormandos(d.formandos, base.formandos),
       fotoTurma: { transform: isObj(d.fotoTurma) ? cleanTransform(d.fotoTurma.transform) : base.fotoTurma.transform },
     };

@@ -1,4 +1,4 @@
-import type { LayerId } from './geometry';
+import type { LayerId, Pt } from './geometry';
 
 export type FontId = 'fraunces' | 'space-grotesk' | 'sora' | 'jetbrains-mono';
 export type SlotKey =
@@ -52,4 +52,5 @@ export interface MuralDoc {
   fotoTurma: { photo?: Photo; transform: PhotoTransform };
   estilos: Record<SlotKey, SlotStyle>;
   export: ExportOptions;
+  holes: Record<LayerId, Pt[]>;
 }

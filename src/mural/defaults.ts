@@ -3,6 +3,7 @@ import type {
   CargoNome, ExportOptions, MuralDoc, MuralFormando, SlotKey, SlotStyle, Snippet, SnippetId,
 } from './types';
 import { splitName } from './text/split';
+import { LAYER_IDS, PIECES, type LayerId, type Pt } from './geometry';
 
 export const FORMANDOS: string[] = [
   'ARTHUR BOMA SKEETE MYPOTO',
@@ -169,6 +170,10 @@ export const DEFAULT_EXPORT: ExportOptions = {
   holeMm: 8,
 };
 
+export function createDefaultHoles(): Record<LayerId, Pt[]> {
+  return Object.fromEntries(LAYER_IDS.map((id) => [id, PIECES[id].holes.map((h) => ({ ...h }))])) as Record<LayerId, Pt[]>;
+}
+
 export function createFormandos(): MuralFormando[] {
   return FORMANDOS.map((nome, i) => ({
     id: `f${String(i).padStart(2, '0')}`,
@@ -195,5 +200,6 @@ export function createDefaultDoc(): MuralDoc {
     fotoTurma: { transform: { scale: 1, x: 0, y: 0 } },
     estilos: structuredClone(DEFAULT_ESTILOS),
     export: structuredClone(DEFAULT_EXPORT),
+    holes: createDefaultHoles(),
   };
 }
