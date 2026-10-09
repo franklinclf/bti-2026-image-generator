@@ -8,6 +8,15 @@ import { loadFontsNode } from './text/fonts.node';
 const photo = { url: 'blob:a', fileName: 'a.jpg', w: 10, h: 12 };
 
 describe('muralReducer', () => {
+  it('SET_NAMES de professores tira de memoriam quem saiu da lista', () => {
+    let d = createDefaultDoc();
+    d = muralReducer(d, { type: 'SET_MEMORIAM', value: ['Maxwell Gomes da Silva', 'Ana'] });
+    d = muralReducer(d, { type: 'SET_NAMES', list: 'professores', value: ['Ana ', 'Bia'] });
+    expect(d.memoriam).toEqual(['Ana']);
+    const c = muralReducer(d, { type: 'SET_NAMES', list: 'comissao', value: ['X'] });
+    expect(c.memoriam).toEqual(['Ana']);
+  });
+
   it('edita snippet sem mexer nos outros', () => {
     const d = muralReducer(createDefaultDoc(), { type: 'SET_SNIPPET', id: 'git', patch: { on: false } });
     expect(d.snippets.git).toEqual({ text: createDefaultDoc().snippets.git.text, on: false });
@@ -66,7 +75,53 @@ describe('persistencia', () => {
   it('entrada invalida volta ao padrao', () => {
     expect(loadDoc(null)).toEqual(createDefaultDoc());
     expect(loadDoc('{nao json')).toEqual(createDefaultDoc());
-    expect(loadDoc(JSON.stringify({ version: 2 }))).toEqual(createDefaultDoc());
+    expect(loadDoc(JSON.stringify({ version: 3 }))).toEqual(createDefaultDoc());
+  });
+
+  it('memoriam sobrevive ao ciclo serialize/load', () => {
+    const d = muralReducer(createDefaultDoc(), { type: 'SET_MEMORIAM', value: ['Dennys Leite Maia'] });
+    expect(d.memoriam).toEqual(['Dennys Leite Maia']);
+    expect(loadDoc(serializeDoc(d)).memoriam).toEqual(['Dennys Leite Maia']);
+    expect(loadDoc(serializeDoc(d)).version).toBe(2);
+  });
+
+  it('memoriam invalido na v2 volta ao padrao', () => {
+    expect(loadDoc(JSON.stringify({ version: 2, memoriam: ['a', 3] })).memoriam).toEqual(['Maxwell Gomes da Silva']);
+    expect(loadDoc(JSON.stringify({ version: 2, memoriam: 'x' })).memoriam).toEqual(['Maxwell Gomes da Silva']);
+  });
+
+  it('migra v1 com os padroes antigos para v2', () => {
+    const v1Prof = [
+      'Antonio Igor Silva de Oliveira', 'Roberta de Souza Coelho', 'Patrick Cesar Alves Terrematte',
+      'Alyson Matheus de Carvalho Souza', 'Maxwell Gomes da Silva', 'Gustavo Bezerra Paz Leitão',
+      'Eiji Adachi Medeiros Barbosa', 'Selan Rodrigues dos Santos', 'Tarciana Cabral de Brito Guerra',
+      'Daniel Sabino Amorim de Araujo', 'Thanos Tsouanas', 'Umberto Souza da Costa',
+      'Wellington Silva de Souza', 'Silvan Ferreira da Silva Junior', 'Frederico Araujo da Silva Lopes',
+      'Dennys Leite Maia',
+    ];
+    const v1 = {
+      version: 1,
+      homenageados: [
+        { cargo: 'Patronesse', nome: 'Ismenia Blavatsky de Magalhães' },
+        { cargo: 'Paraninfa', nome: 'Isabel Dillmann Nunes' },
+        { cargo: 'Orador(a)', nome: 'Aluno de C&T' },
+        { cargo: 'Juramentista', nome: 'Raquel da Costa Freire' },
+      ],
+      professores: v1Prof,
+    };
+    const d = loadDoc(JSON.stringify(v1));
+    const def = createDefaultDoc();
+    expect(d.version).toBe(2);
+    expect(d.homenageados.map((h) => h.cargo)).toEqual(['Patronesse', 'Paraninfa', 'Juramentista']);
+    expect(d.professores).toEqual(def.professores);
+    expect(d.memoriam).toEqual(def.memoriam);
+  });
+
+  it('migra v1 com professores personalizados sem mexer na lista', () => {
+    const d = loadDoc(JSON.stringify({ version: 1, professores: ['Ana', 'Bia'] }));
+    expect(d.version).toBe(2);
+    expect(d.professores).toEqual(['Ana', 'Bia']);
+    expect(d.memoriam).toEqual(['Maxwell Gomes da Silva']);
   });
 
   it('completa chaves que faltam com o padrao', () => {
@@ -160,6 +215,39 @@ describe('loadDoc com projeto malformado', () => {
     expect(d.export).toEqual(def);
     const ok = { files: { ...def.files, corte: false }, formats: { pdf: false, svg: true, png: true }, dpi: 150 as const, bleedMm: 2.5, holeMm: 12 };
     expect(load({ export: ok }).export).toEqual(ok);
+    expect(load({ export: { ...ok, dpi: 600 } }).export.dpi).toBe(600);
     expect(load({ export: { bleedMm: 9, holeMm: 1 } }).export).toEqual(def);
+  });
+});
+
+describe('furos', () => {
+  it('SET_HOLES troca so a peca informada', () => {
+    const d = muralReducer(createDefaultDoc(), { type: 'SET_HOLES', piece: 'turma', value: [{ x: 50, y: 120 }] });
+    expect(d.holes.turma).toEqual([{ x: 50, y: 120 }]);
+    expect(d.holes.fundo).toHaveLength(4);
+  });
+  it('padrao: fundo 4, hexagono 2, modulos nenhum', () => {
+    const h = createDefaultDoc().holes;
+    expect([h.fundo.length, h.hexagono.length, h.turma.length, h.homenagens.length, h.formandos.length]).toEqual([4, 2, 0, 0, 0]);
+  });
+  it('v1 e v2 sem holes ganham os padrao', () => {
+    const base = JSON.parse(JSON.stringify(createDefaultDoc()));
+    delete base.holes;
+    expect(loadDoc(JSON.stringify(base)).holes).toEqual(createDefaultDoc().holes);
+    expect(loadDoc(JSON.stringify({ ...base, version: 1 })).holes).toEqual(createDefaultDoc().holes);
+  });
+  it('valida: descarta entradas invalidas e fora da area', () => {
+    const base = JSON.parse(serializeDoc(createDefaultDoc()));
+    base.holes = {
+      turma: [{ x: 10, y: 10 }, { x: 'a', y: 1 }, { x: 900, y: 5 }, { x: 5, y: -1 }, null, { x: NaN, y: 2 }],
+      fundo: 'x',
+      hexagono: [],
+    };
+    const h = loadDoc(JSON.stringify(base)).holes;
+    expect(h.turma).toEqual([{ x: 10, y: 10 }]);
+    expect(h.fundo).toEqual(createDefaultDoc().holes.fundo);
+    expect(h.fundo).toHaveLength(4);
+    expect(h.hexagono).toEqual([]);
+    expect(h.homenagens).toEqual([]);
   });
 });

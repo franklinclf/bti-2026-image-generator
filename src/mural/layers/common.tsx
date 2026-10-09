@@ -12,10 +12,6 @@ export function MuralDefs() {
       <pattern id="mural-grid-coarse" width="50" height="50" patternUnits="userSpaceOnUse">
         <path d="M50 0H0V50" fill="none" stroke="#2c4374" strokeWidth={0.8} />
       </pattern>
-      <linearGradient id="mural-gold" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor={COLORS.champagne} />
-        <stop offset="1" stopColor={COLORS.gold} />
-      </linearGradient>
     </defs>
   );
 }

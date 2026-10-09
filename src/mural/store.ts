@@ -3,6 +3,7 @@ import type {
   CargoNome, ExportOptions, FontId, MuralDoc, MuralFormando, Photo, PhotoTransform, SlotKey, SlotStyle, Snippet, SnippetId,
 } from './types';
 import { createDefaultDoc, DEFAULT_ESTILOS } from './defaults';
+import { LAYER_IDS, MURAL_H, MURAL_W, type LayerId, type Pt } from './geometry';
 import { splitName } from './text/split';
 
 export const STORAGE_KEY = 'mural-ti-2026:v1';
@@ -12,6 +13,7 @@ export type MuralAction =
   | { type: 'SET_SNIPPET'; id: SnippetId; patch: Partial<Snippet> }
   | { type: 'SET_PAIRS'; list: 'administracao' | 'homenageados'; value: CargoNome[] }
   | { type: 'SET_NAMES'; list: 'professores' | 'comissao'; value: string[] }
+  | { type: 'SET_MEMORIAM'; value: string[] }
   | { type: 'SET_FORMANDO'; id: string; patch: Partial<Omit<MuralFormando, 'id'>> }
   | { type: 'SORT_FORMANDOS' }
   | { type: 'RESPLIT' }
@@ -20,6 +22,7 @@ export type MuralAction =
   | { type: 'SET_STYLE'; slot: SlotKey; patch: Partial<SlotStyle> }
   | { type: 'RESET_STYLE'; slot?: SlotKey }
   | { type: 'SET_EXPORT'; patch: Partial<ExportOptions> }
+  | { type: 'SET_HOLES'; piece: LayerId; value: Pt[] }
   | { type: 'LOAD'; doc: MuralDoc };
 
 const IDENTITY: PhotoTransform = { scale: 1, x: 0, y: 0 };
@@ -39,8 +42,13 @@ export function muralReducer(doc: MuralDoc, a: MuralAction): MuralDoc {
       return { ...doc, snippets: { ...doc.snippets, [a.id]: { ...doc.snippets[a.id], ...a.patch } } };
     case 'SET_PAIRS':
       return { ...doc, [a.list]: a.value };
-    case 'SET_NAMES':
-      return { ...doc, [a.list]: a.value };
+    case 'SET_NAMES': {
+      if (a.list !== 'professores') return { ...doc, [a.list]: a.value };
+      const present = new Set(a.value.map((n) => n.trim()));
+      return { ...doc, professores: a.value, memoriam: doc.memoriam.filter((n) => present.has(n.trim())) };
+    }
+    case 'SET_MEMORIAM':
+      return { ...doc, memoriam: a.value };
     case 'SET_FORMANDO':
       return { ...doc, formandos: doc.formandos.map((f) => (f.id === a.id ? applyFormandoPatch(f, a.patch) : f)) };
     case 'SORT_FORMANDOS':
@@ -68,6 +76,8 @@ export function muralReducer(doc: MuralDoc, a: MuralAction): MuralDoc {
       };
     case 'SET_EXPORT':
       return { ...doc, export: { ...doc.export, ...a.patch } };
+    case 'SET_HOLES':
+      return { ...doc, holes: { ...doc.holes, [a.piece]: a.value } };
     case 'LOAD':
       return a.doc;
     default:
@@ -161,10 +171,54 @@ function cleanExport(raw: unknown, fallback: ExportOptions): ExportOptions {
   return {
     files: cleanFlags(e.files, fallback.files),
     formats: cleanFlags(e.formats, fallback.formats),
-    dpi: e.dpi === 150 || e.dpi === 300 ? e.dpi : fallback.dpi,
+    dpi: e.dpi === 150 || e.dpi === 300 || e.dpi === 600 ? e.dpi : fallback.dpi,
     bleedMm: inRange(e.bleedMm, 0, 5, fallback.bleedMm),
     holeMm: inRange(e.holeMm, 2, 20, fallback.holeMm),
   };
+}
+
+// Furos: pontos finitos dentro da area do mural; peca ausente ou invalida volta ao padrao.
+function cleanHoles(raw: unknown, fallback: Record<LayerId, Pt[]>): Record<LayerId, Pt[]> {
+  const src = isObj(raw) ? raw : {};
+  return Object.fromEntries(
+    LAYER_IDS.map((id) => {
+      const list = src[id];
+      if (!Array.isArray(list)) return [id, fallback[id]];
+      const pts = list
+        .filter((h): h is Record<string, unknown> => isObj(h) && isNum(h.x) && isNum(h.y))
+        .filter((h) => (h.x as number) >= 0 && (h.x as number) <= MURAL_W && (h.y as number) >= 0 && (h.y as number) <= MURAL_H)
+        .map((h) => ({ x: h.x as number, y: h.y as number }));
+      return [id, pts];
+    }),
+  ) as Record<LayerId, Pt[]>;
+}
+
+// Professores do padrao v1 (so para reconhecer listas nao editadas).
+const V1_PROFESSORES = [
+  'Antonio Igor Silva de Oliveira', 'Roberta de Souza Coelho', 'Patrick Cesar Alves Terrematte',
+  'Alyson Matheus de Carvalho Souza', 'Maxwell Gomes da Silva', 'Gustavo Bezerra Paz Leitão',
+  'Eiji Adachi Medeiros Barbosa', 'Selan Rodrigues dos Santos', 'Tarciana Cabral de Brito Guerra',
+  'Daniel Sabino Amorim de Araujo', 'Thanos Tsouanas', 'Umberto Souza da Costa',
+  'Wellington Silva de Souza', 'Silvan Ferreira da Silva Junior', 'Frederico Araujo da Silva Lopes',
+  'Dennys Leite Maia',
+];
+
+const sameSet = (a: string[], b: string[]) => {
+  const sa = new Set(a);
+  return sa.size === new Set(b).size && b.every((n) => sa.has(n));
+};
+
+// v1 -> v2: tira o orador padrao, reordena a lista padrao de professores, memoriam padrao.
+function migrateV1(d: Record<string, unknown>, base: MuralDoc): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...d, version: 2, memoriam: base.memoriam };
+  if (Array.isArray(d.homenageados)) {
+    out.homenageados = d.homenageados.filter((p) => !(isObj(p) && p.nome === 'Aluno de C&T'));
+  }
+  if (Array.isArray(d.professores)) {
+    const names = d.professores.filter(isStr).map((n) => n.trim()).filter(Boolean);
+    if (sameSet(names, V1_PROFESSORES)) out.professores = base.professores;
+  }
+  return out;
 }
 
 // Aceita projeto parcial ou malformado: o que nao for valido volta ao padrao.
@@ -172,14 +226,15 @@ export function loadDoc(raw: string | null): MuralDoc {
   const base = createDefaultDoc();
   if (!raw) return base;
   try {
-    const d = JSON.parse(raw) as Partial<MuralDoc>;
-    if (!isObj(d) || d.version !== 1) return base;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isObj(parsed) || (parsed.version !== 1 && parsed.version !== 2)) return base;
+    const d = (parsed.version === 1 ? migrateV1(parsed, base) : parsed) as Partial<MuralDoc>;
     const snip: Record<string, unknown> = isObj(d.snippets) ? d.snippets : {};
     const est: Record<string, unknown> = isObj(d.estilos) ? d.estilos : {};
     return {
       ...base,
       ...d,
-      version: 1,
+      version: 2,
       titulo: isStr(d.titulo) ? d.titulo : base.titulo,
       subtitulo: isStr(d.subtitulo) ? d.subtitulo : base.subtitulo,
       turma: isStr(d.turma) ? d.turma : base.turma,
@@ -192,8 +247,10 @@ export function loadDoc(raw: string | null): MuralDoc {
       administracao: cleanPairs(d.administracao, base.administracao),
       homenageados: cleanPairs(d.homenageados, base.homenageados),
       professores: cleanNames(d.professores, base.professores),
+      memoriam: Array.isArray(d.memoriam) && d.memoriam.every(isStr) ? d.memoriam : base.memoriam,
       comissao: cleanNames(d.comissao, base.comissao),
       export: cleanExport(d.export, base.export),
+      holes: cleanHoles(d.holes, base.holes),
       formandos: cleanFormandos(d.formandos, base.formandos),
       fotoTurma: { transform: isObj(d.fotoTurma) ? cleanTransform(d.fotoTurma.transform) : base.fotoTurma.transform },
     };

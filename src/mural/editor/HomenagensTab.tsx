@@ -37,6 +37,21 @@ function LinesList({ title, value, onChange }: { title: string; value: string[];
   );
 }
 
+function MemoriamList({ nomes, value, onChange }: { nomes: string[]; value: string[]; onChange: (v: string[]) => void }) {
+  const list = nomes.map((n) => n.trim()).filter(Boolean);
+  const toggle = (n: string) => onChange(value.includes(n) ? value.filter((v) => v !== n) : [...value, n]);
+  return (
+    <div className="mural-stack">
+      {list.map((n, i) => (
+        <label key={i} className="mural-check">
+          <input type="checkbox" checked={value.includes(n)} onChange={() => toggle(n)} />
+          <span>in memoriam · {n}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
 export default function HomenagensTab() {
   const { doc, dispatch, model } = useMural();
   const overflows = (model?.overflows ?? []).filter((o) => o.key.startsWith('hom'));
@@ -51,6 +66,7 @@ export default function HomenagensTab() {
       <PairList title="corpo administrativo" value={doc.administracao} onChange={(v) => dispatch({ type: 'SET_PAIRS', list: 'administracao', value: v })} />
       <PairList title="homenageados da turma" value={doc.homenageados} onChange={(v) => dispatch({ type: 'SET_PAIRS', list: 'homenageados', value: v })} />
       <LinesList title="professores homenageados" value={doc.professores} onChange={(v) => dispatch({ type: 'SET_NAMES', list: 'professores', value: v })} />
+      <MemoriamList nomes={doc.professores} value={doc.memoriam} onChange={(v) => dispatch({ type: 'SET_MEMORIAM', value: v })} />
       <LinesList title="comissão de formatura" value={doc.comissao} onChange={(v) => dispatch({ type: 'SET_NAMES', list: 'comissao', value: v })} />
     </div>
   );

@@ -1,5 +1,5 @@
 // Planejamento do export (puro): lista de arquivos, area de cada um e textos de producao.
-import { LAYER_IDS, MURAL_H, MURAL_W, PIECES, shapeBBox, shapePath, type LayerId, type Rect } from '../geometry';
+import { LAYER_IDS, MURAL_H, MURAL_W, PIECES, shapeBBox, shapePath, type LayerId, type Pt, type Rect } from '../geometry';
 import type { ExportFileId, ExportOptions } from '../types';
 
 export type Format = 'pdf' | 'svg' | 'png';
@@ -55,7 +55,7 @@ export function zipName(d: Date): string {
   return `mural-ti-2026_${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.zip`;
 }
 
-export function buildMontagem(bleed: number, holeMm: number): string {
+export function buildMontagem(bleed: number, holeMm: number, holes: Record<LayerId, Pt[]>): string {
   const f = (n: number) => n.toFixed(1);
   const lines = [
     'MURAL TI 2026.1 · UFRN · montagem',
@@ -69,19 +69,48 @@ export function buildMontagem(bleed: number, holeMm: number): string {
     lines.push(`${p.num} ${p.label}`);
     lines.push(`  tamanho (sem sangria): ${f(b.w)} × ${f(b.h)}`);
     lines.push(`  posição (canto sup. esq.): x ${f(b.x)}, y ${f(b.y)}`);
-    lines.push(p.holes.length ? `  furos (centro): ${p.holes.map((h) => `(${f(h.x)}, ${f(h.y)})`).join(' ')}` : '  furos: nenhum');
+    const hs = holes[id];
+    lines.push(hs.length ? `  furos (centro): ${hs.map((h) => `(${f(h.x)}, ${f(h.y)})`).join(' ')}` : '  furos: nenhum');
     lines.push('');
   }
   return lines.join('\n');
 }
 
-export function buildCutSvg(holeMm: number): string {
+export function buildCutSvg(holeMm: number, holes: Record<LayerId, Pt[]>): string {
   const paths = LAYER_IDS.map((id) => `<path d="${shapePath(PIECES[id].shape)}"/>`).join('');
-  const holes = LAYER_IDS.flatMap((id) => PIECES[id].holes)
+  const circles = LAYER_IDS.flatMap((id) => holes[id])
     .map((h) => `<circle cx="${h.x}" cy="${h.y}" r="${holeMm / 2}"/>`)
     .join('');
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${MURAL_W}mm" height="${MURAL_H}mm" viewBox="0 0 ${MURAL_W} ${MURAL_H}">` +
-    `<g id="CutContour" fill="none" stroke="#ec008c" stroke-width="0.25">${paths}${holes}</g></svg>`
+    `<g id="CutContour" fill="none" stroke="#ec008c" stroke-width="0.25">${paths}${circles}</g></svg>`
   );
+}
+
+export interface CanvasLimits { maxSide: number; maxArea: number }
+export const CANVAS_LIMITS: { default: CanvasLimits; safari: CanvasLimits } = {
+  default: { maxSide: 32767, maxArea: 268_435_456 },
+  safari: { maxSide: 16384, maxArea: 16_777_216 },
+};
+
+// DPI pedido se o canvas couber; senao o maior DPI inteiro que cabe nos dois limites.
+export function maxDpiFor(wMm: number, hMm: number, dpi: number, limits: CanvasLimits): number {
+  const fits = (d: number) => {
+    const w = Math.round((wMm / 25.4) * d);
+    const h = Math.round((hMm / 25.4) * d);
+    return Math.max(w, h) <= limits.maxSide && w * h <= limits.maxArea;
+  };
+  if (fits(dpi)) return dpi;
+  const byArea = Math.sqrt(limits.maxArea / (wMm * hMm)) * 25.4;
+  const bySide = (limits.maxSide / Math.max(wMm, hMm)) * 25.4;
+  let d = Math.floor(Math.min(byArea, bySide, dpi));
+  while (d > 1 && !fits(d)) d--;
+  return Math.max(1, d);
+}
+
+// Sequencia de DPIs para tentar o PNG: cada tentativa reduz 25%, ate 150 (o pedido sempre entra).
+export function retryDpis(start: number): number[] {
+  const out = [start];
+  for (let d = Math.floor(start * 0.75); d >= 150; d = Math.floor(d * 0.75)) out.push(d);
+  return out;
 }

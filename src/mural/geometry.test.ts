@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   HEX_PTS,
   PIECES,
+  holeWarnings,
+  pointInShape,
   coverRect,
   offsetPolygon,
   photoCell,
@@ -77,5 +79,53 @@ describe('grade e fotos', () => {
     expect(coverRect(cell, { w: 100, h: 100 }, { scale: 1, x: 0, y: 0 })).toEqual({ x: 36, y: 332, w: 48, h: 48 });
     expect(coverRect(cell, { w: 100, h: 100 }, { scale: 1, x: 50, y: 0 }).x).toBe(56);
     expect(coverRect(cell, { w: 100, h: 100 }, { scale: 2, x: 0, y: 0 })).toEqual({ x: 12, y: 308, w: 96, h: 96 });
+  });
+});
+
+const defaultHoles = () => ({
+  fundo: PIECES.fundo.holes.map((h) => ({ ...h })),
+  turma: [],
+  homenagens: [],
+  formandos: [],
+  hexagono: PIECES.hexagono.holes.map((h) => ({ ...h })),
+});
+
+describe('pointInShape', () => {
+  it('poligono convexo', () => {
+    expect(pointInShape(PIECES.fundo.shape, { x: 400, y: 300 })).toBe(true);
+    expect(pointInShape(PIECES.fundo.shape, { x: 400, y: 30 })).toBe(false);
+    expect(pointInShape(PIECES.fundo.shape, { x: 5, y: 65 })).toBe(false); // chanfro
+    expect(pointInShape(PIECES.hexagono.shape, { x: 400, y: 100 })).toBe(true);
+  });
+  it('retangulo arredondado', () => {
+    expect(pointInShape(PIECES.turma.shape, { x: 100, y: 150 })).toBe(true);
+    expect(pointInShape(PIECES.turma.shape, { x: 20, y: 150 })).toBe(false);
+  });
+});
+
+describe('holeWarnings', () => {
+  it('furos padrao nao geram avisos', () => {
+    expect(holeWarnings(defaultHoles(), 8)).toEqual([]);
+  });
+  it('furo fora da peca', () => {
+    const h = defaultHoles();
+    h.fundo = [{ x: 400, y: 30 }];
+    expect(holeWarnings(h, 8)).toEqual(['Fundo: furo 1 fora da peça']);
+  });
+  it('furo perto da borda', () => {
+    const h = defaultHoles();
+    h.turma = [{ x: 27, y: 150 }];
+    expect(holeWarnings(h, 8)).toEqual(['Turma: furo 1 a menos de 3 mm da borda']);
+  });
+  it('furo perto de lado inclinado do hexagono', () => {
+    const [a, b] = HEX_PTS;
+    const c = HEX_PTS.reduce((m, p) => ({ x: m.x + p.x / HEX_PTS.length, y: m.y + p.y / HEX_PTS.length }), { x: 0, y: 0 });
+    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    let n = { x: -(b.y - a.y) / len, y: (b.x - a.x) / len };
+    if (n.x * (c.x - mid.x) + n.y * (c.y - mid.y) < 0) n = { x: -n.x, y: -n.y };
+    const h = defaultHoles();
+    h.hexagono = [{ x: mid.x + 4 * n.x, y: mid.y + 4 * n.y }];
+    expect(holeWarnings(h, 8)).toEqual(['Hexágono: furo 1 a menos de 3 mm da borda']);
   });
 });

@@ -11,9 +11,9 @@ export default function HexLayer({ model, bleed, highlightOverflow }: LayerProps
       <g transform={`translate(${tx} ${ty}) scale(${s})`}>
         <polygon
           points={HEX_BASE.map((p) => `${p.x},${p.y}`).join(' ')}
-          fill="none" stroke="url(#mural-gold)" strokeWidth={5}
+          fill="none" stroke={COLORS.goldStroke} strokeWidth={5}
         />
-        <path d={LAUREL_D} fill="none" stroke="url(#mural-gold)" strokeWidth={3.2} strokeLinejoin="round" strokeLinecap="round" />
+        <path d={LAUREL_D} fill="none" stroke={COLORS.goldStroke} strokeWidth={3.2} strokeLinejoin="round" strokeLinecap="round" />
         <g fill={COLORS.champagne}>
           {LAUREL_DOTS.map(([cx, cy]) => <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={4.2} />)}
           {HEX_BASE.map((p) => <circle key={`v${p.x}-${p.y}`} cx={p.x} cy={p.y} r={6} />)}

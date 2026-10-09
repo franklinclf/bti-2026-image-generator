@@ -8,8 +8,6 @@ import type { MuralModel } from '../compose';
 import type { ExportFileId } from '../types';
 import { fileLayers, fileViewBox } from './plan';
 
-export const SAFARI_MAX_PX = 16_777_216;
-
 export function isSafari(ua: string = navigator.userAgent): boolean {
   return /^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
 }
@@ -50,7 +48,11 @@ async function toDataUrl(href: string, targetPx: number): Promise<string> {
 }
 
 // Troca blob:/caminhos por data URLs (necessario para PNG via canvas e para o PDF).
-export async function inlineImages(svg: SVGSVGElement, dpi: number, cache: Map<string, string>): Promise<void> {
+// raster: reamostra para o dpi do PNG. vector (svg/pdf): resolucao original, limitada a 1200 DPI.
+export type ImageMode = 'raster' | 'vector';
+const VECTOR_MAX_DPI = 1200;
+
+export async function inlineImages(svg: SVGSVGElement, dpi: number, cache: Map<string, string>, mode: ImageMode): Promise<void> {
   const imgs = Array.from(svg.querySelectorAll('image'));
   await Promise.all(
     imgs.map(async (img) => {
@@ -58,8 +60,8 @@ export async function inlineImages(svg: SVGSVGElement, dpi: number, cache: Map<s
       if (!href || href.startsWith('data:')) return;
       const wMm = Number(img.getAttribute('width'));
       const hMm = Number(img.getAttribute('height'));
-      const target = Math.ceil((Math.max(wMm, hMm) / 25.4) * dpi);
-      const key = `${href}@${target}`;
+      const target = Math.ceil((Math.max(wMm, hMm) / 25.4) * (mode === 'vector' ? VECTOR_MAX_DPI : dpi));
+      const key = `${href}@${mode}@${target}`;
       let data = cache.get(key);
       if (!data) {
         data = await toDataUrl(href, target);
@@ -84,6 +86,13 @@ export async function svgToPdf(svg: SVGSVGElement, wMm: number, hMm: number): Pr
   return pdf.output('blob');
 }
 
+export class CanvasTooLargeError extends Error {
+  constructor(w: number, h: number) {
+    super(`canvas ${w}×${h} grande demais`);
+    this.name = 'CanvasTooLargeError';
+  }
+}
+
 export async function svgToPng(svgText: string, wMm: number, hMm: number, dpi: number): Promise<Blob> {
   const w = Math.round((wMm / 25.4) * dpi);
   const h = Math.round((hMm / 25.4) * dpi);
@@ -96,10 +105,16 @@ export async function svgToPng(svgText: string, wMm: number, hMm: number, dpi: n
     c.width = w;
     c.height = h;
     const ctx = c.getContext('2d');
-    if (!ctx) throw new Error('canvas indisponível');
-    ctx.drawImage(img, 0, 0, w, h);
+    if (!ctx) throw new CanvasTooLargeError(w, h);
+    try {
+      ctx.drawImage(img, 0, 0, w, h);
+      // canvas grande demais falha em silencio (transparente); toda peca tem o centro opaco
+      if (ctx.getImageData(w >> 1, h >> 1, 1, 1).data[3] === 0) throw new CanvasTooLargeError(w, h);
+    } catch {
+      throw new CanvasTooLargeError(w, h);
+    }
     return await new Promise<Blob>((resolve, reject) =>
-      c.toBlob((b) => (b ? resolve(b) : reject(new Error(`falha ao gerar PNG ${w}×${h}`))), 'image/png'),
+      c.toBlob((b) => (b ? resolve(b) : reject(new CanvasTooLargeError(w, h))), 'image/png'),
     );
   } finally {
     URL.revokeObjectURL(url);

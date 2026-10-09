@@ -3,6 +3,7 @@ import type {
   CargoNome, ExportOptions, MuralDoc, MuralFormando, SlotKey, SlotStyle, Snippet, SnippetId,
 } from './types';
 import { splitName } from './text/split';
+import { LAYER_IDS, PIECES, type LayerId, type Pt } from './geometry';
 
 export const FORMANDOS: string[] = [
   'ARTHUR BOMA SKEETE MYPOTO',
@@ -60,23 +61,25 @@ export const FORMANDOS: string[] = [
 ];
 
 const PROFESSORES = [
-  'Antonio Igor Silva de Oliveira',
-  'Roberta de Souza Coelho',
-  'Patrick Cesar Alves Terrematte',
-  'Alyson Matheus de Carvalho Souza',
   'Maxwell Gomes da Silva',
-  'Gustavo Bezerra Paz Leitão',
-  'Eiji Adachi Medeiros Barbosa',
-  'Selan Rodrigues dos Santos',
-  'Tarciana Cabral de Brito Guerra',
+  'Alyson Matheus de Carvalho Souza',
+  'Antonio Igor Silva de Oliveira',
   'Daniel Sabino Amorim de Araujo',
+  'Dennys Leite Maia',
+  'Eiji Adachi Medeiros Barbosa',
+  'Frederico Araujo da Silva Lopes',
+  'Gustavo Bezerra Paz Leitão',
+  'Patrick Cesar Alves Terrematte',
+  'Roberta de Souza Coelho',
+  'Selan Rodrigues dos Santos',
+  'Silvan Ferreira da Silva Junior',
+  'Tarciana Cabral de Brito Guerra',
   'Thanos Tsouanas',
   'Umberto Souza da Costa',
   'Wellington Silva de Souza',
-  'Silvan Ferreira da Silva Junior',
-  'Frederico Araujo da Silva Lopes',
-  'Dennys Leite Maia',
 ];
+
+const MEMORIAM = ['Maxwell Gomes da Silva'];
 
 const COMISSAO = [
   'Franklin Claudio Lopes de Oliveira Filho',
@@ -96,7 +99,6 @@ const ADMINISTRACAO: CargoNome[] = [
 const HOMENAGEADOS: CargoNome[] = [
   { cargo: 'Patronesse', nome: 'Ismenia Blavatsky de Magalhães' },
   { cargo: 'Paraninfa', nome: 'Isabel Dillmann Nunes' },
-  { cargo: 'Orador(a)', nome: 'Aluno de C&T' },
   { cargo: 'Juramentista', nome: 'Raquel da Costa Freire' },
 ];
 
@@ -168,6 +170,10 @@ export const DEFAULT_EXPORT: ExportOptions = {
   holeMm: 8,
 };
 
+export function createDefaultHoles(): Record<LayerId, Pt[]> {
+  return Object.fromEntries(LAYER_IDS.map((id) => [id, PIECES[id].holes.map((h) => ({ ...h }))])) as Record<LayerId, Pt[]>;
+}
+
 export function createFormandos(): MuralFormando[] {
   return FORMANDOS.map((nome, i) => ({
     id: `f${String(i).padStart(2, '0')}`,
@@ -180,7 +186,7 @@ export function createFormandos(): MuralFormando[] {
 
 export function createDefaultDoc(): MuralDoc {
   return {
-    version: 1,
+    version: 2,
     titulo: 'Tecnologia da Informação',
     subtitulo: 'UFRN · 2026.1',
     turma: 'Sprint Sem Fim',
@@ -188,10 +194,12 @@ export function createDefaultDoc(): MuralDoc {
     administracao: structuredClone(ADMINISTRACAO),
     homenageados: structuredClone(HOMENAGEADOS),
     professores: [...PROFESSORES],
+    memoriam: [...MEMORIAM],
     comissao: [...COMISSAO],
     formandos: createFormandos(),
     fotoTurma: { transform: { scale: 1, x: 0, y: 0 } },
     estilos: structuredClone(DEFAULT_ESTILOS),
     export: structuredClone(DEFAULT_EXPORT),
+    holes: createDefaultHoles(),
   };
 }

@@ -1,4 +1,4 @@
-import type { LayerId } from './geometry';
+import type { LayerId, Pt } from './geometry';
 
 export type FontId = 'fraunces' | 'space-grotesk' | 'sora' | 'jetbrains-mono';
 export type SlotKey =
@@ -32,13 +32,13 @@ export type ExportFileId = 'composicao' | LayerId | 'corte';
 export interface ExportOptions {
   files: Record<ExportFileId, boolean>;
   formats: { pdf: boolean; svg: boolean; png: boolean };
-  dpi: 150 | 300;
+  dpi: 150 | 300 | 600;
   bleedMm: number;
   holeMm: number;
 }
 
 export interface MuralDoc {
-  version: 1;
+  version: 2;
   titulo: string;
   subtitulo: string;
   turma: string;
@@ -46,9 +46,11 @@ export interface MuralDoc {
   administracao: CargoNome[];
   homenageados: CargoNome[];
   professores: string[];
+  memoriam: string[];
   comissao: string[];
   formandos: MuralFormando[];
   fotoTurma: { photo?: Photo; transform: PhotoTransform };
   estilos: Record<SlotKey, SlotStyle>;
   export: ExportOptions;
+  holes: Record<LayerId, Pt[]>;
 }

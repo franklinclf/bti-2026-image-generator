@@ -3,6 +3,7 @@
 import type { MuralDoc, Photo, PhotoTransform, SlotStyle, SnippetId, CargoNome } from './types';
 import { getFont, type FontSet } from './text/fonts';
 import { layoutText } from './text/layout';
+import { memoriamIcon } from './text/icons';
 import { fitWidth } from './text/fit';
 import { HOM, TURMA_FOTO, coverRect, photoCell, type LayerId, type Rect } from './geometry';
 
@@ -12,6 +13,7 @@ export const COLORS = {
   navy3: '#101d3b',
   hex: '#132245',
   gold: '#c9a227',
+  goldStroke: '#d9b85b',
   champagne: '#e8cf8f',
   ink: '#eef2fb',
   inkDim: '#aab6cf',
@@ -138,7 +140,16 @@ export function composeMural(doc: MuralDoc, fonts: FontSet): MuralModel {
   head(HOM.col2X, y2, 'prof. homenageados', HOM.col2W);
   y2 += 8;
   doc.professores.filter((n) => n.trim()).forEach((n, i) => {
-    put(`hom:prof:${i}`, 'homenagens', n, st.homenagem, HOM.col2X, y2, { maxW: HOM.col2W, label: `Professor(a): ${n}` });
+    let dx = 0;
+    if (doc.memoriam.includes(n.trim())) {
+      const icon = memoriamIcon(st.homenagem.sizeMm);
+      texts.push({
+        key: `hom:prof:${i}:memoriam`, layer: 'homenagens', label: `Professor(a) in memoriam: ${n}`,
+        d: icon.d, x: HOM.col2X, y: y2, scaleX: 1, width: icon.width, fill: COLORS.champagne, opacity: 1, overflow: false,
+      });
+      dx = icon.width + 1;
+    }
+    put(`hom:prof:${i}`, 'homenagens', n, st.homenagem, HOM.col2X + dx, y2, { maxW: HOM.col2W - dx, label: `Professor(a): ${n}` });
     y2 += 8.6;
   });
   if (y2 - 8.6 > HOM.bottom) {

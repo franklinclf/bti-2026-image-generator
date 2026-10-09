@@ -111,6 +111,68 @@ export function shapeBBox(s: Shape, bleed = 0): Rect {
   return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y };
 }
 
+// Ponto dentro da peca (poligono convexo: produtos vetoriais de mesmo sinal;
+// rrect: trata como retangulo).
+export function pointInShape(s: Shape, p: Pt): boolean {
+  if (s.kind === 'rrect') {
+    const { x, y, w, h } = s.rect;
+    return p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h;
+  }
+  let pos = false;
+  let neg = false;
+  const n = s.pts.length;
+  for (let i = 0; i < n; i++) {
+    const a = s.pts[i];
+    const b = s.pts[(i + 1) % n];
+    const c = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+    if (c > 0) pos = true;
+    else if (c < 0) neg = true;
+  }
+  return !(pos && neg);
+}
+
+const HOLE_EDGE_MIN = 3;
+
+function distToSegment(p: Pt, a: Pt, b: Pt): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len2 = dx * dx + dy * dy;
+  const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+
+// Distancia do ponto (dentro da peca) a borda mais proxima.
+function distToEdge(s: Shape, p: Pt): number {
+  if (s.kind === 'rrect') {
+    const { x, y, w, h } = s.rect;
+    return Math.min(p.x - x, x + w - p.x, p.y - y, y + h - p.y);
+  }
+  return Math.min(...s.pts.map((a, i) => distToSegment(p, a, s.pts[(i + 1) % s.pts.length])));
+}
+
+export interface HoleIssue { piece: LayerId; index: number; message: string }
+
+export function holeIssues(holes: Record<LayerId, Pt[]>, holeMm: number): HoleIssue[] {
+  const out: HoleIssue[] = [];
+  for (const id of LAYER_IDS) {
+    const piece = PIECES[id];
+    (holes[id] ?? []).forEach((h, index) => {
+      if (!pointInShape(piece.shape, h)) {
+        out.push({ piece: id, index, message: `${piece.label}: furo ${index + 1} fora da peça` });
+        return;
+      }
+      const edge = distToEdge(piece.shape, h);
+      if (edge - holeMm / 2 < HOLE_EDGE_MIN) {
+        out.push({ piece: id, index, message: `${piece.label}: furo ${index + 1} a menos de ${HOLE_EDGE_MIN} mm da borda` });
+      }
+    });
+  }
+  return out;
+}
+
+export const holeWarnings = (holes: Record<LayerId, Pt[]>, holeMm: number): string[] =>
+  holeIssues(holes, holeMm).map((i) => i.message);
+
 const n2 = (v: number) => String(Math.round(v * 100) / 100);
 
 export function shapePath(s: Shape, bleed = 0): string {
