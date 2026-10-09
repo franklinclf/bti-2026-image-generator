@@ -39,7 +39,7 @@ Mockups de referência: `docs/superpowers/specs/mural/mockup-v5.html` (fragmento
   "UFRN · 2026.1 · TURMA SPRINT SEM FIM" (y 248), linha git (y 266).
 - **Arestas do grafo** (fundo): dos vértices inferiores do hexágono (329.1, 145.8) e
   (470.9, 145.8) até (285, 205) e (515, 205); segmento vertical (400, 276)→(400, 305).
-- **Logos** no rodapé do fundo: UFRN (esquerda, x 40) e PIX (direita, até x 760). Arquivos em
+- **Logos** na faixa inferior do fundo (y 578–592, caixas de 50 × 14 mm): UFRN em x 30 e PIX terminando em x 770. Arquivos em
   `public/brand/`.
 - **Espaçadores**: fundo em (20, 80), (780, 80), (20, 580), (780, 580); hexágono em (400, 36) e
   (400, 170).
@@ -56,7 +56,7 @@ Mockups de referência: `docs/superpowers/specs/mural/mockup-v5.html` (fragmento
 | Id | Onde | Texto padrão |
 |---|---|---|
 | `coord` | fundo, canto sup. esquerdo | `// 05.79 S · 35.20 W · natal/rn` |
-| `build` | fundo, canto inf. direito | `// sprint final · status: done ✓` |
+| `build` | fundo, canto sup. direito | `// sprint final · status: done ✓` |
 | `importTurma` | fundo, sob o hexágono (horizontal) | `import turma` |
 | `importGratidao` | fundo, sob o hexágono (horizontal) | `import gratidao` |
 | `git` | fundo, sob o subtítulo | `>_ git commit -m "formados" && git push origin futuro` |
