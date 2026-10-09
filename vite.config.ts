@@ -1,8 +1,12 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 // base: './' garante assets relativos no deploy estatico (Vercel)
 export default defineConfig({
   plugins: [react()],
   base: './',
+  test: {
+    environment: 'node',
+    include: ['src/**/*.test.{ts,tsx}'],
+  },
 });
