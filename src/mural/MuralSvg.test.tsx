@@ -23,6 +23,11 @@ describe('MuralSvg', () => {
     expect(html).toContain('viewBox="0 0 800 600"');
   });
 
+  it('sem stroke com gradiente (svg2pdf nao suporta)', () => {
+    const html = renderToStaticMarkup(<MuralSvg model={model} />);
+    expect(html).not.toMatch(/stroke="url\(/);
+  });
+
   it('so a camada pedida, com tamanho em mm', () => {
     const html = renderToStaticMarkup(
       <MuralSvg model={model} layers={['hexagono']} sizing="mm" viewBox={{ x: 326, y: 20, w: 148, h: 170 }} />,

@@ -12,6 +12,7 @@ export const COLORS = {
   navy3: '#101d3b',
   hex: '#132245',
   gold: '#c9a227',
+  goldStroke: '#d9b85b',
   champagne: '#e8cf8f',
   ink: '#eef2fb',
   inkDim: '#aab6cf',
