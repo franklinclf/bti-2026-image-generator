@@ -4,6 +4,7 @@ import type { ExportFileId, ExportOptions } from '../types';
 import { FILE_LABELS, FILE_ORDER, planFiles, zipName } from '../export/plan';
 import type { Progress } from '../export/bundle';
 import NumberField from './NumberField';
+import { LAYER_IDS, MURAL_H, MURAL_W, PIECES, holeWarnings, shapeBBox } from '../geometry';
 import { downloadBlob } from '../download';
 
 export default function ExportTab() {
@@ -14,6 +15,7 @@ export default function ExportTab() {
   const o = doc.export;
   const set = (patch: Partial<ExportOptions>) => dispatch({ type: 'SET_EXPORT', patch });
   const count = planFiles(o).length;
+  const warnings = holeWarnings(doc.holes, o.holeMm);
 
   const run = async () => {
     if (!model) return;
@@ -76,6 +78,42 @@ export default function ExportTab() {
         <span>Diâmetro dos furos (mm, 2 a 20)</span>
         <NumberField value={o.holeMm} min={2} max={20} onCommit={(v) => set({ holeMm: v })} />
       </label>
+      <h3 className="mural-h">// furos</h3>
+      {warnings.length > 0 && (
+        <div className="mural-overflows">
+          Avisos de furos (o export continua permitido):
+          <ul>{warnings.map((w) => <li key={w}>{w}</li>)}</ul>
+        </div>
+      )}
+      {LAYER_IDS.map((id) => {
+        const list = doc.holes[id];
+        const setList = (value: typeof list) => dispatch({ type: 'SET_HOLES', piece: id, value });
+        const add = () => {
+          const b = shapeBBox(PIECES[id].shape);
+          setList([...list, { x: Math.round((b.x + b.w / 2) * 2) / 2, y: Math.round((b.y + b.h / 2) * 2) / 2 }]);
+        };
+        return (
+          <div key={id} className="mural-stack">
+            <div className="mural-row">
+              <strong>{PIECES[id].num} {PIECES[id].label}</strong>
+              <button className="btn" onClick={add}>+ furo</button>
+            </div>
+            {list.map((h, i) => (
+              <div key={i} className="mural-row">
+                <span>{i + 1}</span>
+                <label className="mural-check">x (mm)
+                  <NumberField value={h.x} min={0} max={MURAL_W} clamp onCommit={(x) => setList(list.map((q, j) => (j === i ? { ...q, x } : q)))} />
+                </label>
+                <label className="mural-check">y (mm)
+                  <NumberField value={h.y} min={0} max={MURAL_H} clamp onCommit={(y) => setList(list.map((q, j) => (j === i ? { ...q, y } : q)))} />
+                </label>
+                <button className="btn" aria-label={`remover furo ${i + 1}`} onClick={() => setList(list.filter((_, j) => j !== i))}>remover</button>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+
       <p className="mural-hint">
         PDF e SVG saem com texto em contornos. O zip traz também <code>montagem.txt</code> (posição de cada peça e dos furos).
       </p>

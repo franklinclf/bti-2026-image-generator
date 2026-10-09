@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import MuralSvg from '../MuralSvg';
 import type { MuralModel } from '../compose';
 import { useMural } from '../state';
+import { holeIssues } from '../geometry';
 
 const ZOOMS = [1, 1.5, 2, 3];
 
 export default function MuralPreview({ model }: { model: MuralModel }) {
-  const { doc } = useMural();
+  const { doc, dispatch } = useMural();
   const [zoom, setZoom] = useState(1);
-  const [guides, setGuides] = useState(true);
+  const [outline, setOutline] = useState(true);
+  const [bleed, setBleed] = useState(true);
+  const [holes, setHoles] = useState(true);
+  const badHoles = useMemo(
+    () => new Set(holeIssues(doc.holes, doc.export.holeMm).map((i) => `${i.piece}:${i.index}`)),
+    [doc.holes, doc.export.holeMm],
+  );
+  const anyGuide = outline || bleed || holes;
   return (
     <div className="mural-preview">
       <div className="mural-preview__bar">
@@ -19,8 +27,16 @@ export default function MuralPreview({ model }: { model: MuralModel }) {
           </select>
         </label>
         <label className="mural-check">
-          <input type="checkbox" checked={guides} onChange={(e) => setGuides(e.target.checked)} />
-          contornos, sangria e furos
+          <input type="checkbox" checked={outline} onChange={(e) => setOutline(e.target.checked)} />
+          contornos
+        </label>
+        <label className="mural-check">
+          <input type="checkbox" checked={bleed} onChange={(e) => setBleed(e.target.checked)} />
+          sangria
+        </label>
+        <label className="mural-check">
+          <input type="checkbox" checked={holes} onChange={(e) => setHoles(e.target.checked)} />
+          furos
         </label>
         {model.overflows.length > 0 && (
           <span className="mural__warn">{model.overflows.length} texto(s) não cabem (em vermelho)</span>
@@ -28,7 +44,17 @@ export default function MuralPreview({ model }: { model: MuralModel }) {
       </div>
       <div className="mural-preview__scroll">
         <div style={{ width: `${zoom * 100}%` }}>
-          <MuralSvg model={model} bleed={guides ? doc.export.bleedMm : 0} guides={guides} holeMm={doc.export.holeMm} highlightOverflow />
+          <MuralSvg
+            model={model}
+            bleed={bleed ? doc.export.bleedMm : 0}
+            guides={anyGuide ? { outline, bleed, holes } : undefined}
+            holes={doc.holes}
+            holeMm={doc.export.holeMm}
+            badHoles={badHoles}
+            onHoleDrag={(piece, index, p) =>
+              dispatch({ type: 'SET_HOLES', piece, value: doc.holes[piece].map((h, i) => (i === index ? p : h)) })}
+            highlightOverflow
+          />
         </div>
       </div>
     </div>
