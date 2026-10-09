@@ -42,8 +42,11 @@ export function muralReducer(doc: MuralDoc, a: MuralAction): MuralDoc {
       return { ...doc, snippets: { ...doc.snippets, [a.id]: { ...doc.snippets[a.id], ...a.patch } } };
     case 'SET_PAIRS':
       return { ...doc, [a.list]: a.value };
-    case 'SET_NAMES':
-      return { ...doc, [a.list]: a.value };
+    case 'SET_NAMES': {
+      if (a.list !== 'professores') return { ...doc, [a.list]: a.value };
+      const present = new Set(a.value.map((n) => n.trim()));
+      return { ...doc, professores: a.value, memoriam: doc.memoriam.filter((n) => present.has(n.trim())) };
+    }
     case 'SET_MEMORIAM':
       return { ...doc, memoriam: a.value };
     case 'SET_FORMANDO':

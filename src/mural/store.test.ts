@@ -8,6 +8,15 @@ import { loadFontsNode } from './text/fonts.node';
 const photo = { url: 'blob:a', fileName: 'a.jpg', w: 10, h: 12 };
 
 describe('muralReducer', () => {
+  it('SET_NAMES de professores tira de memoriam quem saiu da lista', () => {
+    let d = createDefaultDoc();
+    d = muralReducer(d, { type: 'SET_MEMORIAM', value: ['Maxwell Gomes da Silva', 'Ana'] });
+    d = muralReducer(d, { type: 'SET_NAMES', list: 'professores', value: ['Ana ', 'Bia'] });
+    expect(d.memoriam).toEqual(['Ana']);
+    const c = muralReducer(d, { type: 'SET_NAMES', list: 'comissao', value: ['X'] });
+    expect(c.memoriam).toEqual(['Ana']);
+  });
+
   it('edita snippet sem mexer nos outros', () => {
     const d = muralReducer(createDefaultDoc(), { type: 'SET_SNIPPET', id: 'git', patch: { on: false } });
     expect(d.snippets.git).toEqual({ text: createDefaultDoc().snippets.git.text, on: false });
