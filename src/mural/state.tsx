@@ -61,14 +61,21 @@ export function MuralProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // composeMural nao usa holes nem export: arrastar furo ou mexer no export nao recompoe
+  const composeDoc = useMemo(
+    () => doc,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [doc.titulo, doc.subtitulo, doc.turma, doc.snippets, doc.administracao, doc.homenageados, doc.professores,
+      doc.memoriam, doc.comissao, doc.formandos, doc.fotoTurma, doc.estilos],
+  );
   const { model, composeError } = useMemo(() => {
     if (!fonts) return { model: null, composeError: null };
     try {
-      return { model: composeMural(doc, fonts), composeError: null };
+      return { model: composeMural(composeDoc, fonts), composeError: null };
     } catch (e) {
       return { model: null, composeError: e instanceof Error ? e.message : String(e) };
     }
-  }, [doc, fonts]);
+  }, [composeDoc, fonts]);
   const value = useMemo(
     () => ({ doc, dispatch, fonts, fontError, model, composeError }),
     [doc, fonts, fontError, model, composeError],
