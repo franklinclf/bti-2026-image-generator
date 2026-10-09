@@ -1,6 +1,6 @@
 # Mural de vidro — design
 
-Data: 2026-10-09 · Branch: `feat/mural` · Status: aprovado no brainstorming, aguardando revisão do spec
+Data: 2026-10-09 · Branch: `feat/mural` · Status: implementado em feat/mural (aguardando teste visual e specs da PIX)
 
 ## 1. Objetivo
 
