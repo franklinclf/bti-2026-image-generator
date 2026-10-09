@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { composeMural } from './compose';
 import { createDefaultDoc } from './defaults';
-import { coverRect, photoCell } from './geometry';
+import { coverRect, HOM, photoCell } from './geometry';
 import type { FontSet } from './text/fonts';
 import { loadFontsNode } from './text/fonts.node';
 
@@ -15,6 +15,17 @@ const keys = (m: ReturnType<typeof composeMural>) => m.texts.map((t) => t.key);
 describe('composeMural', () => {
   it('o conteudo padrao cabe sem estouros', () => {
     const m = composeMural(createDefaultDoc(), fonts);
+    expect(m.overflows).toEqual([]);
+  });
+
+  it('professor in memoriam ganha icone e o nome desloca para a direita', () => {
+    const m = composeMural(createDefaultDoc(), fonts);
+    const icon = m.texts.find((t) => t.key === 'hom:prof:0:memoriam');
+    const nome = m.texts.find((t) => t.key === 'hom:prof:0');
+    expect(icon).toBeDefined();
+    expect(nome).toBeDefined();
+    expect(icon!.x).toBeCloseTo(HOM.col2X, 2);
+    expect(nome!.x).toBeCloseTo(HOM.col2X + icon!.width + 1, 2);
     expect(m.overflows).toEqual([]);
   });
 

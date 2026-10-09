@@ -38,7 +38,7 @@ export interface ExportOptions {
 }
 
 export interface MuralDoc {
-  version: 1;
+  version: 2;
   titulo: string;
   subtitulo: string;
   turma: string;
@@ -46,6 +46,7 @@ export interface MuralDoc {
   administracao: CargoNome[];
   homenageados: CargoNome[];
   professores: string[];
+  memoriam: string[];
   comissao: string[];
   formandos: MuralFormando[];
   fotoTurma: { photo?: Photo; transform: PhotoTransform };

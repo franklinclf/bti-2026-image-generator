@@ -66,7 +66,53 @@ describe('persistencia', () => {
   it('entrada invalida volta ao padrao', () => {
     expect(loadDoc(null)).toEqual(createDefaultDoc());
     expect(loadDoc('{nao json')).toEqual(createDefaultDoc());
-    expect(loadDoc(JSON.stringify({ version: 2 }))).toEqual(createDefaultDoc());
+    expect(loadDoc(JSON.stringify({ version: 3 }))).toEqual(createDefaultDoc());
+  });
+
+  it('memoriam sobrevive ao ciclo serialize/load', () => {
+    const d = muralReducer(createDefaultDoc(), { type: 'SET_MEMORIAM', value: ['Dennys Leite Maia'] });
+    expect(d.memoriam).toEqual(['Dennys Leite Maia']);
+    expect(loadDoc(serializeDoc(d)).memoriam).toEqual(['Dennys Leite Maia']);
+    expect(loadDoc(serializeDoc(d)).version).toBe(2);
+  });
+
+  it('memoriam invalido na v2 volta ao padrao', () => {
+    expect(loadDoc(JSON.stringify({ version: 2, memoriam: ['a', 3] })).memoriam).toEqual(['Maxwell Gomes da Silva']);
+    expect(loadDoc(JSON.stringify({ version: 2, memoriam: 'x' })).memoriam).toEqual(['Maxwell Gomes da Silva']);
+  });
+
+  it('migra v1 com os padroes antigos para v2', () => {
+    const v1Prof = [
+      'Antonio Igor Silva de Oliveira', 'Roberta de Souza Coelho', 'Patrick Cesar Alves Terrematte',
+      'Alyson Matheus de Carvalho Souza', 'Maxwell Gomes da Silva', 'Gustavo Bezerra Paz Leitão',
+      'Eiji Adachi Medeiros Barbosa', 'Selan Rodrigues dos Santos', 'Tarciana Cabral de Brito Guerra',
+      'Daniel Sabino Amorim de Araujo', 'Thanos Tsouanas', 'Umberto Souza da Costa',
+      'Wellington Silva de Souza', 'Silvan Ferreira da Silva Junior', 'Frederico Araujo da Silva Lopes',
+      'Dennys Leite Maia',
+    ];
+    const v1 = {
+      version: 1,
+      homenageados: [
+        { cargo: 'Patronesse', nome: 'Ismenia Blavatsky de Magalhães' },
+        { cargo: 'Paraninfa', nome: 'Isabel Dillmann Nunes' },
+        { cargo: 'Orador(a)', nome: 'Aluno de C&T' },
+        { cargo: 'Juramentista', nome: 'Raquel da Costa Freire' },
+      ],
+      professores: v1Prof,
+    };
+    const d = loadDoc(JSON.stringify(v1));
+    const def = createDefaultDoc();
+    expect(d.version).toBe(2);
+    expect(d.homenageados.map((h) => h.cargo)).toEqual(['Patronesse', 'Paraninfa', 'Juramentista']);
+    expect(d.professores).toEqual(def.professores);
+    expect(d.memoriam).toEqual(def.memoriam);
+  });
+
+  it('migra v1 com professores personalizados sem mexer na lista', () => {
+    const d = loadDoc(JSON.stringify({ version: 1, professores: ['Ana', 'Bia'] }));
+    expect(d.version).toBe(2);
+    expect(d.professores).toEqual(['Ana', 'Bia']);
+    expect(d.memoriam).toEqual(['Maxwell Gomes da Silva']);
   });
 
   it('completa chaves que faltam com o padrao', () => {

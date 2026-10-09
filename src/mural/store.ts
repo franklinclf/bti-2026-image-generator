@@ -12,6 +12,7 @@ export type MuralAction =
   | { type: 'SET_SNIPPET'; id: SnippetId; patch: Partial<Snippet> }
   | { type: 'SET_PAIRS'; list: 'administracao' | 'homenageados'; value: CargoNome[] }
   | { type: 'SET_NAMES'; list: 'professores' | 'comissao'; value: string[] }
+  | { type: 'SET_MEMORIAM'; value: string[] }
   | { type: 'SET_FORMANDO'; id: string; patch: Partial<Omit<MuralFormando, 'id'>> }
   | { type: 'SORT_FORMANDOS' }
   | { type: 'RESPLIT' }
@@ -41,6 +42,8 @@ export function muralReducer(doc: MuralDoc, a: MuralAction): MuralDoc {
       return { ...doc, [a.list]: a.value };
     case 'SET_NAMES':
       return { ...doc, [a.list]: a.value };
+    case 'SET_MEMORIAM':
+      return { ...doc, memoriam: a.value };
     case 'SET_FORMANDO':
       return { ...doc, formandos: doc.formandos.map((f) => (f.id === a.id ? applyFormandoPatch(f, a.patch) : f)) };
     case 'SORT_FORMANDOS':
@@ -167,19 +170,48 @@ function cleanExport(raw: unknown, fallback: ExportOptions): ExportOptions {
   };
 }
 
+// Professores do padrao v1 (so para reconhecer listas nao editadas).
+const V1_PROFESSORES = [
+  'Antonio Igor Silva de Oliveira', 'Roberta de Souza Coelho', 'Patrick Cesar Alves Terrematte',
+  'Alyson Matheus de Carvalho Souza', 'Maxwell Gomes da Silva', 'Gustavo Bezerra Paz Leitão',
+  'Eiji Adachi Medeiros Barbosa', 'Selan Rodrigues dos Santos', 'Tarciana Cabral de Brito Guerra',
+  'Daniel Sabino Amorim de Araujo', 'Thanos Tsouanas', 'Umberto Souza da Costa',
+  'Wellington Silva de Souza', 'Silvan Ferreira da Silva Junior', 'Frederico Araujo da Silva Lopes',
+  'Dennys Leite Maia',
+];
+
+const sameSet = (a: string[], b: string[]) => {
+  const sa = new Set(a);
+  return sa.size === new Set(b).size && b.every((n) => sa.has(n));
+};
+
+// v1 -> v2: tira o orador padrao, reordena a lista padrao de professores, memoriam padrao.
+function migrateV1(d: Record<string, unknown>, base: MuralDoc): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...d, version: 2, memoriam: base.memoriam };
+  if (Array.isArray(d.homenageados)) {
+    out.homenageados = d.homenageados.filter((p) => !(isObj(p) && p.nome === 'Aluno de C&T'));
+  }
+  if (Array.isArray(d.professores)) {
+    const names = d.professores.filter(isStr).map((n) => n.trim()).filter(Boolean);
+    if (sameSet(names, V1_PROFESSORES)) out.professores = base.professores;
+  }
+  return out;
+}
+
 // Aceita projeto parcial ou malformado: o que nao for valido volta ao padrao.
 export function loadDoc(raw: string | null): MuralDoc {
   const base = createDefaultDoc();
   if (!raw) return base;
   try {
-    const d = JSON.parse(raw) as Partial<MuralDoc>;
-    if (!isObj(d) || d.version !== 1) return base;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isObj(parsed) || (parsed.version !== 1 && parsed.version !== 2)) return base;
+    const d = (parsed.version === 1 ? migrateV1(parsed, base) : parsed) as Partial<MuralDoc>;
     const snip: Record<string, unknown> = isObj(d.snippets) ? d.snippets : {};
     const est: Record<string, unknown> = isObj(d.estilos) ? d.estilos : {};
     return {
       ...base,
       ...d,
-      version: 1,
+      version: 2,
       titulo: isStr(d.titulo) ? d.titulo : base.titulo,
       subtitulo: isStr(d.subtitulo) ? d.subtitulo : base.subtitulo,
       turma: isStr(d.turma) ? d.turma : base.turma,
@@ -192,6 +224,7 @@ export function loadDoc(raw: string | null): MuralDoc {
       administracao: cleanPairs(d.administracao, base.administracao),
       homenageados: cleanPairs(d.homenageados, base.homenageados),
       professores: cleanNames(d.professores, base.professores),
+      memoriam: Array.isArray(d.memoriam) && d.memoriam.every(isStr) ? d.memoriam : base.memoriam,
       comissao: cleanNames(d.comissao, base.comissao),
       export: cleanExport(d.export, base.export),
       formandos: cleanFormandos(d.formandos, base.formandos),

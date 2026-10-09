@@ -24,6 +24,16 @@ describe('createDefaultDoc', () => {
     expect(doc.export).toMatchObject({ dpi: 300, bleedMm: 3, holeMm: 8 });
   });
 
+  it('padroes v2: sem orador, professores A-Z com Maxwell primeiro, in memoriam', () => {
+    const doc = createDefaultDoc();
+    expect(doc.version).toBe(2);
+    expect(doc.homenageados.map((h) => h.cargo)).toEqual(['Patronesse', 'Paraninfa', 'Juramentista']);
+    expect(doc.professores[0]).toBe('Maxwell Gomes da Silva');
+    const resto = doc.professores.slice(1);
+    expect(resto).toEqual([...resto].sort((a, b) => a.localeCompare(b, 'pt-BR')));
+    expect(doc.memoriam).toEqual(['Maxwell Gomes da Silva']);
+  });
+
   it('cada chamada devolve objetos independentes', () => {
     const a = createDefaultDoc();
     const b = createDefaultDoc();
