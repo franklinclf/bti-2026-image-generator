@@ -56,6 +56,22 @@ describe('MuralSvg', () => {
     expect(noBleed.slice(noBleed.indexOf('id="guides"'))).not.toContain('<circle');
   });
 
+  it('onHoleDrag: area de toque por furo e vermelho so no aro visivel', () => {
+    const doc = createDefaultDoc();
+    const guides = { outline: false, bleed: false, holes: true };
+    const bad = new Set(['fundo:0']);
+    const drag = renderToStaticMarkup(
+      <MuralSvg model={model} guides={guides} holes={doc.holes} holeMm={8} badHoles={bad} onHoleDrag={() => {}} />,
+    );
+    const g = drag.slice(drag.indexOf('id="guides"'));
+    expect(count(g, 'r="7"')).toBe(6);
+    expect(count(g, 'stroke="#ff4d4d"')).toBe(1);
+    const plain = renderToStaticMarkup(<MuralSvg model={model} guides={guides} holes={doc.holes} holeMm={8} badHoles={bad} />);
+    const pg = plain.slice(plain.indexOf('id="guides"'));
+    expect(count(pg, '<circle')).toBe(6);
+    expect(pg).not.toContain('r="7"');
+  });
+
   it('sem guias, nada de <g id="guides">', () => {
     expect(renderToStaticMarkup(<MuralSvg model={model} />)).not.toContain('id="guides"');
   });

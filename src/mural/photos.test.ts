@@ -73,3 +73,21 @@ describe('matchPortraits', () => {
     expect(r.unmatched).toEqual([0]);
   });
 });
+
+describe('matchPortraits casos limite', () => {
+  const lista = [
+    { id: 'a', nome: 'ANA SILVA SOUZA' },
+    { id: 'b', nome: 'ANA SILVA LIMA' },
+    { id: 'c', nome: 'ANA MARIA' },
+  ];
+  it('empate na passada 2 fica sem par', () => {
+    const r = matchPortraits(lista.slice(0, 2), ['ana silva.jpg']);
+    expect(r.matches).toEqual([]);
+    expect(r.unmatched).toEqual([0]);
+  });
+  it('uma palavra do arquivo nao consome duas palavras do nome', () => {
+    const r = matchPortraits([lista[2]], ['ana ana.jpg']);
+    expect(r.matches).toEqual([]);
+    expect(r.unmatched).toEqual([0]);
+  });
+});
